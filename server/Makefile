@@ -20,8 +20,10 @@ cgidir = /usr/lib/cgi-bin
 objects = \
 	tinyxml2.o \
 	distsn.o \
-	user-words-cron.o
-cgi_binaries =
+	user-words-cron.o \
+	user-match-api.o
+cgi_binaries = \
+	vinayaka-user-match-api.cgi
 cron_binaries = \
 	vinayaka-user-words-cron
 binaries = $(cgi_binaries) $(cron_binaries)
@@ -37,6 +39,9 @@ all: $(binaries)
 
 vinayaka-user-words-cron: tinyxml2.o distsn.o user-words-cron.o
 	$(CXX) tinyxml2.o distsn.o user-words-cron.o -lcurl $(CFLAGS) -o $@
+
+vinayaka-user-match-api.cgi: tinyxml2.o distsn.o user-match-api.o
+	$(CXX) tinyxml2.o distsn.o user-match-api.o -lcurl $(CFLAGS) -o $@
 
 install: $(cgis)
 	$(INSTALL_PROGRAM) $(cgis) --target-directory=$(cgidir)
