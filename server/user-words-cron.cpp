@@ -52,6 +52,7 @@ static void get_profile (string host, string user, string &a_screen_name, string
 		/* FIXME! Mastodon Only! Not for Pleroma!!! */
 		string atom_query = string {"https://"} + host + string {"/users/"} + user + string {".atom"};
 		string atom_reply = http_get (atom_query);
+		
 		XMLDocument atom_document;
 		XMLError atom_parse_error = atom_document.Parse (atom_reply.c_str ());
 		if (atom_parse_error != XML_SUCCESS) {
@@ -84,6 +85,32 @@ static void get_profile (string host, string user, string &a_screen_name, string
 			throw (UserException {__LINE__});
 		}
 		a_bio = string {note_text};
+		
+		vector <string> toots;
+		for (XMLElement * entry_element = feed_element->FirstChildElement ("entry");
+			entry_element != nullptr;
+			entry_element = entry_element->NextSiblingElement ("entry"))
+		{
+			XMLElement * verb_element = entry_element->FirstChildElement ("activity:verb");
+			if (verb_element == nullptr) {
+				throw (UserException {__LINE__});
+			}
+			const char * verb_text = verb_element->GetText ();
+			if (verb_text == nullptr) {
+				throw (UserException {__LINE__});
+			}
+			if (string {verb_text} == string {"http://activitystrea.ms/schema/1.0/post"}) {
+				XMLElement * content_element = entry_element->FirstChildElement ("content");
+				if (content_element == nullptr) {
+					throw (UserException {__LINE__});
+				}
+				const char * content_text = content_element->GetText ();
+				if (content_text != nullptr) {
+					toots.push_back (string {content_text});
+				}
+			}
+		}
+		a_toots = toots;
 	} catch (HttpException e) {
 		throw (UserException {__LINE__});
 	}
@@ -104,7 +131,10 @@ static vector <string> get_words (string host, string user)
 	get_profile (host, user, screen_name, bio, toots);
 	cout << user << "@" << host << endl;
 	cout << screen_name << endl;
-	cout << bio << endl << endl;
+	cout << bio << endl;
+	for (auto toot: toots) {
+		cout << toot << endl;
+	}
 	vector <string> words = get_words_from_toots (toots);
 	return words;
 }
