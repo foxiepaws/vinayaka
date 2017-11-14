@@ -30,3 +30,8 @@
 *.exe
 *.out
 *.app
+
+# Binaries
+vinayaka-user-words-cron
+
+
