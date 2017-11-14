@@ -44,10 +44,25 @@ public:
 };
 
 
+static void get_profile (string host, string user, string &screen_name, string &bio, vector <string> &toots)
+{
+}
+
+
+static vector <string> get_words_from_toots (vector <string>)
+{
+	return vector <string> {};
+}
+
+
 static vector <string> get_words (string host, string user)
 {
-	throw (UserException {__LINE__});
-	return vector <string> {};
+	string screen_name;
+	string bio;
+	vector <string> toots;
+	get_profile (host, user, screen_name, bio, toots);
+	vector <string> words = get_words_from_toots (toots);
+	return words;
 }
 
 
@@ -97,7 +112,7 @@ int main (int argc, char **argv)
 			<< "{"
 			<< "\"host\":\"" << escape_json (user.host) << "\","
 			<< "\"user\":\"" << escape_json (user.user) << "\","
-			<< "\"words\":\""
+			<< "\"words\":"
 			<< "[";
 			for (unsigned int b = 0; b < words.size (); b ++) {
 				if (0 < b) {
