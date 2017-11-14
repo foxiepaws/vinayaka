@@ -117,24 +117,66 @@ static void get_profile (string host, string user, string &a_screen_name, string
 }
 
 
-static vector <string> get_words_from_toots (vector <string>)
+class OccupancyCount {
+public:
+	string word;
+	unsigned int count;
+public:
+	OccupancyCount (): count (0) { /* Do nothing. */};
+	OccupancyCount (string a_word, unsigned int a_count) {
+		word = a_word;
+		count = a_count;
+	};
+};
+
+
+static bool by_count_desc (const OccupancyCount &a, const OccupancyCount &b)
 {
-	return vector <string> {};
+	return b.count < a.count;
+}
+
+
+static vector <string> get_words_from_toots (vector <string> toots)
+{
+	const unsigned int word_length = 6;
+	const unsigned int vocabulary_size = 1000;
+
+	map <string, unsigned int> occupancy_count_map;
+	for (auto toot: toots) {
+		if (word_length <= toot.size ()) {
+			for (unsigned int offset = 0; offset <= toot.size () - word_length; offset ++) {
+				string word = toot.substr (offset, word_length);
+				if (occupancy_count_map.find (word) == occupancy_count_map.end ()) {
+					occupancy_count_map.insert (pair <string, unsigned int> {word, 1});
+				} else {
+					occupancy_count_map.at (word) ++;
+				}
+			}
+		}
+	}
+
+	vector <OccupancyCount> occupancy_count_vector;
+	for (auto i: occupancy_count_map) {
+		occupancy_count_vector.push_back (OccupancyCount {i.first, i.second});
+	}
+	sort (occupancy_count_vector.begin (), occupancy_count_vector.end (), by_count_desc);
+	
+	vector <string> words;
+	for (unsigned int cn = 0; cn < occupancy_count_vector.size () && cn < vocabulary_size; cn ++) {
+		words.push_back (occupancy_count_vector.at (cn).word);
+	}
+	
+	return words;
 }
 
 
 static vector <string> get_words (string host, string user)
 {
+	cerr << user << "@" << host << endl;
 	string screen_name;
 	string bio;
 	vector <string> toots;
 	get_profile (host, user, screen_name, bio, toots);
-	cout << user << "@" << host << endl;
-	cout << screen_name << endl;
-	cout << bio << endl;
-	for (auto toot: toots) {
-		cout << toot << endl;
-	}
 	vector <string> words = get_words_from_toots (toots);
 	return words;
 }
