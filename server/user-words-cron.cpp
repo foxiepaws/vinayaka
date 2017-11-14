@@ -46,13 +46,29 @@ public:
 
 static vector <string> get_words (string host, string user)
 {
+	throw (UserException {__LINE__});
 	return vector <string> {};
 }
 
 
 static vector <User> get_users ()
 {
-	return vector <User> {};
+	vector <User> users;
+	string reply = http_get ("http://distsn.org/cgi-bin/distsn-user-recommendation-api.cgi?10");
+	picojson::value json_value;
+	string error = picojson::parse (json_value, reply);
+	if (! error.empty ()) {
+		cerr << error << endl;
+		exit (1);
+	}
+	auto user_jsons = json_value.get <picojson::array> ();
+	for (auto user_json: user_jsons) {
+		auto user_object = user_json.get <picojson::object> ();
+		string host = user_object.at (string {"host"}).get <string> ();
+		string username = user_object.at (string {"username"}).get <string> ();
+		users.push_back (User {host, username});
+	}
+	return users;
 }
 
 
