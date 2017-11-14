@@ -132,7 +132,7 @@ public:
 
 static bool by_count_desc (const OccupancyCount &a, const OccupancyCount &b)
 {
-	return b.count < a.count;
+	return b.count < a.count || (a.count == b.count && b.word < a.word);
 }
 
 
