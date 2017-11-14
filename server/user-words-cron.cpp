@@ -145,7 +145,7 @@ static vector <string> get_words_from_toots (vector <string> toots)
 	for (auto toot: toots) {
 		if (word_length <= toot.size ()) {
 			for (unsigned int offset = 0; offset <= toot.size () - word_length; offset ++) {
-				unsigned int octet = toot.at (offset);
+				unsigned int octet = static_cast <unsigned char> (toot.at (offset));
 				if (! (0x80 <= octet && octet < 0xC0)) {
 					string word = toot.substr (offset, word_length);
 					if (occupancy_count_map.find (word) == occupancy_count_map.end ()) {
