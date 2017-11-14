@@ -2,6 +2,7 @@
 #define DISTSN_H
 
 
+#include "tinyxml2.h"
 #include "picojson.h"
 
 
@@ -51,6 +52,11 @@ std::vector <picojson::value> get_timeline (std::string host);
 std::string http_get (std::string url);
 time_t get_time (const picojson::value &toot);
 time_t str2time (std::string s);
+
+
+std::string escape_json (std::string in);
+std::vector <std::string> get_words_from_toots (std::vector <std::string> toots);
+void get_profile (std::string host, std::string user, std::string &a_screen_name, std::string &a_bio, std::vector <std::string> &a_toots);
 
 
 #endif /* #ifndef DISTSN_H */

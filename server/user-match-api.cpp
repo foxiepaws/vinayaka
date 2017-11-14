@@ -38,9 +38,17 @@ static bool by_similarity_desc (const UserAndSimilarity &a, const UserAndSimilar
 }
 
 
-static vector <string> get_words (string user, string host)
+static vector <string> get_words (string host, string user)
 {
-	return vector <string> {};
+	cerr << user << "@" << host << endl;
+	string screen_name;
+	string bio;
+	vector <string> toots;
+	get_profile (host, user, screen_name, bio, toots);
+	toots.push_back (screen_name);
+	toots.push_back (bio);
+	vector <string> words = get_words_from_toots (toots);
+	return words;
 }
 
 
@@ -94,7 +102,7 @@ static double get_similarity (vector <string> listener, vector <string> speaker)
 	set_intersection (listener_set.begin (), listener_set.end (),
 		speaker_set.begin (), speaker_set.end (),
 		inserter (intersection, intersection.begin ()));
-	double similarity = static_cast <double> (speaker_set.size ()) / static_cast <double> (intersection.size ());
+	double similarity = static_cast <double> (intersection.size ()) / static_cast <double> (speaker_set.size ());
 	return similarity;
 }
 
@@ -104,9 +112,9 @@ int main (int argc, char **argv)
 	if (argc < 3) {
 		exit (1);
 	}
-	string user {argv [1]};
-	string host {argv [2]};
-	vector <string> words = get_words (user, host);
+	string host {argv [1]};
+	string user {argv [2]};
+	vector <string> words = get_words (host, user);
 	
 	vector <UserAndWords> users_and_words = read_storage ();
 	
@@ -131,8 +139,8 @@ int main (int argc, char **argv)
 		auto user = users_and_similarity.at (cn);
 		cout
 			<< "{"
-			<< "\"host\":\"" << user.host << "\","
-			<< "\"user\":\"" << user.host << "\","
+			<< "\"host\":\"" << escape_json (user.host) << "\","
+			<< "\"user\":\"" << escape_json (user.user) << "\","
 			<< "\"similarity\":" << user.similarity
 			<< "}";
 	}
