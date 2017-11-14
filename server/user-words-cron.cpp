@@ -68,24 +68,21 @@ static void get_profile (string host, string user, string &a_screen_name, string
 			throw (UserException {__LINE__});
 		}
 		XMLElement * displayname_element = author_element->FirstChildElement ("poco:displayName");
-		if (displayname_element == nullptr) {
-			throw (UserException {__LINE__});
+		a_screen_name = string {};
+		if (displayname_element != nullptr) {
+			const char * displayname_text = displayname_element->GetText ();
+			if (displayname_text != nullptr) {
+				a_screen_name = string {displayname_text};
+			}
 		}
-		const char * displayname_text = displayname_element->GetText ();
-		if (displayname_text == nullptr) {
-			throw (UserException {__LINE__});
-		}
-		a_screen_name = string {displayname_text};
+		a_bio = string {};
 		XMLElement * note_element = author_element->FirstChildElement ("poco:note");
-		if (note_element == nullptr) {
-			throw (UserException {__LINE__});
+		if (note_element != nullptr) {
+			const char * note_text = note_element->GetText ();
+			if (note_text != nullptr) {
+				a_bio = string {note_text};
+			}
 		}
-		const char * note_text = note_element->GetText ();
-		if (note_text == nullptr) {
-			throw (UserException {__LINE__});
-		}
-		a_bio = string {note_text};
-		
 		vector <string> toots;
 		for (XMLElement * entry_element = feed_element->FirstChildElement ("entry");
 			entry_element != nullptr;
@@ -136,13 +133,40 @@ static bool by_count_desc (const OccupancyCount &a, const OccupancyCount &b)
 }
 
 
+static string remove_html (string in)
+{
+	string out;
+	unsigned int state = 0;
+	for (auto c: in) {
+		switch (state) {
+		case 0:
+			if (c == '<') {
+				state = 1;
+			} else {
+				out.push_back (c);
+			}
+			break;
+		case 1:
+			if (c == '>') {
+				state = 0;
+			}
+			break;
+		default:
+			abort ();
+		}
+	}
+	return out;
+}
+
+
 static vector <string> get_words_from_toots (vector <string> toots)
 {
 	const unsigned int word_length = 6;
 	const unsigned int vocabulary_size = 1000;
 
 	map <string, unsigned int> occupancy_count_map;
-	for (auto toot: toots) {
+	for (auto raw_toot: toots) {
+		string toot = remove_html (raw_toot);
 		if (word_length <= toot.size ()) {
 			for (unsigned int offset = 0; offset <= toot.size () - word_length; offset ++) {
 				unsigned int octet = static_cast <unsigned char> (toot.at (offset));
@@ -188,7 +212,7 @@ static vector <string> get_words (string host, string user)
 static vector <User> get_users ()
 {
 	vector <User> users;
-	string query = string {"http://distsn.org/cgi-bin/distsn-user-recommendation-api.cgi?10000"};
+	string query = string {"http://distsn.org/cgi-bin/distsn-user-recommendation-api.cgi?10"};
 	cerr << query << endl;
 	string reply = http_get (query);
 	picojson::value json_value;
