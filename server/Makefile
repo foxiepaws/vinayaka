@@ -18,6 +18,7 @@ CHMOD = chmod
 cgidir = /usr/lib/cgi-bin
 
 objects = \
+	tinyxml2.o \
 	distsn.o \
 	user-words-cron.o
 cgi_binaries =
@@ -34,8 +35,8 @@ cgis = $(cgi_binaries) $(cgi_scripts)
 
 all: $(binaries)
 
-vinayaka-user-words-cron: distsn.o user-words-cron.o
-	$(CXX) distsn.o user-words-cron.o -lcurl $(CFLAGS) -o $@
+vinayaka-user-words-cron: tinyxml2.o distsn.o user-words-cron.o
+	$(CXX) tinyxml2.o distsn.o user-words-cron.o -lcurl $(CFLAGS) -o $@
 
 install: $(cgis)
 	$(INSTALL_PROGRAM) $(cgis) --target-directory=$(cgidir)
