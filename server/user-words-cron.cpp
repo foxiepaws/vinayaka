@@ -8,9 +8,11 @@
 #include <fstream>
 #include <set>
 #include "picojson.h"
+#include "tinyxml2.h"
 #include "distsn.h"
 
 
+using namespace tinyxml2;
 using namespace std;
 
 
@@ -44,8 +46,47 @@ public:
 };
 
 
-static void get_profile (string host, string user, string &screen_name, string &bio, vector <string> &toots)
+static void get_profile (string host, string user, string &a_screen_name, string &a_bio, vector <string> &a_toots)
 {
+	try {
+		/* FIXME! Mastodon Only! Not for Pleroma!!! */
+		string atom_query = string {"https://"} + host + string {"/users/"} + user + string {".atom"};
+		string atom_reply = http_get (atom_query);
+		XMLDocument atom_document;
+		XMLError atom_parse_error = atom_document.Parse (atom_reply.c_str ());
+		if (atom_parse_error != XML_SUCCESS) {
+			throw (UserException {__LINE__});
+		}
+		XMLElement * root_element = atom_document.RootElement ();
+		if (root_element == nullptr) {
+			throw (UserException {__LINE__});
+		}
+		XMLElement * feed_element = root_element;
+		XMLElement * author_element = feed_element->FirstChildElement ("author");
+		if (author_element == nullptr) {
+			throw (UserException {__LINE__});
+		}
+		XMLElement * displayname_element = author_element->FirstChildElement ("poco:displayName");
+		if (displayname_element == nullptr) {
+			throw (UserException {__LINE__});
+		}
+		const char * displayname_text = displayname_element->GetText ();
+		if (displayname_text == nullptr) {
+			throw (UserException {__LINE__});
+		}
+		a_screen_name = string {displayname_text};
+		XMLElement * note_element = author_element->FirstChildElement ("poco:note");
+		if (note_element == nullptr) {
+			throw (UserException {__LINE__});
+		}
+		const char * note_text = note_element->GetText ();
+		if (note_text == nullptr) {
+			throw (UserException {__LINE__});
+		}
+		a_bio = string {note_text};
+	} catch (HttpException e) {
+		throw (UserException {__LINE__});
+	}
 }
 
 
@@ -61,6 +102,9 @@ static vector <string> get_words (string host, string user)
 	string bio;
 	vector <string> toots;
 	get_profile (host, user, screen_name, bio, toots);
+	cout << user << "@" << host << endl;
+	cout << screen_name << endl;
+	cout << bio << endl << endl;
 	vector <string> words = get_words_from_toots (toots);
 	return words;
 }
