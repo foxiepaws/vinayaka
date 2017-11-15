@@ -109,9 +109,9 @@ static double get_similarity (vector <string> listener, vector <string> speaker)
 }
 
 
-static map <User, double> get_users_and_similarity (string host, string user, unsigned int word_length, unsigned int vocabulary_size)
+static map <User, double> get_users_and_similarity (vector <string> toots, unsigned int word_length, unsigned int vocabulary_size)
 {
-	vector <string> words = get_words (host, user, word_length, vocabulary_size);
+	vector <string> words = get_words_from_toots (toots, word_length, vocabulary_size);
 	stringstream filename;
 	filename << "/var/lib/vinayaka/user-words." << word_length << "." << vocabulary_size << ".xml";
 	vector <UserAndWords> users_and_words = read_storage (filename.str ());
@@ -137,11 +137,19 @@ int main (int argc, char **argv)
 	}
 	string host {argv [1]};
 	string user {argv [2]};
+
+	cerr << user << "@" << host << endl;
+	string screen_name;
+	string bio;
+	vector <string> toots;
+	get_profile (host, user, screen_name, bio, toots);
+	toots.push_back (screen_name);
+	toots.push_back (bio);
 	
-	auto map_6_100 = get_users_and_similarity (host, user, 6, 100);
-	auto map_6_1000 = get_users_and_similarity (host, user, 6, 1000);
-	auto map_12_100 = get_users_and_similarity (host, user, 12, 100);
-	auto map_12_1000 = get_users_and_similarity (host, user, 12, 1000);
+	auto map_6_100 = get_users_and_similarity (toots, 6, 100);
+	auto map_6_1000 = get_users_and_similarity (toots, 6, 1000);
+	auto map_12_100 = get_users_and_similarity (toots, 12, 100);
+	auto map_12_1000 = get_users_and_similarity (toots, 12, 1000);
 
 	vector <UserAndSimilarity> users_and_similarity;
 	for (auto user_in_map: map_6_1000) {
