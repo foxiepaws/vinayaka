@@ -32,7 +32,7 @@
 
 <p>
 <label>あなたのユーザー名とインスタンスのホスト名 (例: nullkal@mstdn.jp)<br>
-<input type="text" id="user-input"></input></label>
+<input type="text" id="user-input" autocomplete="on" imputmode="verbatim" list="completes" required="true" spellcheck="false"></input></label>
 </p>
 
 <p>
@@ -42,6 +42,8 @@
 </div> <!-- class="inputs" -->
 
 <div id="placeholder"></div>
+
+<datalist id="completes"></datalist>
 
 </html>
 
