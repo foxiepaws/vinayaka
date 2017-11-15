@@ -76,8 +76,7 @@ window.addEventListener ('load', function () {
 document.getElementById ('user-input').addEventListener ('input', function () {
 	var user_and_host = document.getElementById ('user-input').value;
 	var user_and_host_array = user_and_host.split ('@');
-	if (user_and_host_array.length == 1 ||
-		(user_and_host_array.length == 2 && user_and_host_array[1].length == 0))
+	if (user_and_host_array.length == 2 && user_and_host_array[1].length == 0)
 	{
 		var user = user_and_host_array [0];
 		var options =
