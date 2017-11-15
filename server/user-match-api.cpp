@@ -32,15 +32,31 @@ public:
 };
 
 
+class User {
+public:
+	string host;
+	string user;
+public:
+	User () { /* Do nothing. */ };
+	User (string a_host, string a_user) {
+		host = a_host;
+		user = a_user;
+	};
+	bool operator < (const User &r) const {
+		return host < r.host || (host == r.host && user < r.user);
+	};
+};
+
+
 static bool by_similarity_desc (const UserAndSimilarity &a, const UserAndSimilarity &b)
 {
 	return b.similarity < a.similarity;
 }
 
 
-static vector <UserAndWords> read_storage ()
+static vector <UserAndWords> read_storage (string filename)
 {
-	FILE * in = fopen ("/var/lib/vinayaka/user-words.xml", "rb");
+	FILE * in = fopen (filename.c_str (), "rb");
 	if (in == nullptr) {
 		cerr << "File not found." << endl;
 		exit (1);
@@ -93,6 +109,27 @@ static double get_similarity (vector <string> listener, vector <string> speaker)
 }
 
 
+static map <User, double> get_users_and_similarity (string host, string user, unsigned int word_length, unsigned int vocabulary_size)
+{
+	vector <string> words = get_words (host, user, word_length, vocabulary_size);
+	stringstream filename;
+	filename << "/var/lib/vinayaka/user-words." << word_length << "." << vocabulary_size << ".xml";
+	vector <UserAndWords> users_and_words = read_storage (filename.str ());
+	
+	map <User, double> users_and_similarity;
+	
+	for (auto user_and_words: users_and_words) {
+		double similarity = get_similarity (words, user_and_words.words);
+		User user;
+		user.host = user_and_words.host;
+		user.user = user_and_words.user;
+		users_and_similarity.insert (pair <User, double> {user, similarity});
+	}
+	
+	return users_and_similarity;
+}
+
+
 int main (int argc, char **argv)
 {
 	if (argc < 3) {
@@ -100,16 +137,24 @@ int main (int argc, char **argv)
 	}
 	string host {argv [1]};
 	string user {argv [2]};
-	vector <string> words = get_words (host, user);
 	
-	vector <UserAndWords> users_and_words = read_storage ();
-	
+	auto map_6_100 = get_users_and_similarity (host, user, 6, 100);
+	auto map_6_1000 = get_users_and_similarity (host, user, 6, 1000);
+	auto map_12_100 = get_users_and_similarity (host, user, 12, 100);
+	auto map_12_1000 = get_users_and_similarity (host, user, 12, 1000);
+
 	vector <UserAndSimilarity> users_and_similarity;
-	for (auto user_and_words: users_and_words) {
-		double similarity = get_similarity (words, user_and_words.words);
+	for (auto user_in_map: map_6_1000) {
+		User user = user_in_map.first;
+		double similarity_6_100 = (map_6_100.find (user) == map_6_100.end ()? 0: map_6_100.at (user));
+		double similarity_6_1000 = (map_6_1000.find (user) == map_6_1000.end ()? 0: map_6_1000.at (user));
+		double similarity_12_100 = (map_12_100.find (user) == map_12_100.end ()? 0: map_12_100.at (user));
+		double similarity_12_1000 = (map_12_1000.find (user) == map_12_1000.end ()? 0: map_12_1000.at (user));
+
+		double similarity = (similarity_6_100 + similarity_6_1000 + similarity_12_100 + similarity_12_1000) / 4.0;
 		UserAndSimilarity user_and_similarity;
-		user_and_similarity.user = user_and_words.user;
-		user_and_similarity.host = user_and_words.host;
+		user_and_similarity.user = user.user;
+		user_and_similarity.host = user.host;
 		user_and_similarity.similarity = similarity;
 		users_and_similarity.push_back (user_and_similarity);
 	}

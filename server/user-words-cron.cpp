@@ -31,7 +31,7 @@ public:
 static vector <User> get_users ()
 {
 	vector <User> users;
-	string query = string {"http://distsn.org/cgi-bin/distsn-user-recommendation-api.cgi?10000"};
+	string query = string {"http://distsn.org/cgi-bin/distsn-user-recommendation-api.cgi?10"};
 	cerr << query << endl;
 	string reply = http_get (query);
 	picojson::value json_value;
@@ -51,19 +51,8 @@ static vector <User> get_users ()
 }
 
 
-int main (int argc, char **argv)
+static void write_to_storage (vector <pair <User, vector <string>>> users_and_words, ofstream &out)
 {
-	auto users = get_users ();
-	vector <pair <User, vector <string>>> users_and_words;
-	for (auto user: users) {
-		try {
-			auto words = get_words (user.host, user.user);
-			users_and_words.push_back (pair <User, vector <string>> {user, words});
-		} catch (UserException e) {
-			cerr << "Error " << user.user << "@" << user.host << " " << e.line << endl;
-		}
-	}
-	ofstream out {"/var/lib/vinayaka/user-words.xml"};
 	out << "[";
 	for (unsigned int a = 0; a < users_and_words.size (); a ++) {
 		if (0 < a) {
@@ -88,6 +77,34 @@ int main (int argc, char **argv)
 		out << "]" << "}";
 	}
 	out << "]";
+}
+
+
+static void get_and_save_words (unsigned int word_length, unsigned int vocabulary_size, vector <User> users)
+{
+	vector <pair <User, vector <string>>> users_and_words;
+	for (auto user: users) {
+		try {
+			auto words = get_words (user.host, user.user, word_length, vocabulary_size);
+			users_and_words.push_back (pair <User, vector <string>> {user, words});
+		} catch (UserException e) {
+			cerr << "Error " << user.user << "@" << user.host << " " << e.line << endl;
+		}
+	}
+	stringstream filename;
+	filename << "/var/lib/vinayaka/user-words." << word_length << "." << vocabulary_size << ".xml";
+	ofstream out {filename.str ()};
+	write_to_storage (users_and_words, out);
+}
+
+
+int main (int argc, char **argv)
+{
+	auto users = get_users ();
+	get_and_save_words (6, 100, users);
+	get_and_save_words (6, 1000, users);
+	get_and_save_words (12, 100, users);
+	get_and_save_words (12, 1000, users);
 }
 
 

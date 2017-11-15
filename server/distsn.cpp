@@ -228,11 +228,8 @@ static bool by_count_desc (const OccupancyCount &a, const OccupancyCount &b)
 }
 
 
-vector <string> get_words_from_toots (vector <string> toots)
+vector <string> get_words_from_toots (vector <string> toots, unsigned int word_length, unsigned int vocabulary_size)
 {
-	const unsigned int word_length = 6;
-	const unsigned int vocabulary_size = 1000;
-
 	map <string, unsigned int> occupancy_count_map;
 	for (auto raw_toot: toots) {
 		string toot = remove_html (raw_toot);
@@ -334,8 +331,7 @@ void get_profile (string host, string user, string &a_screen_name, string &a_bio
 }
 
 
-
-vector <string> get_words (string host, string user)
+vector <string> get_words (string host, string user, unsigned int word_length, unsigned int vocabulary_size)
 {
 	cerr << user << "@" << host << endl;
 	string screen_name;
@@ -344,7 +340,7 @@ vector <string> get_words (string host, string user)
 	get_profile (host, user, screen_name, bio, toots);
 	toots.push_back (screen_name);
 	toots.push_back (bio);
-	vector <string> words = get_words_from_toots (toots);
+	vector <string> words = get_words_from_toots (toots, word_length, vocabulary_size);
 	return words;
 }
 

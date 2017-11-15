@@ -55,9 +55,9 @@ time_t str2time (std::string s);
 
 
 std::string escape_json (std::string in);
-std::vector <std::string> get_words_from_toots (std::vector <std::string> toots);
+std::vector <std::string> get_words_from_toots (std::vector <std::string> toots, unsigned int word_length, unsigned int vocabulary_size);
 void get_profile (std::string host, std::string user, std::string &a_screen_name, std::string &a_bio, std::vector <std::string> &a_toots);
-std::vector <std::string> get_words (std::string host, std::string user);
+std::vector <std::string> get_words (std::string host, std::string user, unsigned int word_length, unsigned int vocabulary_size);
 
 #endif /* #ifndef DISTSN_H */
 
