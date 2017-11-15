@@ -110,7 +110,8 @@ static double get_similarity (vector <string> listener, vector <string> speaker)
 	set_intersection (listener_set.begin (), listener_set.end (),
 		speaker_set.begin (), speaker_set.end (),
 		inserter (intersection, intersection.begin ()));
-	double similarity = static_cast <double> (intersection.size ()) / static_cast <double> (speaker_set.size ());
+	double similarity = (static_cast <double> (intersection.size ()) * 2.0)
+		/ (static_cast <double> (listener_set.size ()) + static_cast <double> (speaker_set.size ()));
 	return similarity;
 }
 
