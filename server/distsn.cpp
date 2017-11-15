@@ -266,11 +266,54 @@ vector <string> get_words_from_toots (vector <string> toots)
 }
 
 
+static string get_feed_url (string host, string user)
+{
+	string query = string {"https://"} + host + string {"/.well-known/webfinger?resource=acct:"} + user + string {"@"} + host;
+	string reply = http_get (query);
+        picojson::value reply_value;
+	string error = picojson::parse (reply_value, reply);
+	if (! error.empty ()) {
+		cerr << error << endl;
+		throw (UserException {__LINE__});
+	}
+	if (! reply_value.is <picojson::object> ()) {
+		throw (UserException {__LINE__});
+	}
+	auto reply_object = reply_value.get <picojson::object> ();
+	if (reply_object.find ("links") == reply_object.end ()) {
+		throw (UserException {__LINE__});
+	}
+	auto links_value = reply_object.at ("links");
+	if (! links_value.is <picojson::array> ()) {
+		throw (UserException {__LINE__});
+	}
+	auto links_array = links_value.get <picojson::array> ();
+	for (auto link_value: links_array) {
+		if (link_value.is <picojson::object> ()) {
+			auto link_object = link_value.get <picojson::object> ();
+			if (link_object.find ("rel") != link_object.end ()
+				&& link_object.find ("href") != link_object.end ())
+			{
+				auto rel_value = link_object.at ("rel");
+				auto href_value = link_object.at ("href");
+				if (rel_value.is <string> () && href_value.is <string> ()) {
+					string rel = rel_value.get <string> ();
+					string href = href_value.get <string> ();
+					if (rel == string {"http://schemas.google.com/g/2010#updates-from"}) {
+						return href;
+					}
+				}
+			}
+		}
+	}
+	throw (UserException {__LINE__});
+}
+
+
 void get_profile (string host, string user, string &a_screen_name, string &a_bio, vector <string> &a_toots)
 {
 	try {
-		/* FIXME! Mastodon Only! Not for Pleroma!!! */
-		string atom_query = string {"https://"} + host + string {"/users/"} + user + string {".atom"};
+		string atom_query = get_feed_url (host, user);
 		string atom_reply = http_get (atom_query);
 		
 		XMLDocument atom_document;
