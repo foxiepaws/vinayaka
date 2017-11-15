@@ -48,6 +48,13 @@ public:
 };
 
 
+class ModelException: public ExceptionWithLineNumber {
+public:
+	ModelException () { };
+	ModelException (unsigned int a_line): ExceptionWithLineNumber (a_line) { };
+};
+
+
 static bool by_similarity_desc (const UserAndSimilarity &a, const UserAndSimilarity &b)
 {
 	return b.similarity < a.similarity;
@@ -58,8 +65,7 @@ static vector <UserAndWords> read_storage (string filename)
 {
 	FILE * in = fopen (filename.c_str (), "rb");
 	if (in == nullptr) {
-		cerr << "File not found." << endl;
-		exit (1);
+		throw (ModelException {__LINE__});
 	}
         string s;
         for (; ; ) {
@@ -146,10 +152,39 @@ int main (int argc, char **argv)
 	toots.push_back (screen_name);
 	toots.push_back (bio);
 	
-	auto map_6_100 = get_users_and_similarity (toots, 6, 100);
-	auto map_6_1000 = get_users_and_similarity (toots, 6, 1000);
-	auto map_12_100 = get_users_and_similarity (toots, 12, 100);
-	auto map_12_1000 = get_users_and_similarity (toots, 12, 1000);
+	unsigned int available_models = 0;
+	
+	map <User, double> map_6_100;
+	try {
+		map_6_100 = get_users_and_similarity (toots, 6, 100);
+		available_models ++;
+	} catch (ModelException e) {
+		/* Do nothing. */
+	}
+
+	map <User, double> map_6_1000;
+	try {
+		map_6_1000 = get_users_and_similarity (toots, 6, 1000);
+		available_models ++;
+	} catch (ModelException e) {
+		/* Do nothing. */
+	}
+
+	map <User, double> map_12_100;
+	try {
+		map_12_100 = get_users_and_similarity (toots, 12, 100);
+		available_models ++;
+	} catch (ModelException e) {
+		/* Do nothing. */
+	}
+
+	map <User, double> map_12_1000;
+	try {
+		map_12_1000 = get_users_and_similarity (toots, 12, 1000);
+		available_models ++;
+	} catch (ModelException e) {
+		/* Do nothing. */
+	}
 
 	vector <UserAndSimilarity> users_and_similarity;
 	for (auto user_in_map: map_6_1000) {
@@ -159,7 +194,8 @@ int main (int argc, char **argv)
 		double similarity_12_100 = (map_12_100.find (user) == map_12_100.end ()? 0: map_12_100.at (user));
 		double similarity_12_1000 = (map_12_1000.find (user) == map_12_1000.end ()? 0: map_12_1000.at (user));
 
-		double similarity = (similarity_6_100 + similarity_6_1000 + similarity_12_100 + similarity_12_1000) / 4.0;
+		double similarity = (similarity_6_100 + similarity_6_1000 + similarity_12_100 + similarity_12_1000)
+			/ static_cast <double> (available_models);
 		UserAndSimilarity user_and_similarity;
 		user_and_similarity.user = user.user;
 		user_and_similarity.host = user.host;
