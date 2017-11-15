@@ -18,6 +18,7 @@ document.getElementById ('search-button').addEventListener ('click', function ()
 		request.open ('GET', url);
 		request.onload = function () {
 			if (request.readyState === request.DONE) {
+				document.getElementById ('search-button').removeAttribute ('disabled');
 				if (request.status === 200) {
 					var response_text = request.responseText;
 					var users = JSON.parse (response_text);
@@ -30,6 +31,7 @@ document.getElementById ('search-button').addEventListener ('click', function ()
 		}
 		document.getElementById ('placeholder').innerHTML =
 			'<string>お待ちください。</strong>';
+		document.getElementById ('search-button').setAttribute ('disabled', 'disabled');
 		request.send ();
 	} else {
 		document.getElementById ('placeholder').innerHTML =
