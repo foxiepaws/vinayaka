@@ -128,7 +128,7 @@ int main (int argc, char **argv)
 		users_and_similarity.push_back (user_and_similarity);
 	}
 	
-	sort (users_and_similarity.begin (), users_and_similarity.end (), by_similarity_desc);
+	stable_sort (users_and_similarity.begin (), users_and_similarity.end (), by_similarity_desc);
 	
 	cout << "Content-Type: application/json" << endl << endl;
 	cout << "[";
