@@ -209,6 +209,118 @@ static string remove_html (string in)
 }
 
 
+static string remove_url (string in)
+{
+	string out;
+	unsigned int state = 0;
+	string cache;
+	for (auto c: in) {
+		switch (state) {
+		case 0:
+			if (c == 'h') {
+				cache.push_back (c);
+				state = 1;
+			} else {
+				out.push_back (c);
+			}
+			break;
+		case 1:
+			if (c == 't') {
+				cache.push_back (c);
+				state = 2;
+			} else {
+				out += cache;
+				out.push_back (c);
+				cache.clear ();
+				state = 0;
+			}
+			break;
+		case 2:
+			if (c == 't') {
+				cache.push_back (c);
+				state = 3;
+			} else {
+				out += cache;
+				out.push_back (c);
+				cache.clear ();
+				state = 0;
+			}
+			break;
+		case 3:
+			if (c == 'p') {
+				cache.push_back (c);
+				state = 4;
+			} else {
+				out += cache;
+				out.push_back (c);
+				cache.clear ();
+				state = 0;
+			}
+			break;
+		case 4:
+			if (c == 's') {
+				cache.push_back (c);
+				state = 5;
+			} else if (c == ':') {
+				cache.push_back (c);
+				state = 6;
+			} else {
+				out += cache;
+				out.push_back (c);
+				cache.clear ();
+				state = 0;
+			}
+			break;
+		case 5:
+			if (c == ':') {
+				cache.push_back (c);
+				state = 6;
+			} else {
+				out += cache;
+				out.push_back (c);
+				cache.clear ();
+				state = 0;
+			}
+			break;
+		case 6:
+			if (c == '/') {
+				cache.push_back (c);
+				state = 7;
+			} else {
+				out += cache;
+				out.push_back (c);
+				cache.clear ();
+				state = 0;
+			}
+			break;
+		case 7:
+			if (c == '/') {
+				cache.clear ();
+				state = 8;
+			} else {
+				out += cache;
+				out.push_back (c);
+				cache.clear ();
+				state = 0;
+			}
+			break;
+		case 8:
+			if (0x20 < c && c < 0x7f) {
+				/* Do notthing. */
+			} else {
+				out.push_back (c);
+				state = 0;
+			}
+			break;
+		default:
+			abort ();
+		}
+	}
+	out += cache;
+	return out;
+}
+
+
 class OccupancyCount {
 public:
 	string word;
@@ -233,6 +345,7 @@ vector <string> get_words_from_toots (vector <string> toots, unsigned int word_l
 	map <string, unsigned int> occupancy_count_map;
 	for (auto raw_toot: toots) {
 		string toot = remove_html (raw_toot);
+		toot = remove_url (toot);
 		if (word_length <= toot.size ()) {
 			for (unsigned int offset = 0; offset <= toot.size () - word_length; offset ++) {
 				unsigned int octet = static_cast <unsigned char> (toot.at (offset));
