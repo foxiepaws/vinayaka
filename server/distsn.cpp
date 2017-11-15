@@ -334,3 +334,19 @@ void get_profile (string host, string user, string &a_screen_name, string &a_bio
 }
 
 
+
+vector <string> get_words (string host, string user)
+{
+	cerr << user << "@" << host << endl;
+	string screen_name;
+	string bio;
+	vector <string> toots;
+	get_profile (host, user, screen_name, bio, toots);
+	toots.push_back (screen_name);
+	toots.push_back (bio);
+	vector <string> words = get_words_from_toots (toots);
+	return words;
+}
+
+
+

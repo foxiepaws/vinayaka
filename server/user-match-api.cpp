@@ -38,20 +38,6 @@ static bool by_similarity_desc (const UserAndSimilarity &a, const UserAndSimilar
 }
 
 
-static vector <string> get_words (string host, string user)
-{
-	cerr << user << "@" << host << endl;
-	string screen_name;
-	string bio;
-	vector <string> toots;
-	get_profile (host, user, screen_name, bio, toots);
-	toots.push_back (screen_name);
-	toots.push_back (bio);
-	vector <string> words = get_words_from_toots (toots);
-	return words;
-}
-
-
 static vector <UserAndWords> read_storage ()
 {
 	FILE * in = fopen ("/var/lib/vinayaka/user-words.xml", "rb");
