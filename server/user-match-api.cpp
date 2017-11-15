@@ -155,6 +155,14 @@ int main (int argc, char **argv)
 	
 	unsigned int available_models = 0;
 	
+	map <User, double> map_6_20;
+	try {
+		map_6_20 = get_users_and_similarity (toots, 6, 20);
+		available_models ++;
+	} catch (ModelException e) {
+		/* Do nothing. */
+	}
+
 	map <User, double> map_6_100;
 	try {
 		map_6_100 = get_users_and_similarity (toots, 6, 100);
@@ -163,9 +171,9 @@ int main (int argc, char **argv)
 		/* Do nothing. */
 	}
 
-	map <User, double> map_6_1000;
+	map <User, double> map_9_40;
 	try {
-		map_6_1000 = get_users_and_similarity (toots, 6, 1000);
+		map_9_40 = get_users_and_similarity (toots, 9, 40);
 		available_models ++;
 	} catch (ModelException e) {
 		/* Do nothing. */
@@ -179,23 +187,15 @@ int main (int argc, char **argv)
 		/* Do nothing. */
 	}
 
-	map <User, double> map_12_1000;
-	try {
-		map_12_1000 = get_users_and_similarity (toots, 12, 1000);
-		available_models ++;
-	} catch (ModelException e) {
-		/* Do nothing. */
-	}
-
 	vector <UserAndSimilarity> users_and_similarity;
-	for (auto user_in_map: map_6_1000) {
+	for (auto user_in_map: map_12_100) {
 		User user = user_in_map.first;
+		double similarity_6_20 = (map_6_20.find (user) == map_6_20.end ()? 0: map_6_20.at (user));
 		double similarity_6_100 = (map_6_100.find (user) == map_6_100.end ()? 0: map_6_100.at (user));
-		double similarity_6_1000 = (map_6_1000.find (user) == map_6_1000.end ()? 0: map_6_1000.at (user));
+		double similarity_9_40 = (map_9_40.find (user) == map_9_40.end ()? 0: map_9_40.at (user));
 		double similarity_12_100 = (map_12_100.find (user) == map_12_100.end ()? 0: map_12_100.at (user));
-		double similarity_12_1000 = (map_12_1000.find (user) == map_12_1000.end ()? 0: map_12_1000.at (user));
 
-		double similarity = (similarity_6_100 + similarity_6_1000 + similarity_12_100 + similarity_12_1000)
+		double similarity = (similarity_6_20 + similarity_6_100 + similarity_9_40 + similarity_12_100)
 			/ static_cast <double> (available_models);
 		UserAndSimilarity user_and_similarity;
 		user_and_similarity.user = user.user;
