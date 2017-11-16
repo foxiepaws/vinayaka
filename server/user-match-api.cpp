@@ -261,7 +261,7 @@ int main (int argc, char **argv)
 			intersection.insert (intersection.end (), intersection_in_a_model.begin (), intersection_in_a_model.end ());
 		}
 		if (intersection_9_40.find (User {user.host, user.user}) != intersection_9_40.end ()) {
-			set <string> intersection_in_a_model = intersection_6_20.at (User {user.host, user.user});
+			set <string> intersection_in_a_model = intersection_9_40.at (User {user.host, user.user});
 			intersection.insert (intersection.end (), intersection_in_a_model.begin (), intersection_in_a_model.end ());
 		}
 		if (intersection_12_100.find (User {user.host, user.user}) != intersection_12_100.end ()) {
