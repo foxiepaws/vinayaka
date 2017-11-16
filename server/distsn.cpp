@@ -340,6 +340,32 @@ static bool by_count_desc (const OccupancyCount &a, const OccupancyCount &b)
 }
 
 
+static bool starts_with_utf8_codepoint_boundary (string word)
+{
+	unsigned int first_octet = static_cast <unsigned char> (word.at (0));
+	return (! (0x80 <= first_octet && first_octet < 0xC0));
+}
+
+
+static bool all_hiragana (string word)
+{
+	for (unsigned int cn = 0; cn * 3 + 2 < word.size (); cn ++) {
+		string codepoint = word.substr (cn * 3, 3);
+		if (! (string {"ぁ"} <= codepoint && codepoint <= string {"ゟ"})) {
+			return false;
+		}
+	}
+	return true;
+}
+
+
+static bool valid_word (string word)
+{
+	return starts_with_utf8_codepoint_boundary (word)
+		&& (! all_hiragana (word));
+}
+
+
 vector <string> get_words_from_toots (vector <string> toots, unsigned int word_length, unsigned int vocabulary_size)
 {
 	map <string, unsigned int> occupancy_count_map;
@@ -348,9 +374,8 @@ vector <string> get_words_from_toots (vector <string> toots, unsigned int word_l
 		toot = remove_url (toot);
 		if (word_length <= toot.size ()) {
 			for (unsigned int offset = 0; offset <= toot.size () - word_length; offset ++) {
-				unsigned int octet = static_cast <unsigned char> (toot.at (offset));
-				if (! (0x80 <= octet && octet < 0xC0)) {
-					string word = toot.substr (offset, word_length);
+				string word = toot.substr (offset, word_length);
+				if (valid_word (word)) {
 					if (occupancy_count_map.find (word) == occupancy_count_map.end ()) {
 						occupancy_count_map.insert (pair <string, unsigned int> {word, 1});
 					} else {
