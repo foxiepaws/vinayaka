@@ -101,9 +101,11 @@ static void get_and_save_words (unsigned int word_length, unsigned int vocabular
 int main (int argc, char **argv)
 {
 	auto users = get_users ();
-	get_and_save_words (6, 20, users);
+	get_and_save_words (6, 400, users);
+	get_and_save_words (9, 400, users);
+	get_and_save_words (12, 400, users);
 	get_and_save_words (6, 100, users);
-	get_and_save_words (9, 40, users);
+	get_and_save_words (9, 100, users);
 	get_and_save_words (12, 100, users);
 }
 

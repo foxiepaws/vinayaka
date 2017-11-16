@@ -188,10 +188,6 @@ int main (int argc, char **argv)
 	
 	unsigned int available_models = 0;
 	
-	map <User, double> map_6_20;
-	map <User, set <string>> intersection_6_20;
-	/* Supress this model. */
-
 	map <User, double> map_6_100;
 	map <User, set <string>> intersection_6_100;
 	try {
@@ -201,10 +197,28 @@ int main (int argc, char **argv)
 		/* Do nothing. */
 	}
 
-	map <User, double> map_9_40;
-	map <User, set <string>> intersection_9_40;
+	map <User, double> map_6_400;
+	map <User, set <string>> intersection_6_400;
 	try {
-		map_9_40 = get_users_and_similarity (toots, 9, 40, intersection_9_40);
+		map_6_400 = get_users_and_similarity (toots, 6, 400, intersection_6_400);
+		available_models ++;
+	} catch (ModelException e) {
+		/* Do nothing. */
+	}
+
+	map <User, double> map_9_100;
+	map <User, set <string>> intersection_9_100;
+	try {
+		map_9_100 = get_users_and_similarity (toots, 9, 100, intersection_9_100);
+		available_models ++;
+	} catch (ModelException e) {
+		/* Do nothing. */
+	}
+
+	map <User, double> map_9_400;
+	map <User, set <string>> intersection_9_400;
+	try {
+		map_9_400 = get_users_and_similarity (toots, 9, 400, intersection_9_400);
 		available_models ++;
 	} catch (ModelException e) {
 		/* Do nothing. */
@@ -219,15 +233,28 @@ int main (int argc, char **argv)
 		/* Do nothing. */
 	}
 
-	vector <UserAndSimilarity> users_and_similarity;
-	for (auto user_in_map: map_12_100) {
-		User user = user_in_map.first;
-		double similarity_6_20 = (map_6_20.find (user) == map_6_20.end ()? 0: map_6_20.at (user));
-		double similarity_6_100 = (map_6_100.find (user) == map_6_100.end ()? 0: map_6_100.at (user));
-		double similarity_9_40 = (map_9_40.find (user) == map_9_40.end ()? 0: map_9_40.at (user));
-		double similarity_12_100 = (map_12_100.find (user) == map_12_100.end ()? 0: map_12_100.at (user));
+	map <User, double> map_12_400;
+	map <User, set <string>> intersection_12_400;
+	try {
+		map_12_400 = get_users_and_similarity (toots, 12, 400, intersection_12_400);
+		available_models ++;
+	} catch (ModelException e) {
+		/* Do nothing. */
+	}
 
-		double similarity = (similarity_6_20 + similarity_6_100 + similarity_9_40 + similarity_12_100)
+	vector <UserAndSimilarity> users_and_similarity;
+	for (auto user_in_map: map_6_100) {
+		User user = user_in_map.first;
+		double similarity_6_100 = (map_6_100.find (user) == map_6_100.end ()? 0: map_6_100.at (user));
+		double similarity_6_400 = (map_6_400.find (user) == map_6_400.end ()? 0: map_6_400.at (user));
+		double similarity_9_100 = (map_9_100.find (user) == map_9_100.end ()? 0: map_9_100.at (user));
+		double similarity_9_400 = (map_9_400.find (user) == map_9_400.end ()? 0: map_9_400.at (user));
+		double similarity_12_100 = (map_12_100.find (user) == map_12_100.end ()? 0: map_12_100.at (user));
+		double similarity_12_400 = (map_12_400.find (user) == map_12_400.end ()? 0: map_12_400.at (user));
+
+		double similarity
+			= (similarity_6_100 + similarity_6_400 + similarity_9_100 + similarity_9_400
+			+ similarity_12_100 + similarity_12_400)
 			/ static_cast <double> (available_models);
 		UserAndSimilarity user_and_similarity;
 		user_and_similarity.user = user.user;
@@ -247,20 +274,28 @@ int main (int argc, char **argv)
 		auto user = users_and_similarity.at (cn);
 
 		vector <string> intersection;
-		if (intersection_6_20.find (User {user.host, user.user}) != intersection_6_20.end ()) {
-			set <string> intersection_in_a_model = intersection_6_20.at (User {user.host, user.user});
-			intersection.insert (intersection.end (), intersection_in_a_model.begin (), intersection_in_a_model.end ());
-		}
 		if (intersection_6_100.find (User {user.host, user.user}) != intersection_6_100.end ()) {
 			set <string> intersection_in_a_model = intersection_6_100.at (User {user.host, user.user});
 			intersection.insert (intersection.end (), intersection_in_a_model.begin (), intersection_in_a_model.end ());
 		}
-		if (intersection_9_40.find (User {user.host, user.user}) != intersection_9_40.end ()) {
-			set <string> intersection_in_a_model = intersection_9_40.at (User {user.host, user.user});
+		if (intersection_6_400.find (User {user.host, user.user}) != intersection_6_400.end ()) {
+			set <string> intersection_in_a_model = intersection_6_400.at (User {user.host, user.user});
+			intersection.insert (intersection.end (), intersection_in_a_model.begin (), intersection_in_a_model.end ());
+		}
+		if (intersection_9_100.find (User {user.host, user.user}) != intersection_9_100.end ()) {
+			set <string> intersection_in_a_model = intersection_9_100.at (User {user.host, user.user});
+			intersection.insert (intersection.end (), intersection_in_a_model.begin (), intersection_in_a_model.end ());
+		}
+		if (intersection_9_400.find (User {user.host, user.user}) != intersection_9_400.end ()) {
+			set <string> intersection_in_a_model = intersection_9_400.at (User {user.host, user.user});
 			intersection.insert (intersection.end (), intersection_in_a_model.begin (), intersection_in_a_model.end ());
 		}
 		if (intersection_12_100.find (User {user.host, user.user}) != intersection_12_100.end ()) {
 			set <string> intersection_in_a_model = intersection_12_100.at (User {user.host, user.user});
+			intersection.insert (intersection.end (), intersection_in_a_model.begin (), intersection_in_a_model.end ());
+		}
+		if (intersection_12_400.find (User {user.host, user.user}) != intersection_12_400.end ()) {
+			set <string> intersection_in_a_model = intersection_12_400.at (User {user.host, user.user});
 			intersection.insert (intersection.end (), intersection_in_a_model.begin (), intersection_in_a_model.end ());
 		}
 
