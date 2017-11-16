@@ -278,20 +278,20 @@ int main (int argc, char **argv)
 			set <string> intersection_in_a_model = intersection_6_100.at (User {user.host, user.user});
 			intersection.insert (intersection.end (), intersection_in_a_model.begin (), intersection_in_a_model.end ());
 		}
-		if (intersection_6_400.find (User {user.host, user.user}) != intersection_6_400.end ()) {
-			set <string> intersection_in_a_model = intersection_6_400.at (User {user.host, user.user});
-			intersection.insert (intersection.end (), intersection_in_a_model.begin (), intersection_in_a_model.end ());
-		}
 		if (intersection_9_100.find (User {user.host, user.user}) != intersection_9_100.end ()) {
 			set <string> intersection_in_a_model = intersection_9_100.at (User {user.host, user.user});
 			intersection.insert (intersection.end (), intersection_in_a_model.begin (), intersection_in_a_model.end ());
 		}
-		if (intersection_9_400.find (User {user.host, user.user}) != intersection_9_400.end ()) {
-			set <string> intersection_in_a_model = intersection_9_400.at (User {user.host, user.user});
-			intersection.insert (intersection.end (), intersection_in_a_model.begin (), intersection_in_a_model.end ());
-		}
 		if (intersection_12_100.find (User {user.host, user.user}) != intersection_12_100.end ()) {
 			set <string> intersection_in_a_model = intersection_12_100.at (User {user.host, user.user});
+			intersection.insert (intersection.end (), intersection_in_a_model.begin (), intersection_in_a_model.end ());
+		}
+		if (intersection_6_400.find (User {user.host, user.user}) != intersection_6_400.end ()) {
+			set <string> intersection_in_a_model = intersection_6_400.at (User {user.host, user.user});
+			intersection.insert (intersection.end (), intersection_in_a_model.begin (), intersection_in_a_model.end ());
+		}
+		if (intersection_9_400.find (User {user.host, user.user}) != intersection_9_400.end ()) {
+			set <string> intersection_in_a_model = intersection_9_400.at (User {user.host, user.user});
 			intersection.insert (intersection.end (), intersection_in_a_model.begin (), intersection_in_a_model.end ());
 		}
 		if (intersection_12_400.find (User {user.host, user.user}) != intersection_12_400.end ()) {
