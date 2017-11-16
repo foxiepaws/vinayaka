@@ -411,11 +411,9 @@ vector <string> get_words_from_toots (vector <string> toots, unsigned int word_l
 }
 
 
-void get_profile (string host, string user, string &a_screen_name, string &a_bio, vector <string> &a_toots)
+static void get_profile_impl (string atom_query, string &a_screen_name, string &a_bio, vector <string> &a_toots)
 {
 	try {
-		/* FIXME! Mastodon Only! Not for Pleroma!!! */
-		string atom_query = string {"https://"} + host + string {"/users/"} + user + string {".atom"};
 		string atom_reply = http_get (atom_query);
 		
 		XMLDocument atom_document;
@@ -486,6 +484,18 @@ void get_profile (string host, string user, string &a_screen_name, string &a_bio
 		a_toots = toots;
 	} catch (HttpException e) {
 		throw (UserException {__LINE__});
+	}
+}
+
+
+void get_profile (string host, string user, string &a_screen_name, string &a_bio, vector <string> &a_toots)
+{
+	try {
+		string query = string {"https://"} + host + string {"/users/"} + user + string {".atom"};
+		get_profile_impl (query, a_screen_name, a_bio, a_toots);
+	} catch (UserException e) {
+		string query = string {"https://"} + host + string {"/users/"} + user + string {"/feed.atom"};
+		get_profile_impl (query, a_screen_name, a_bio, a_toots);
 	}
 }
 
