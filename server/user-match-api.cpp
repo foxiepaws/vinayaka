@@ -199,12 +199,7 @@ int main (int argc, char **argv)
 
 	map <User, double> map_6_100;
 	map <User, set <string>> intersection_6_100;
-	try {
-		map_6_100 = get_users_and_similarity (toots, 6, 100, intersection_6_100);
-		available_models ++;
-	} catch (ModelException e) {
-		/* Do nothing. */
-	}
+	/* Suppress this model. */
 
 	map <User, double> map_9_40;
 	map <User, set <string>> intersection_9_40;
