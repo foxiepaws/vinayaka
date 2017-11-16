@@ -347,11 +347,21 @@ static bool starts_with_utf8_codepoint_boundary (string word)
 }
 
 
+static bool is_hiragana (string codepoint)
+{
+	return (string {"ぁ"} <= codepoint && codepoint <= string {"ゟ"})
+		|| codepoint == string {"、"}
+		|| codepoint == string {"。"}
+		|| codepoint == string {"？"}
+		|| codepoint == string {"！"};
+}
+
+
 static bool all_hiragana (string word)
 {
 	for (unsigned int cn = 0; cn * 3 + 2 < word.size (); cn ++) {
 		string codepoint = word.substr (cn * 3, 3);
-		if (! (string {"ぁ"} <= codepoint && codepoint <= string {"ゟ"})) {
+		if (! is_hiragana (codepoint)) {
 			return false;
 		}
 	}
