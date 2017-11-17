@@ -32,7 +32,7 @@
 *.app
 
 # Binaries
-vinayaka-user-words-cron
+vinayaka-user-words-impl
 vinayaka-user-match-api.cgi
 
 
