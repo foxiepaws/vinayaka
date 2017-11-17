@@ -1,15 +1,16 @@
 #!/bin/bash
 
-/usr/local/bin/vinayaka-user-words-impl 6 100 &
-sleep 1m
 /usr/local/bin/vinayaka-user-words-impl 6 400 &
-sleep 1m
-/usr/local/bin/vinayaka-user-words-impl 9 100 &
 sleep 1m
 /usr/local/bin/vinayaka-user-words-impl 9 400 &
 sleep 1m
-/usr/local/bin/vinayaka-user-words-impl 12 100 &
+/usr/local/bin/vinayaka-user-words-impl 12 400 &
+wait
+
+/usr/local/bin/vinayaka-user-words-impl 6 100 &
 sleep 1m
-/usr/local/bin/vinayaka-user-words-impl 12 400
+/usr/local/bin/vinayaka-user-words-impl 9 100 &
+sleep 1m
+/usr/local/bin/vinayaka-user-words-impl 12 100
 wait
 
