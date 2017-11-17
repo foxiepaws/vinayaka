@@ -267,7 +267,7 @@ int main (int argc, char **argv)
 	
 	cout << "Content-Type: application/json" << endl << endl;
 	cout << "[";
-	for (unsigned int cn = 0; cn < users_and_similarity.size () && cn < 100; cn ++) {
+	for (unsigned int cn = 0; cn < users_and_similarity.size () && cn < 1000; cn ++) {
 		if (0 < cn) {
 			cout << ",";
 		}

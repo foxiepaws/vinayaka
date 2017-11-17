@@ -91,7 +91,15 @@ var placeholder = document.getElementById ('placeholder');
 var html = '';
 var cn;
 var cn_intersection;
-for (cn = 0; cn < users.length; cn ++) {
+var limit;
+
+if (detail) {
+	limit = 100;
+} else {
+	limit = 1000;
+}
+
+for (cn = 0; cn < users.length && cn < limit; cn ++) {
 	var user;
 	user = users [cn];
 	var user_html =
