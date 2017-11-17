@@ -3,8 +3,13 @@
 
 function search (detail) {
 	var user_and_host = document.getElementById ('user-input').value;
+	var match = /^https:\/\/([\w\.\-]+)\/@([\w]+)$/.exec (user_and_host);
 	var user_and_host_array = user_and_host.split ('@');
-	if (1 < user_and_host_array.length &&
+	if (match) {
+		var host = match[1];
+		var user = match[2];
+		search_impl (host, user, detail);
+	} else if (1 < user_and_host_array.length &&
 		0 < user_and_host_array[0].length &&
 		0 < user_and_host_array[1].length)
 	{
