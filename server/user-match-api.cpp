@@ -226,6 +226,10 @@ int main (int argc, char **argv)
 			map <User, set <string>> user_to_intersection;
 			user_to_similarity = get_users_and_similarity
 				(toots, model.word_length, model.vocabulary_size, user_to_intersection);
+			model_user_to_similarity.insert
+				(pair <ModelTopology, map <User, double>> {model, user_to_similarity});
+			model_user_to_intersection.insert
+				(pair <ModelTopology, map <User, set <string>>> {model, user_to_intersection});
 			available_models ++;
 			for (auto user_and_similarity: user_to_similarity) {
 				users.insert (user_and_similarity.first);
