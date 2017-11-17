@@ -16,6 +16,7 @@ RMDIR = rmdir
 CHMOD = chmod
 
 cgidir = /usr/lib/cgi-bin
+bindir = /usr/local/bin
 
 objects = \
 	tinyxml2.o \
@@ -25,10 +26,13 @@ objects = \
 cgi_binaries = \
 	vinayaka-user-match-api.cgi
 cron_binaries = \
-	vinayaka-user-words-cron
+	vinayaka-user-words-impl
 binaries = $(cgi_binaries) $(cron_binaries)
 cgi_scripts =
+cron_scripts = \
+	vinayaka-user-words-meta-cron
 cgis = $(cgi_binaries) $(cgi_scripts)
+crons = $(cron_binaries) $(cron_scripts)
 
 .SUFFIXES: .cpp .o
 
@@ -37,7 +41,7 @@ cgis = $(cgi_binaries) $(cgi_scripts)
 
 all: $(binaries)
 
-vinayaka-user-words-cron: tinyxml2.o distsn.o user-words-cron.o
+vinayaka-user-words-impl: tinyxml2.o distsn.o user-words-cron.o
 	$(CXX) tinyxml2.o distsn.o user-words-cron.o -lcurl $(CFLAGS) -o $@
 
 vinayaka-user-match-api.cgi: tinyxml2.o distsn.o user-match-api.o
@@ -45,8 +49,10 @@ vinayaka-user-match-api.cgi: tinyxml2.o distsn.o user-match-api.o
 
 install: $(cgis)
 	$(INSTALL_PROGRAM) $(cgis) --target-directory=$(cgidir)
+	$(INSTALL_PROGRAM) $(crons) --target-directory=$(bindir)
 
 uninstall:
+	-$(RM) $(addprefix $(bindir)/,$(crons))
 	-$(RM) $(addprefix $(cgidir)/,$(cgis))
 
 initialize:

@@ -100,13 +100,19 @@ static void get_and_save_words (unsigned int word_length, unsigned int vocabular
 
 int main (int argc, char **argv)
 {
-	auto users = get_users ();
-	get_and_save_words (6, 400, users);
-	get_and_save_words (9, 400, users);
-	get_and_save_words (12, 400, users);
-	get_and_save_words (6, 100, users);
-	get_and_save_words (9, 100, users);
-	get_and_save_words (12, 100, users);
+	if (2 < argc) {
+		stringstream word_length_s {argv [1]};
+		unsigned int word_length;
+		word_length_s >> word_length;
+		stringstream vocabulary_size_s {argv [2]};
+		unsigned int vocabulary_size;
+		vocabulary_size_s >> vocabulary_size;
+		auto users = get_users ();
+		get_and_save_words (word_length, vocabulary_size, users);
+	} else {
+		cerr << "Too few arguments " << __LINE__ << endl;
+		return 1;
+	}
 }
 
 
