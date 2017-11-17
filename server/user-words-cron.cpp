@@ -92,7 +92,7 @@ static void get_and_save_words (unsigned int word_length, unsigned int vocabular
 		}
 	}
 	stringstream filename;
-	filename << "/var/lib/vinayaka/user-words." << word_length << "." << vocabulary_size << ".xml";
+	filename << "/var/lib/vinayaka/user-words." << word_length << "." << vocabulary_size << ".json";
 	ofstream out {filename.str ()};
 	write_to_storage (users_and_words, out);
 }

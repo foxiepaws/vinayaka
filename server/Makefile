@@ -54,7 +54,7 @@ initialize:
 	$(CHMOD) -R a+rwx /var/lib/vinayaka
 
 refresh:
-	-$(RM) /var/lib/vinayaka/*.xml
+	-$(RM) /var/lib/vinayaka/*.json
 
 clean:
 	-$(RM) $(objects) $(binaries)

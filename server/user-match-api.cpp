@@ -125,7 +125,7 @@ static map <User, double> get_users_and_similarity
 {
 	vector <string> words = get_words_from_toots (toots, word_length, vocabulary_size);
 	stringstream filename;
-	filename << "/var/lib/vinayaka/user-words." << word_length << "." << vocabulary_size << ".xml";
+	filename << "/var/lib/vinayaka/user-words." << word_length << "." << vocabulary_size << ".json";
 	vector <UserAndWords> users_and_words = read_storage (filename.str ());
 	
 	map <User, double> users_and_similarity;
