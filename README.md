@@ -16,6 +16,8 @@ UTF-8 の JSON が返ります。
 
 $ sudo apt install git make gcc g++ libcurl4-openssl-dev apache2
 
+$ cd /home/ubuntu
+
 $ mkdir -p git
 
 $ cd git
@@ -40,7 +42,7 @@ Write following code in crontab:
 
 # Update
 
-$ cd ~/git/vinayaka
+$ cd /home/ubuntu/git/vinayaka
 
 $ git pull
 
