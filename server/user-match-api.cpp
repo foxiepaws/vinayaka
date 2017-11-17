@@ -170,6 +170,24 @@ static string escape_utf8_fragment (string in) {
 }
 
 
+class ModelTopology {
+public:
+	unsigned int word_length;
+	unsigned int vocabulary_size;
+public:
+	ModelTopology () { };
+	ModelTopology (unsigned int a_word_length, unsigned int a_vocabulary_size) {
+		word_length = a_word_length;
+		vocabulary_size = a_vocabulary_size;
+	};
+public:
+	bool operator < (const ModelTopology &right) const {
+		return vocabulary_size < right.vocabulary_size
+			|| (vocabulary_size == right.vocabulary_size && word_length < right.word_length);
+	}
+};
+
+
 int main (int argc, char **argv)
 {
 	if (argc < 3) {
@@ -184,78 +202,51 @@ int main (int argc, char **argv)
 	vector <string> toots;
 	get_profile (host, user, screen_name, bio, toots);
 	toots.push_back (screen_name);
+	toots.push_back (screen_name);
 	toots.push_back (bio);
+	toots.push_back (bio);
+
+	vector <ModelTopology> models = {
+		ModelTopology {6, 100},
+		ModelTopology {9, 100},
+		ModelTopology {12, 100},
+		ModelTopology {6, 400},
+		ModelTopology {9, 400},
+		ModelTopology {12, 400}
+	};
 	
 	unsigned int available_models = 0;
-	
-	map <User, double> map_6_100;
-	map <User, set <string>> intersection_6_100;
-	try {
-		map_6_100 = get_users_and_similarity (toots, 6, 100, intersection_6_100);
-		available_models ++;
-	} catch (ModelException e) {
-		/* Do nothing. */
-	}
+	map <ModelTopology, map <User, double>> model_user_to_similarity;
+	map <ModelTopology, map <User, set <string>>> model_user_to_intersection;
+	set <User> users;
 
-	map <User, double> map_6_400;
-	map <User, set <string>> intersection_6_400;
-	try {
-		map_6_400 = get_users_and_similarity (toots, 6, 400, intersection_6_400);
-		available_models ++;
-	} catch (ModelException e) {
-		/* Do nothing. */
-	}
-
-	map <User, double> map_9_100;
-	map <User, set <string>> intersection_9_100;
-	try {
-		map_9_100 = get_users_and_similarity (toots, 9, 100, intersection_9_100);
-		available_models ++;
-	} catch (ModelException e) {
-		/* Do nothing. */
-	}
-
-	map <User, double> map_9_400;
-	map <User, set <string>> intersection_9_400;
-	try {
-		map_9_400 = get_users_and_similarity (toots, 9, 400, intersection_9_400);
-		available_models ++;
-	} catch (ModelException e) {
-		/* Do nothing. */
-	}
-
-	map <User, double> map_12_100;
-	map <User, set <string>> intersection_12_100;
-	try {
-		map_12_100 = get_users_and_similarity (toots, 12, 100, intersection_12_100);
-		available_models ++;
-	} catch (ModelException e) {
-		/* Do nothing. */
-	}
-
-	map <User, double> map_12_400;
-	map <User, set <string>> intersection_12_400;
-	try {
-		map_12_400 = get_users_and_similarity (toots, 12, 400, intersection_12_400);
-		available_models ++;
-	} catch (ModelException e) {
-		/* Do nothing. */
+	for (auto model: models) {
+		try {
+			map <User, double> user_to_similarity;
+			map <User, set <string>> user_to_intersection;
+			user_to_similarity = get_users_and_similarity
+				(toots, model.word_length, model.vocabulary_size, user_to_intersection);
+			available_models ++;
+			for (auto user_and_similarity: user_to_similarity) {
+				users.insert (user_and_similarity.first);
+			}
+		} catch (ModelException e) {
+			cerr << "Model " << model.word_length << ", " << model.vocabulary_size << " not found." << endl;
+		}
 	}
 
 	vector <UserAndSimilarity> users_and_similarity;
-	for (auto user_in_map: map_6_100) {
-		User user = user_in_map.first;
-		double similarity_6_100 = (map_6_100.find (user) == map_6_100.end ()? 0: map_6_100.at (user));
-		double similarity_6_400 = (map_6_400.find (user) == map_6_400.end ()? 0: map_6_400.at (user));
-		double similarity_9_100 = (map_9_100.find (user) == map_9_100.end ()? 0: map_9_100.at (user));
-		double similarity_9_400 = (map_9_400.find (user) == map_9_400.end ()? 0: map_9_400.at (user));
-		double similarity_12_100 = (map_12_100.find (user) == map_12_100.end ()? 0: map_12_100.at (user));
-		double similarity_12_400 = (map_12_400.find (user) == map_12_400.end ()? 0: map_12_400.at (user));
-
-		double similarity
-			= (similarity_6_100 + similarity_6_400 + similarity_9_100 + similarity_9_400
-			+ similarity_12_100 + similarity_12_400)
-			/ static_cast <double> (available_models);
+	for (auto user: users) {
+		double similarity_sum = 0;
+		for (auto model_and_user_to_similarity: model_user_to_similarity) {
+			ModelTopology model {model_and_user_to_similarity.first};
+			map <User, double> user_to_similarity {model_and_user_to_similarity.second};
+			similarity_sum +=
+				(user_to_similarity.find (user) == user_to_similarity.end ()?
+				0:
+				user_to_similarity.at (user));
+		}
+		double similarity = similarity_sum / static_cast <double> (available_models);
 		UserAndSimilarity user_and_similarity;
 		user_and_similarity.user = user.user;
 		user_and_similarity.host = user.host;
@@ -274,29 +265,14 @@ int main (int argc, char **argv)
 		auto user = users_and_similarity.at (cn);
 
 		vector <string> intersection;
-		if (intersection_6_100.find (User {user.host, user.user}) != intersection_6_100.end ()) {
-			set <string> intersection_in_a_model = intersection_6_100.at (User {user.host, user.user});
-			intersection.insert (intersection.end (), intersection_in_a_model.begin (), intersection_in_a_model.end ());
-		}
-		if (intersection_9_100.find (User {user.host, user.user}) != intersection_9_100.end ()) {
-			set <string> intersection_in_a_model = intersection_9_100.at (User {user.host, user.user});
-			intersection.insert (intersection.end (), intersection_in_a_model.begin (), intersection_in_a_model.end ());
-		}
-		if (intersection_12_100.find (User {user.host, user.user}) != intersection_12_100.end ()) {
-			set <string> intersection_in_a_model = intersection_12_100.at (User {user.host, user.user});
-			intersection.insert (intersection.end (), intersection_in_a_model.begin (), intersection_in_a_model.end ());
-		}
-		if (intersection_6_400.find (User {user.host, user.user}) != intersection_6_400.end ()) {
-			set <string> intersection_in_a_model = intersection_6_400.at (User {user.host, user.user});
-			intersection.insert (intersection.end (), intersection_in_a_model.begin (), intersection_in_a_model.end ());
-		}
-		if (intersection_9_400.find (User {user.host, user.user}) != intersection_9_400.end ()) {
-			set <string> intersection_in_a_model = intersection_9_400.at (User {user.host, user.user});
-			intersection.insert (intersection.end (), intersection_in_a_model.begin (), intersection_in_a_model.end ());
-		}
-		if (intersection_12_400.find (User {user.host, user.user}) != intersection_12_400.end ()) {
-			set <string> intersection_in_a_model = intersection_12_400.at (User {user.host, user.user});
-			intersection.insert (intersection.end (), intersection_in_a_model.begin (), intersection_in_a_model.end ());
+		for (auto model_and_user_to_intersection: model_user_to_intersection) {
+			ModelTopology model {model_and_user_to_intersection.first};
+			map <User, set <string>> user_to_intersection {model_and_user_to_intersection.second};
+		
+			if (user_to_intersection.find (User {user.host, user.user}) != user_to_intersection.end ()) {
+				set <string> intersection_in_a_model = user_to_intersection.at (User {user.host, user.user});
+				intersection.insert (intersection.end (), intersection_in_a_model.begin (), intersection_in_a_model.end ());
+			}
 		}
 
 		cout
