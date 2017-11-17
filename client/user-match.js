@@ -94,9 +94,9 @@ var cn_intersection;
 var limit;
 
 if (detail) {
-	limit = 100;
-} else {
 	limit = 1000;
+} else {
+	limit = 100;
 }
 
 for (cn = 0; cn < users.length && cn < limit; cn ++) {
