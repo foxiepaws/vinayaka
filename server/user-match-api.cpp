@@ -16,14 +16,6 @@ using namespace tinyxml2;
 using namespace std;
 
 
-class UserAndWords {
-public:
-	string user;
-	string host;
-	vector <string> words;
-};
-
-
 class UserAndSimilarity {
 public:
 	string user;
@@ -48,57 +40,9 @@ public:
 };
 
 
-class ModelException: public ExceptionWithLineNumber {
-public:
-	ModelException () { };
-	ModelException (unsigned int a_line): ExceptionWithLineNumber (a_line) { };
-};
-
-
 static bool by_similarity_desc (const UserAndSimilarity &a, const UserAndSimilarity &b)
 {
 	return b.similarity < a.similarity;
-}
-
-
-static vector <UserAndWords> read_storage (string filename)
-{
-	FILE * in = fopen (filename.c_str (), "rb");
-	if (in == nullptr) {
-		throw (ModelException {__LINE__});
-	}
-        string s;
-        for (; ; ) {
-                if (feof (in)) {
-                        break;
-                }
-                char b [1024];
-                fgets (b, 1024, in);
-                s += string {b};
-        }
-        picojson::value json_value;
-        picojson::parse (json_value, s);
-        auto array = json_value.get <picojson::array> ();
-        
-        vector <UserAndWords> memo;
-        
-        for (auto user_value: array) {
-        	auto user_object = user_value.get <picojson::object> ();
-        	string user = user_object.at (string {"user"}).get <string> ();
-        	string host = user_object.at (string {"host"}).get <string> ();
-        	auto words_array = user_object.at (string {"words"}).get <picojson::array> ();
-        	vector <string> words;
-        	for (auto word_value: words_array) {
-        		string word = word_value.get <string> ();
-        		words.push_back (word);
-        	}
-        	UserAndWords user_and_words;
-        	user_and_words.user = user;
-        	user_and_words.host = host;
-        	user_and_words.words = words;
-        	memo.push_back (user_and_words);
-        }
-	return memo;
 }
 
 

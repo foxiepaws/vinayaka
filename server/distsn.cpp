@@ -516,4 +516,45 @@ vector <string> get_words (string host, string user, unsigned int word_length, u
 }
 
 
+vector <UserAndWords> read_storage (string filename)
+{
+	FILE * in = fopen (filename.c_str (), "rb");
+	if (in == nullptr) {
+		throw (ModelException {__LINE__});
+	}
+        string s;
+        for (; ; ) {
+                if (feof (in)) {
+                        break;
+                }
+                char b [1024];
+                fgets (b, 1024, in);
+                s += string {b};
+        }
+        picojson::value json_value;
+        picojson::parse (json_value, s);
+        auto array = json_value.get <picojson::array> ();
+        
+        vector <UserAndWords> memo;
+        
+        for (auto user_value: array) {
+        	auto user_object = user_value.get <picojson::object> ();
+        	string user = user_object.at (string {"user"}).get <string> ();
+        	string host = user_object.at (string {"host"}).get <string> ();
+        	auto words_array = user_object.at (string {"words"}).get <picojson::array> ();
+        	vector <string> words;
+        	for (auto word_value: words_array) {
+        		string word = word_value.get <string> ();
+        		words.push_back (word);
+        	}
+        	UserAndWords user_and_words;
+        	user_and_words.user = user;
+        	user_and_words.host = host;
+        	user_and_words.words = words;
+        	memo.push_back (user_and_words);
+        }
+	return memo;
+}
+
+
 
