@@ -10,35 +10,57 @@ function search (detail) {
 	{
 		var user = user_and_host_array[0];
 		var host = user_and_host_array[1];
-		var url = '/cgi-bin/vinayaka-user-match-api.cgi?' +
-			encodeURIComponent (host) + '+' +
-			encodeURIComponent (user);
-		var request = new XMLHttpRequest;
-		request.open ('GET', url);
-		request.onload = function () {
-			if (request.readyState === request.DONE) {
-				document.getElementById ('search-button').removeAttribute ('disabled');
-				document.getElementById ('detail-button').removeAttribute ('disabled');
-				if (request.status === 200) {
-					var response_text = request.responseText;
-					var users = JSON.parse (response_text);
-					show_users (users, detail);
-				} else {
-					document.getElementById ('placeholder').innerHTML =
-						'<string>情報を取得できませんでした。</strong>';
-				}
-			}
-		}
-		document.getElementById ('placeholder').innerHTML =
-			'<string>お待ちください。</strong>';
-		document.getElementById ('search-button').setAttribute ('disabled', 'disabled');
-		document.getElementById ('detail-button').setAttribute ('disabled', 'disabled');
-		request.send ();
+		search_impl (host, user, detail);
 	} else {
 		document.getElementById ('placeholder').innerHTML =
 			'<string>ユーザー名とホスト名が入力されていません。</strong>';
 	}
 }
+
+
+function search_impl (host, user, detail) {
+	save_inputs (host, user);
+	var url = '/cgi-bin/vinayaka-user-match-api.cgi?' +
+		encodeURIComponent (host) + '+' +
+		encodeURIComponent (user);
+	var request = new XMLHttpRequest;
+	request.open ('GET', url);
+	request.onload = function () {
+		if (request.readyState === request.DONE) {
+			document.getElementById ('search-button').removeAttribute ('disabled');
+			document.getElementById ('detail-button').removeAttribute ('disabled');
+			if (request.status === 200) {
+				var response_text = request.responseText;
+				var users = JSON.parse (response_text);
+				show_users (users, detail);
+			} else {
+				document.getElementById ('placeholder').innerHTML =
+					'<string>情報を取得できませんでした。</strong>';
+			}
+		}
+	}
+	document.getElementById ('placeholder').innerHTML =
+		'<string>お待ちください。</strong>';
+	document.getElementById ('search-button').setAttribute ('disabled', 'disabled');
+	document.getElementById ('detail-button').setAttribute ('disabled', 'disabled');
+	request.send ();
+}
+
+
+function save_inputs (host, user) {
+	window.localStorage.setItem ('host', host);
+	window.localStorage.setItem ('user', user);
+}
+
+
+window.addEventListener ('load', function () {
+	var host = window.localStorage.getItem ('host');
+	var user = window.localStorage.getItem ('user');
+	if (host && user) {
+		document.getElementById ('user-input').value = user + '@' + host;
+	}
+}, false); /* window.addEventListener ('load', function () { */
+
 
 
 window.addEventListener ('load', function () {
