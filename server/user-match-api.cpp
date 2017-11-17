@@ -46,10 +46,8 @@ static bool by_similarity_desc (const UserAndSimilarity &a, const UserAndSimilar
 }
 
 
-static double get_similarity (vector <string> listener, vector <string> speaker, set <string> & a_intersection)
+static double get_similarity (set <string> listener_set, set <string> speaker_set, set <string> & a_intersection)
 {
-	set <string> listener_set {listener.begin (), listener.end ()};
-	set <string> speaker_set {speaker.begin (), speaker.end ()};
 	set <string> intersection;
 	set_intersection (listener_set.begin (), listener_set.end (),
 		speaker_set.begin (), speaker_set.end (),
@@ -58,35 +56,6 @@ static double get_similarity (vector <string> listener, vector <string> speaker,
 		/ (static_cast <double> (listener_set.size ()) + static_cast <double> (speaker_set.size ()));
 	a_intersection = intersection;
 	return similarity;
-}
-
-
-static map <User, double> get_users_and_similarity
-	(vector <string> toots,
-	unsigned int word_length,
-	unsigned int vocabulary_size,
-	map <User, set <string>> & a_users_and_intersection)
-{
-	vector <string> words = get_words_from_toots (toots, word_length, vocabulary_size);
-	stringstream filename;
-	filename << "/var/lib/vinayaka/user-words." << word_length << "." << vocabulary_size << ".json";
-	vector <UserAndWords> users_and_words = read_storage (filename.str ());
-	
-	map <User, double> users_and_similarity;
-	map <User, set <string>> users_and_intersection;
-	
-	for (auto user_and_words: users_and_words) {
-		set <string> intersection;
-		double similarity = get_similarity (words, user_and_words.words, intersection);
-		User user;
-		user.host = user_and_words.host;
-		user.user = user_and_words.user;
-		users_and_similarity.insert (pair <User, double> {user, similarity});
-		users_and_intersection.insert (pair <User, set <string>> {user, intersection});
-	}
-	
-	a_users_and_intersection = users_and_intersection;
-	return users_and_similarity;
 }
 
 
@@ -132,6 +101,42 @@ public:
 };
 
 
+static set <string> get_words_of_listener (vector <string> toots, vector <ModelTopology> models)
+{
+	set <string> words;
+	for (auto model: models) {
+		vector <string> words_in_a_model = get_words_from_toots (toots, model.word_length, model.vocabulary_size);
+		words.insert (words_in_a_model.begin (), words_in_a_model.end ());
+	}
+	return words;
+};
+
+
+static map <User, set <string>> get_words_of_speakers (vector <ModelTopology> models)
+{
+	map <User, set <string>> users_to_words;
+	for (auto model: models) {
+		stringstream filename;
+		filename << "/var/lib/vinayaka/user-words." << model.word_length << "." << model.vocabulary_size << ".json";
+		try {
+			vector <UserAndWords> users_and_words = read_storage (filename.str ());
+			for (auto user_and_words: users_and_words) {
+				User user {user_and_words.host, user_and_words.user};
+				set <string> words {user_and_words.words.begin (), user_and_words.words.end ()};
+				if (users_to_words.find (user) == users_to_words.end ()) {
+					users_to_words.insert (pair <User, set <string>> {user, words});
+				} else {
+					users_to_words.at (user).insert (words.begin (), words.end ());
+				}
+			}
+		} catch (ModelException e) {
+			cerr << "ModelException " << e.line << " " << filename.str () << endl;
+		}
+	}
+	return users_to_words;
+}
+
+
 int main (int argc, char **argv)
 {
 	if (argc < 3) {
@@ -151,83 +156,49 @@ int main (int argc, char **argv)
 	toots.push_back (bio);
 
 	vector <ModelTopology> models = {
-		ModelTopology {6, 100},
-		ModelTopology {9, 100},
-		ModelTopology {12, 100},
+		ModelTopology {3, 400},
 		ModelTopology {6, 400},
 		ModelTopology {9, 400},
-		ModelTopology {12, 400}
+		ModelTopology {12, 400},
+		ModelTopology {15, 400},
+		ModelTopology {18, 400}
 	};
 	
-	unsigned int available_models = 0;
-	map <ModelTopology, map <User, double>> model_user_to_similarity;
-	map <ModelTopology, map <User, set <string>>> model_user_to_intersection;
-	set <User> users;
+	set <string> words_of_listener = get_words_of_listener (toots, models);
+	map <User, set <string>> speaker_to_words = get_words_of_speakers (models);
 
-	for (auto model: models) {
-		try {
-			map <User, double> user_to_similarity;
-			map <User, set <string>> user_to_intersection;
-			user_to_similarity = get_users_and_similarity
-				(toots, model.word_length, model.vocabulary_size, user_to_intersection);
-			model_user_to_similarity.insert
-				(pair <ModelTopology, map <User, double>> {model, user_to_similarity});
-			model_user_to_intersection.insert
-				(pair <ModelTopology, map <User, set <string>>> {model, user_to_intersection});
-			available_models ++;
-			for (auto user_and_similarity: user_to_similarity) {
-				users.insert (user_and_similarity.first);
-			}
-		} catch (ModelException e) {
-			cerr << "Model " << model.word_length << ", " << model.vocabulary_size << " not found." << endl;
-		}
-	}
-
-	vector <UserAndSimilarity> users_and_similarity;
-	for (auto user: users) {
-		double similarity_sum = 0;
-		for (auto model_and_user_to_similarity: model_user_to_similarity) {
-			ModelTopology model {model_and_user_to_similarity.first};
-			map <User, double> user_to_similarity {model_and_user_to_similarity.second};
-			similarity_sum +=
-				(user_to_similarity.find (user) == user_to_similarity.end ()?
-				0:
-				user_to_similarity.at (user));
-		}
-		double similarity = similarity_sum / static_cast <double> (available_models);
-		UserAndSimilarity user_and_similarity;
-		user_and_similarity.user = user.user;
-		user_and_similarity.host = user.host;
-		user_and_similarity.similarity = similarity;
-		users_and_similarity.push_back (user_and_similarity);
-	}
+	vector <UserAndSimilarity> speakers_and_similarity;
+	map <User, set <string>> speaker_to_intersection;
 	
-	stable_sort (users_and_similarity.begin (), users_and_similarity.end (), by_similarity_desc);
+	for (auto speaker_and_words: speaker_to_words) {
+		User speaker = speaker_and_words.first;
+		set <string> words_of_speaker = speaker_and_words.second;
+		set <string> intersection;
+		double similarity = get_similarity (words_of_listener, words_of_speaker, intersection);
+		UserAndSimilarity speaker_and_similarity;
+		speaker_and_similarity.user = speaker.user;
+		speaker_and_similarity.host = speaker.host;
+		speaker_and_similarity.similarity = similarity;
+		speakers_and_similarity.push_back (speaker_and_similarity);
+		speaker_to_intersection.insert (pair <User, set <string>> {speaker, intersection});
+	}
+
+	stable_sort (speakers_and_similarity.begin (), speakers_and_similarity.end (), by_similarity_desc);
 	
 	cout << "Content-Type: application/json" << endl << endl;
 	cout << "[";
-	for (unsigned int cn = 0; cn < users_and_similarity.size () && cn < 1000; cn ++) {
+	for (unsigned int cn = 0; cn < speakers_and_similarity.size () && cn < 1000; cn ++) {
 		if (0 < cn) {
 			cout << ",";
 		}
-		auto user = users_and_similarity.at (cn);
-
-		vector <string> intersection;
-		for (auto model_and_user_to_intersection: model_user_to_intersection) {
-			ModelTopology model {model_and_user_to_intersection.first};
-			map <User, set <string>> user_to_intersection {model_and_user_to_intersection.second};
-		
-			if (user_to_intersection.find (User {user.host, user.user}) != user_to_intersection.end ()) {
-				set <string> intersection_in_a_model = user_to_intersection.at (User {user.host, user.user});
-				intersection.insert (intersection.end (), intersection_in_a_model.begin (), intersection_in_a_model.end ());
-			}
-		}
-
+		auto speaker = speakers_and_similarity.at (cn);
+		set <string> intersection_set = speaker_to_intersection.at (User {speaker.host, speaker.user});
+		vector <string> intersection {intersection_set.begin (), intersection_set.end ()};
 		cout
 			<< "{"
-			<< "\"host\":\"" << escape_json (user.host) << "\","
-			<< "\"user\":\"" << escape_json (user.user) << "\","
-			<< "\"similarity\":" << user.similarity << ",";
+			<< "\"host\":\"" << escape_json (speaker.host) << "\","
+			<< "\"user\":\"" << escape_json (speaker.user) << "\","
+			<< "\"similarity\":" << speaker.similarity << ",";
 		cout << "\"intersection\":[";
 		for (unsigned int cn_intersection = 0; cn_intersection < intersection.size (); cn_intersection ++) {
 			if (0 < cn_intersection) {
