@@ -609,13 +609,8 @@ WriteLock::WriteLock (string a_path)
 		abort ();
 	}
 	int reply = flock (fd, LOCK_EX || LOCK_NB);
-	if (reply < 0) {
-		if (errno == EWOULDBLOCK) {
-			throw (LockException {});
-		} else {
-			abort ();
-		}
-	}
+	ok = (reply == 0);
+	error_number = errno;
 }
 
 
