@@ -36,8 +36,13 @@ function search_impl (host, user, detail) {
 			document.getElementById ('detail-button').removeAttribute ('disabled');
 			if (request.status === 200) {
 				var response_text = request.responseText;
-				var users = JSON.parse (response_text);
-				show_users (users, detail);
+				try {
+					var users = JSON.parse (response_text);
+					show_users (users, detail);
+				} catch (e) {
+					document.getElementById ('placeholder').innerHTML =
+						'<string>絶望と仲良くなろうよ。</strong>';
+				}
 			} else {
 				document.getElementById ('placeholder').innerHTML =
 					'<string>情報を取得できませんでした。</strong>';
