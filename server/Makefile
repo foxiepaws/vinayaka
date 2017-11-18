@@ -24,13 +24,15 @@ objects = \
 	user-words-cron.o \
 	user-match-api.o \
 	user-avatar-cron.o
-cgi_binaries = \
-	vinayaka-user-match-api.cgi
+cgi_binaries =
 cron_binaries = \
 	vinayaka-user-words-impl \
 	vinayaka-user-avatar-cron
-binaries = $(cgi_binaries) $(cron_binaries)
-cgi_scripts =
+impl_binaries = \
+	vinayaka-user-match-impl
+binaries = $(cgi_binaries) $(cron_binaries) $(impl_binaries)
+cgi_scripts = \
+	vinayaka-user-match-api.cgi
 cron_scripts = \
 	vinayaka-user-words-meta-cron
 cgis = $(cgi_binaries) $(cgi_scripts)
@@ -46,7 +48,7 @@ all: $(binaries)
 vinayaka-user-words-impl: tinyxml2.o distsn.o user-words-cron.o
 	$(CXX) tinyxml2.o distsn.o user-words-cron.o -lcurl $(CFLAGS) -o $@
 
-vinayaka-user-match-api.cgi: tinyxml2.o distsn.o user-match-api.o
+vinayaka-user-match-impl: tinyxml2.o distsn.o user-match-api.o
 	$(CXX) tinyxml2.o distsn.o user-match-api.o -lcurl $(CFLAGS) -o $@
 
 vinayaka-user-avatar-cron: tinyxml2.o distsn.o user-avatar-cron.o
@@ -55,8 +57,10 @@ vinayaka-user-avatar-cron: tinyxml2.o distsn.o user-avatar-cron.o
 install: $(cgis)
 	$(INSTALL_PROGRAM) $(cgis) --target-directory=$(cgidir)
 	$(INSTALL_PROGRAM) $(crons) --target-directory=$(bindir)
+	$(INSTALL_PROGRAM) $(impl_binaries) --target-directory=$(bindir)
 
 uninstall:
+	-$(RM) $(addprefix $(bindir)/,$(impl_binaries))
 	-$(RM) $(addprefix $(bindir)/,$(crons))
 	-$(RM) $(addprefix $(cgidir)/,$(cgis))
 
