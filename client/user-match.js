@@ -38,7 +38,12 @@ function search_impl (host, user, detail) {
 				var response_text = request.responseText;
 				try {
 					var users = JSON.parse (response_text);
-					show_users (users, detail);
+					if (typeof users === 'string') {
+						document.getElementById ('placeholder').innerHTML =
+							'<string>' + escapeHtml (users) + '</strong>';
+					} else {
+						show_users (users, detail);
+					}
 				} catch (e) {
 					document.getElementById ('placeholder').innerHTML =
 						'<string>絶望と仲良くなろうよ。</strong>';
