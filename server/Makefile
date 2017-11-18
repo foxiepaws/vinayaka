@@ -64,7 +64,6 @@ initialize:
 	$(MKDIR) -p /var/lib/vinayaka
 	$(CHMOD) -R a+rwx /var/lib/vinayaka
 	echo 'lock' > /var/lib/vinayaka/lock
-	$(CHMOD) a+rw /var/lib/vinayaka/lock
 
 refresh:
 	-$(RM) /var/lib/vinayaka/*.json
