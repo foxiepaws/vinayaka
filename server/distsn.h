@@ -4,7 +4,6 @@
 
 #include "tinyxml2.h"
 #include "picojson.h"
-#include <sys/file.h>
 
 
 class ExceptionWithLineNumber: public std::exception {
@@ -60,20 +59,6 @@ public:
 	std::string user;
 	std::string host;
 	std::vector <std::string> words;
-};
-
-
-class WriteLock {
-public:
-	int fd;
-	std::string path;
-public:
-	WriteLock (std::string a_path);
-	~WriteLock ();
-};
-
-
-class LockException: public std::exception {
 };
 
 

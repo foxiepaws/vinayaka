@@ -1,6 +1,5 @@
 #include <sstream>
 #include <curl/curl.h>
-#include <unistd.h>
 #include "distsn.h"
 
 
@@ -601,27 +600,4 @@ vector <UserAndWords> read_storage (string filename)
 }
 
 
-WriteLock::WriteLock (string a_path)
-{
-	path = a_path;
-	int fd = open (path.c_str (), O_RDWR);
-	if (fd < 0) {
-		abort ();
-	}
-	int reply = flock (fd, LOCK_EX || LOCK_NB);
-	if (reply < 0) {
-		if (errno == EWOULDBLOCK) {
-			throw (LockException {});
-		} else {
-			abort ();
-		}
-	}
-}
-
-
-WriteLock::~WriteLock ()
-{
-	flock (fd, LOCK_UN);
-	close (fd);
-}
 
