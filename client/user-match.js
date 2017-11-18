@@ -107,8 +107,13 @@ for (cn = 0; cn < users.length && cn < limit; cn ++) {
 		'<a href="' +
 		'https://' + user.host + '/users/' + user.user +
 		'" target="vinayaka-external-user-profile">' +
-		'<img class="avatar" src="' +
-		user.avatar +
+		'<img class="avatar" src="';
+	if (user.avatar && 0 < user.avatar.length) {
+		user_html += user.avatar;
+	} else {
+		user_html += 'missing.png';
+	}
+	user_html +=
 		'">' +
 		'</a>' +
 		'<br>' +
@@ -120,7 +125,7 @@ for (cn = 0; cn < users.length && cn < limit; cn ++) {
 		'<br>' +
 		'類似度 ' + (user.similarity * 100).toFixed (2) + ' %';
 	if (detail) {
-		user_html += '<br>';
+		user_html += '</p><p>';
 		user_html += '<small>';
 		for (cn_intersection = 0; cn_intersection < user.intersection.length; cn_intersection ++) {
 			user_html += escapeHtml (user.intersection[cn_intersection]);

@@ -81,6 +81,12 @@ div.inputs {
 img.avatar {
 	width: 96px;
 	height: 96px;
+	float: left;
+	margin-right: 8px;
+	margin-bottom: 8px;
 }
 
+p {
+	clear: both;
+}
 

@@ -19,8 +19,9 @@ www_files = \
 	fake-mastodon.css \
 	kasaikuminkan.jpg \
 	google214b9ca3f27d115d.html \
-	user-match.js
-	
+	user-match.js \
+	missing.svg
+
 
 install: $(www_files)
 	$(INSTALL_DATA) $(www_files) --target-directory=$(htmldir)
