@@ -68,6 +68,7 @@ public:
 	int fd;
 	std::string path;
 	bool ok;
+	int error_number;
 public:
 	WriteLock (std::string a_path);
 	~WriteLock ();
