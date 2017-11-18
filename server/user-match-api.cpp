@@ -243,7 +243,6 @@ int main (int argc, char **argv)
 	toots.push_back (bio);
 
 	vector <ModelTopology> models = {
-		ModelTopology {3, 400},
 		ModelTopology {6, 400},
 		ModelTopology {9, 400},
 		ModelTopology {12, 400},
