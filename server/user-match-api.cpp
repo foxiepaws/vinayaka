@@ -183,6 +183,32 @@ static map <User, Profile> read_profiles ()
 }
 
 
+static bool charactor_for_url (char c)
+{
+	return
+		('a' <= c && c <= 'z')
+		|| ('A' <= c && c <= 'Z')
+		|| ('0' <= c && c <= '9')
+		|| c == ':'
+		|| c == '/'
+		|| c == '.'
+		|| c == '-'
+		|| c == '_'
+		|| c == '%';
+}
+
+
+static bool safe_url (string url)
+{
+	for (auto c: url) {
+		if (! charactor_for_url (c)) {
+			return false;
+		}
+	}
+	return true;
+}
+
+
 int main (int argc, char **argv)
 {
 	if (argc < 3) {
@@ -257,8 +283,12 @@ int main (int argc, char **argv)
 			Profile profile = users_to_profile.at (User {speaker.host, speaker.user});
 			cout
 				<< "\"screen_name\":\"" << escape_json (profile.screen_name) << "\","
-				<< "\"bio\":\"" << escape_json (profile.bio) << "\","
-				<< "\"avatar\":\"" << escape_json (profile.avatar) << "\",";
+				<< "\"bio\":\"" << escape_json (profile.bio) << "\",";
+			if (safe_url (profile.avatar)) {
+				cout << "\"avatar\":\"" << escape_json (profile.avatar) << "\",";
+			} else {
+				cout << "\"avatar\":\"\",";
+			}
 		}
 
 		cout << "\"intersection\":[";
