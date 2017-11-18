@@ -353,7 +353,27 @@ static bool is_hiragana (string codepoint)
 		|| codepoint == string {"、"}
 		|| codepoint == string {"。"}
 		|| codepoint == string {"？"}
-		|| codepoint == string {"！"};
+		|| codepoint == string {"！"}
+		|| codepoint == string {"思"};
+}
+
+
+static bool is_katakana (string codepoint)
+{
+	/* 長音「ー」を含む。 */
+	return (string {"ァ"} <= codepoint && codepoint <= string {"ヿ"});
+}
+
+
+static bool all_kana (string word)
+{
+	for (unsigned int cn = 0; cn * 3 + 2 < word.size (); cn ++) {
+		string codepoint = word.substr (cn * 3, 3);
+		if (! (is_hiragana (codepoint) || is_katakana (codepoint))) {
+			return false;
+		}
+	}
+	return true;
 }
 
 
@@ -371,8 +391,11 @@ static bool all_hiragana (string word)
 
 static bool valid_word (string word)
 {
-	return starts_with_utf8_codepoint_boundary (word)
-		&& (! all_hiragana (word));
+	bool invalid
+		= (! starts_with_utf8_codepoint_boundary (word))
+		|| (word.size () < 9 && all_kana (word))
+		|| (word.size () < 12 && all_hiragana (word));
+	return ! invalid;
 }
 
 
