@@ -40,6 +40,14 @@ public:
 };
 
 
+class Profile {
+public:
+	string screen_name;
+	string bio;
+	string avatar;
+};
+
+
 static bool by_similarity_desc (const UserAndSimilarity &a, const UserAndSimilarity &b)
 {
 	return b.similarity < a.similarity;
@@ -137,6 +145,44 @@ static map <User, set <string>> get_words_of_speakers (vector <ModelTopology> mo
 }
 
 
+static map <User, Profile> read_profiles ()
+{
+	FILE * in = fopen ("/var/lib/vinayaka/user-profiles.json", "rb");
+	if (in == nullptr) {
+		return map <User, Profile> {};
+	}
+        string s;
+        for (; ; ) {
+                if (feof (in)) {
+                        break;
+                }
+                char b [1024];
+                fgets (b, 1024, in);
+                s += string {b};
+        }
+        picojson::value json_value;
+        picojson::parse (json_value, s);
+        auto array = json_value.get <picojson::array> ();
+        
+	map <User, Profile> users_to_profile;
+        
+        for (auto user_value: array) {
+        	auto user_object = user_value.get <picojson::object> ();
+        	string host = user_object.at (string {"host"}).get <string> ();
+        	string user = user_object.at (string {"user"}).get <string> ();
+        	string screen_name = user_object.at (string {"screen_name"}).get <string> ();
+        	string bio = user_object.at (string {"bio"}).get <string> ();
+        	string avatar = user_object.at (string {"avatar"}).get <string> ();
+        	Profile profile;
+        	profile.screen_name = screen_name;
+        	profile.bio = bio;
+        	profile.avatar = avatar;
+        	users_to_profile.insert (pair <User, Profile> {User {host, user}, profile});
+        }
+	return users_to_profile;
+}
+
+
 int main (int argc, char **argv)
 {
 	if (argc < 3) {
@@ -184,7 +230,9 @@ int main (int argc, char **argv)
 	}
 
 	stable_sort (speakers_and_similarity.begin (), speakers_and_similarity.end (), by_similarity_desc);
-	
+
+	map <User, Profile> users_to_profile = read_profiles ();
+
 	cout << "Content-Type: application/json" << endl << endl;
 	cout << "[";
 	for (unsigned int cn = 0; cn < speakers_and_similarity.size () && cn < 1000; cn ++) {
@@ -199,6 +247,20 @@ int main (int argc, char **argv)
 			<< "\"host\":\"" << escape_json (speaker.host) << "\","
 			<< "\"user\":\"" << escape_json (speaker.user) << "\","
 			<< "\"similarity\":" << speaker.similarity << ",";
+
+		if (users_to_profile.find (User {speaker.host, speaker.user}) == users_to_profile.end ()) {
+			cout
+				<< "\"screen_name\":\"\","
+				<< "\"bio\":\"\","
+				<< "\"avatar\":\"\",";
+		} else {
+			Profile profile = users_to_profile.at (User {speaker.host, speaker.user});
+			cout
+				<< "\"screen_name\":\"" << escape_json (profile.screen_name) << "\","
+				<< "\"bio\":\"" << escape_json (profile.bio) << "\","
+				<< "\"avatar\":\"" << escape_json (profile.avatar) << "\",";
+		}
+
 		cout << "\"intersection\":[";
 		for (unsigned int cn_intersection = 0; cn_intersection < intersection.size (); cn_intersection ++) {
 			if (0 < cn_intersection) {
@@ -207,6 +269,7 @@ int main (int argc, char **argv)
 			cout << "\"" << escape_json (escape_utf8_fragment (intersection [cn_intersection])) << "\"";
 		}
 		cout << "]";
+
 		cout << "}";
 	}
 	cout << "]";
