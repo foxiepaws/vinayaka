@@ -92,16 +92,21 @@ int main (int argc, char **argv)
 	auto users = get_users ();
 	vector <pair <User, Profile>> users_and_profiles;
 	for (auto user: users) {
-		string screen_name;
-		string bio;
-		vector <string> toots;
-		string avatar;
-		get_profile (user.host, user.user, screen_name, bio, toots, avatar);
-		Profile profile;
-		profile.screen_name = screen_name;
-		profile.bio = bio;
-		profile.avatar = avatar;
-		users_and_profiles.push_back (pair <User, Profile> {user, profile});
+		cerr << user.user << "@" << user.host << endl;
+		try {
+			string screen_name;
+			string bio;
+			vector <string> toots;
+			string avatar;
+			get_profile (user.host, user.user, screen_name, bio, toots, avatar);
+			Profile profile;
+			profile.screen_name = screen_name;
+			profile.bio = bio;
+			profile.avatar = avatar;
+			users_and_profiles.push_back (pair <User, Profile> {user, profile});
+		} catch (ExceptionWithLineNumber e) {
+			cerr << "Error " << e.line << endl;
+		};
 	};
 	string filename {"/var/lib/vinayaka/user-profiles.json"};
 	ofstream out {filename};
