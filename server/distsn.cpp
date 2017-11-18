@@ -436,7 +436,7 @@ vector <string> get_words_from_toots (vector <string> toots, unsigned int word_l
 }
 
 
-static void get_profile_impl (string atom_query, string &a_screen_name, string &a_bio, vector <string> &a_toots)
+static void get_profile_impl (string atom_query, string &a_screen_name, string &a_bio, vector <string> &a_toots, string &a_avatar)
 {
 	try {
 		string atom_reply = http_get (atom_query);
@@ -451,6 +451,17 @@ static void get_profile_impl (string atom_query, string &a_screen_name, string &
 			throw (UserException {__LINE__});
 		}
 		XMLElement * feed_element = root_element;
+
+		string avatar;
+		XMLElement * logo_element = feed_element->FirstChildElement ("logo");
+		if (logo_element != nullptr) {
+			const char * logo_text = logo_element->GetText ();
+			if (logo_text != nullptr) {
+				avatar = string {logo_text};
+			}
+		}
+		a_avatar = avatar;
+
 		XMLElement * author_element = feed_element->FirstChildElement ("author");
 		if (author_element == nullptr) {
 			throw (UserException {__LINE__});
@@ -513,15 +524,22 @@ static void get_profile_impl (string atom_query, string &a_screen_name, string &
 }
 
 
-void get_profile (string host, string user, string &a_screen_name, string &a_bio, vector <string> &a_toots)
+void get_profile (string host, string user, string &a_screen_name, string &a_bio, vector <string> &a_toots, string & a_avatar)
 {
 	try {
 		string query = string {"https://"} + host + string {"/users/"} + user + string {".atom"};
-		get_profile_impl (query, a_screen_name, a_bio, a_toots);
+		get_profile_impl (query, a_screen_name, a_bio, a_toots, a_avatar);
 	} catch (UserException e) {
 		string query = string {"https://"} + host + string {"/users/"} + user + string {"/feed.atom"};
-		get_profile_impl (query, a_screen_name, a_bio, a_toots);
+		get_profile_impl (query, a_screen_name, a_bio, a_toots, a_avatar);
 	}
+}
+
+
+void get_profile (string host, string user, string &a_screen_name, string &a_bio, vector <string> &a_toots)
+{
+	string avatar;
+	get_profile (host, user, a_screen_name, a_bio, a_toots, avatar);
 }
 
 

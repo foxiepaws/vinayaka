@@ -22,11 +22,13 @@ objects = \
 	tinyxml2.o \
 	distsn.o \
 	user-words-cron.o \
-	user-match-api.o
+	user-match-api.o \
+	user-avatar-cron.o
 cgi_binaries = \
 	vinayaka-user-match-api.cgi
 cron_binaries = \
-	vinayaka-user-words-impl
+	vinayaka-user-words-impl \
+	vinayaka-user-avatar-cron
 binaries = $(cgi_binaries) $(cron_binaries)
 cgi_scripts =
 cron_scripts = \
@@ -46,6 +48,9 @@ vinayaka-user-words-impl: tinyxml2.o distsn.o user-words-cron.o
 
 vinayaka-user-match-api.cgi: tinyxml2.o distsn.o user-match-api.o
 	$(CXX) tinyxml2.o distsn.o user-match-api.o -lcurl $(CFLAGS) -o $@
+
+vinayaka-user-avatar-cron: tinyxml2.o distsn.o user-avatar-cron.o
+	$(CXX) tinyxml2.o distsn.o user-avatar-cron.o -lcurl $(CFLAGS) -o $@
 
 install: $(cgis)
 	$(INSTALL_PROGRAM) $(cgis) --target-directory=$(cgidir)
