@@ -107,6 +107,14 @@ for (cn = 0; cn < users.length && cn < limit; cn ++) {
 		'<a href="' +
 		'https://' + user.host + '/users/' + user.user +
 		'" target="vinayaka-external-user-profile">' +
+		'<img class="avatar" src="' +
+		user.avatar +
+		'">' +
+		'</a>' +
+		'<br>' +
+		'<a href="' +
+		'https://' + user.host + '/users/' + user.user +
+		'" target="vinayaka-external-user-profile">' +
 		user.user + '@<wbr>' + user.host +
 		'</a>' +
 		'<br>' +
