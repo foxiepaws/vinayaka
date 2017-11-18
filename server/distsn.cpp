@@ -361,7 +361,9 @@ static bool is_hiragana (string codepoint)
 static bool is_katakana (string codepoint)
 {
 	/* 長音「ー」を含む。 */
-	return (string {"ァ"} <= codepoint && codepoint <= string {"ヿ"});
+	return (string {"ァ"} <= codepoint && codepoint <= string {"ヿ"})
+		|| codepoint == string {"「"}
+		|| codepoint == string {"」"};
 }
 
 
