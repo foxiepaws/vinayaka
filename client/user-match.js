@@ -37,7 +37,12 @@ function search_impl (host, user, detail) {
 			if (request.status === 200) {
 				var response_text = request.responseText;
 				var users = JSON.parse (response_text);
-				show_users (users, detail);
+				if (typeof users === 'string') {
+					document.getElementById ('placeholder').innerHTML =
+						'<string>' + escapeHtml (users) + '</strong>';
+				} else {
+					show_users (users, detail);
+				}
 			} else {
 				document.getElementById ('placeholder').innerHTML =
 					'<string>情報を取得できませんでした。</strong>';

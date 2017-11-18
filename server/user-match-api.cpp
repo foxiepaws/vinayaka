@@ -226,6 +226,14 @@ static bool safe_url (string url)
 
 int main (int argc, char **argv)
 {
+	try {
+		WriteLock {string {"/var/lib/vinayaka/lock"}};
+	} catch (LockException e) {
+		cout << "Content-Type: application/json" << endl << endl;
+		cout << "\"" << escape_json ("サーバーが混み合っております。数分間お待ちのうえお試しください。") << "\"";
+		exit (0);
+	}
+
 	if (argc < 3) {
 		exit (1);
 	}
