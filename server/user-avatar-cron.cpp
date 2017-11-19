@@ -44,7 +44,7 @@ public:
 static vector <User> get_users ()
 {
 	vector <User> users;
-	string query = string {"http://distsn.org/cgi-bin/distsn-user-recommendation-api.cgi?10000"};
+	string query = string {"http://distsn.org/cgi-bin/distsn-user-recommendation-api.cgi?20000"};
 	cerr << query << endl;
 	string reply = http_get (query);
 	picojson::value json_value;
