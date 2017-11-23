@@ -626,6 +626,73 @@ void get_profile (string host, string user, string &a_screen_name, string &a_bio
 }
 
 
+static void get_profile_impl (string atom_query, string &a_screen_name, string &a_bio, string &a_avatar)
+{
+	try {
+		vector <string> timeline;
+
+		cerr << atom_query << endl;
+		string atom_reply = http_get (atom_query);
+		
+		XMLDocument atom_document;
+		XMLError atom_parse_error = atom_document.Parse (atom_reply.c_str ());
+		if (atom_parse_error != XML_SUCCESS) {
+			throw (UserException {__LINE__});
+		}
+		XMLElement * root_element = atom_document.RootElement ();
+		if (root_element == nullptr) {
+			throw (UserException {__LINE__});
+		}
+		XMLElement * feed_element = root_element;
+
+		string avatar;
+		XMLElement * logo_element = feed_element->FirstChildElement ("logo");
+		if (logo_element != nullptr) {
+			const char * logo_text = logo_element->GetText ();
+			if (logo_text != nullptr) {
+				avatar = string {logo_text};
+			}
+		}
+		a_avatar = avatar;
+
+		XMLElement * author_element = feed_element->FirstChildElement ("author");
+		if (author_element == nullptr) {
+			throw (UserException {__LINE__});
+		}
+		XMLElement * displayname_element = author_element->FirstChildElement ("poco:displayName");
+		a_screen_name = string {};
+		if (displayname_element != nullptr) {
+			const char * displayname_text = displayname_element->GetText ();
+			if (displayname_text != nullptr) {
+				a_screen_name = string {displayname_text};
+			}
+		}
+		a_bio = string {};
+		XMLElement * note_element = author_element->FirstChildElement ("poco:note");
+		if (note_element != nullptr) {
+			const char * note_text = note_element->GetText ();
+			if (note_text != nullptr) {
+				a_bio = string {note_text};
+			}
+		}
+	} catch (HttpException e) {
+		throw (UserException {__LINE__});
+	}
+}
+
+
+void get_profile (string host, string user, string &a_screen_name, string &a_bio, string & a_avatar)
+{
+	try {
+		string query = string {"https://"} + host + string {"/users/"} + user + string {".atom"};
+		get_profile_impl (query, a_screen_name, a_bio, a_avatar);
+	} catch (UserException e) {
+		string query = string {"https://"} + host + string {"/users/"} + user + string {"/feed.atom"};
+		get_profile_impl (query, a_screen_name, a_bio, a_avatar);
+	}
+}
+
+
 vector <string> get_words (string host, string user, unsigned int word_length, unsigned int vocabulary_size)
 {
 	cerr << user << "@" << host << endl;

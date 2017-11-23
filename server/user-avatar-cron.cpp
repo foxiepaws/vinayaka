@@ -96,9 +96,8 @@ int main (int argc, char **argv)
 		try {
 			string screen_name;
 			string bio;
-			vector <string> toots;
 			string avatar;
-			get_profile (user.host, user.user, screen_name, bio, toots, avatar);
+			get_profile (user.host, user.user, screen_name, bio, avatar);
 			Profile profile;
 			profile.screen_name = screen_name;
 			profile.bio = bio;
