@@ -60,8 +60,7 @@ static double get_similarity (set <string> listener_set, set <string> speaker_se
 	set_intersection (listener_set.begin (), listener_set.end (),
 		speaker_set.begin (), speaker_set.end (),
 		inserter (intersection, intersection.begin ()));
-	double similarity = (static_cast <double> (intersection.size ()) * 2.0)
-		/ (static_cast <double> (listener_set.size ()) + static_cast <double> (speaker_set.size ()));
+	double similarity = static_cast <double> (intersection.size ());
 	a_intersection = intersection;
 	return similarity;
 }

@@ -133,7 +133,7 @@ for (cn = 0; cn < users.length && cn < limit; cn ++) {
 		user.user + '@<wbr>' + user.host +
 		'</a>' +
 		'<br>' +
-		'類似度 ' + (user.similarity * 100).toFixed (2) + ' %';
+		'類似度 ' + user.similarity.toFixed (0);
 	if (detail) {
 		user_html += '</p><p>';
 		user_html += '<small>';
