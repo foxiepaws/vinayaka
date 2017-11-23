@@ -34,7 +34,8 @@ binaries = $(cgi_binaries) $(cron_binaries) $(impl_binaries)
 cgi_scripts = \
 	vinayaka-user-match-api.cgi
 cron_scripts = \
-	vinayaka-user-words-meta-cron
+	vinayaka-user-words-meta-cron \
+	vinayaka-clear-cache-cron
 cgis = $(cgi_binaries) $(cgi_scripts)
 crons = $(cron_binaries) $(cron_scripts)
 

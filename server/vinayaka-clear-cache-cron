@@ -1,0 +1,4 @@
+#!/bin/bash
+
+/bin/rm -f /var/lib/vinayaka/match-cache.json
+
