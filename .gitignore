@@ -35,4 +35,5 @@
 vinayaka-user-words-impl
 vinayaka-user-match-impl
 vinayaka-user-avatar-cron
+vinayaka-user-match-cache-fetcher
 

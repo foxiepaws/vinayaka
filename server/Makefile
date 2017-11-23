@@ -29,7 +29,10 @@ cron_binaries = \
 	vinayaka-user-words-impl \
 	vinayaka-user-avatar-cron
 impl_binaries = \
-	vinayaka-user-match-impl
+	vinayaka-user-match-impl \
+	vinayaka-user-match-cache-fetcher
+impl_scripts = \
+	vinayaka-user-match-resource-guard
 binaries = $(cgi_binaries) $(cron_binaries) $(impl_binaries)
 cgi_scripts = \
 	vinayaka-user-match-api.cgi
@@ -38,6 +41,7 @@ cron_scripts = \
 	vinayaka-clear-cache-cron
 cgis = $(cgi_binaries) $(cgi_scripts)
 crons = $(cron_binaries) $(cron_scripts)
+impls = $(impl_binaries) $(impl_scripts)
 
 .SUFFIXES: .cpp .o
 
@@ -55,13 +59,16 @@ vinayaka-user-match-impl: tinyxml2.o distsn.o user-match-api.o
 vinayaka-user-avatar-cron: tinyxml2.o distsn.o user-avatar-cron.o
 	$(CXX) tinyxml2.o distsn.o user-avatar-cron.o -lcurl $(CFLAGS) -o $@
 
+vinayaka-user-match-cache-fetcher: tinyxml2.o distsn.o cache-fetcher.o
+	$(CXX) tinyxml2.o distsn.o cache-fetcher.o -lcurl $(CFLAGS) -o $@
+
 install: $(cgis)
 	$(INSTALL_PROGRAM) $(cgis) --target-directory=$(cgidir)
 	$(INSTALL_PROGRAM) $(crons) --target-directory=$(bindir)
-	$(INSTALL_PROGRAM) $(impl_binaries) --target-directory=$(bindir)
+	$(INSTALL_PROGRAM) $(impls) --target-directory=$(bindir)
 
 uninstall:
-	-$(RM) $(addprefix $(bindir)/,$(impl_binaries))
+	-$(RM) $(addprefix $(bindir)/,$(impls))
 	-$(RM) $(addprefix $(bindir)/,$(crons))
 	-$(RM) $(addprefix $(cgidir)/,$(cgis))
 
