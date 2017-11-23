@@ -224,6 +224,93 @@ static bool safe_url (string url)
 }
 
 
+static string format_result
+	(vector <UserAndSimilarity> speakers_and_similarity,
+	map <User, set <string>> speaker_to_intersection,
+	map <User, Profile> users_to_profile)
+{
+	stringstream out;
+	out << "[";
+	for (unsigned int cn = 0; cn < speakers_and_similarity.size () && cn < 1000; cn ++) {
+		if (0 < cn) {
+			out << ",";
+		}
+		auto speaker = speakers_and_similarity.at (cn);
+		set <string> intersection_set = speaker_to_intersection.at (User {speaker.host, speaker.user});
+		vector <string> intersection {intersection_set.begin (), intersection_set.end ()};
+		out
+			<< "{"
+			<< "\"host\":\"" << escape_json (speaker.host) << "\","
+			<< "\"user\":\"" << escape_json (speaker.user) << "\","
+			<< "\"similarity\":" << speaker.similarity << ",";
+
+		if (users_to_profile.find (User {speaker.host, speaker.user}) == users_to_profile.end ()) {
+			out
+				<< "\"screen_name\":\"\","
+				<< "\"bio\":\"\","
+				<< "\"avatar\":\"\",";
+		} else {
+			Profile profile = users_to_profile.at (User {speaker.host, speaker.user});
+			out
+				<< "\"screen_name\":\"" << escape_json (profile.screen_name) << "\","
+				<< "\"bio\":\"" << escape_json (profile.bio) << "\",";
+			if (safe_url (profile.avatar)) {
+				out << "\"avatar\":\"" << escape_json (profile.avatar) << "\",";
+			} else {
+				out << "\"avatar\":\"\",";
+			}
+		}
+
+		out << "\"intersection\":[";
+		for (unsigned int cn_intersection = 0; cn_intersection < intersection.size (); cn_intersection ++) {
+			if (0 < cn_intersection) {
+				out << ",";
+			}
+			out << "\"" << escape_json (escape_utf8_fragment (intersection [cn_intersection])) << "\"";
+		}
+		out << "]";
+
+		out << "}";
+	}
+	out << "]";
+	return out.str ();
+}
+
+
+static void add_to_cache (string host, string user, string result)
+{
+	picojson::array results;
+	FILE * in = fopen ("/var/lib/vinayaka/match-cache.json", "rb");
+	if (in != nullptr) {
+		string s;
+		for (; ; ) {
+			if (feof (in)) {
+			break;
+		}
+		char b [1024];
+			fgets (b, 1024, in);
+			s += string {b};
+		}
+		picojson::value json_value;
+		picojson::parse (json_value, s);
+		results = json_value.get <picojson::array> ();
+		fclose (in);
+	}
+	ofstream out {"/var/lib/vinayaka/match-cache.json"};
+	out << "[";
+	out << "{";
+	out << "\"host\":\"" << host << "\",";
+	out << "\"user\":\"" << user << "\",";
+	out << "\"result\":" << result;
+	out << "}";
+	for (unsigned int cn = 0; cn < results.size (); cn ++) {
+		out << ",";
+		out << results.at (cn).serialize ();
+	}
+	out << "]";
+}
+
+
 int main (int argc, char **argv)
 {
 	if (argc < 3) {
@@ -273,50 +360,11 @@ int main (int argc, char **argv)
 
 	map <User, Profile> users_to_profile = read_profiles ();
 
+	string result = format_result (speakers_and_similarity, speaker_to_intersection, users_to_profile);
 	cout << "Content-Type: application/json" << endl << endl;
-	cout << "[";
-	for (unsigned int cn = 0; cn < speakers_and_similarity.size () && cn < 1000; cn ++) {
-		if (0 < cn) {
-			cout << ",";
-		}
-		auto speaker = speakers_and_similarity.at (cn);
-		set <string> intersection_set = speaker_to_intersection.at (User {speaker.host, speaker.user});
-		vector <string> intersection {intersection_set.begin (), intersection_set.end ()};
-		cout
-			<< "{"
-			<< "\"host\":\"" << escape_json (speaker.host) << "\","
-			<< "\"user\":\"" << escape_json (speaker.user) << "\","
-			<< "\"similarity\":" << speaker.similarity << ",";
-
-		if (users_to_profile.find (User {speaker.host, speaker.user}) == users_to_profile.end ()) {
-			cout
-				<< "\"screen_name\":\"\","
-				<< "\"bio\":\"\","
-				<< "\"avatar\":\"\",";
-		} else {
-			Profile profile = users_to_profile.at (User {speaker.host, speaker.user});
-			cout
-				<< "\"screen_name\":\"" << escape_json (profile.screen_name) << "\","
-				<< "\"bio\":\"" << escape_json (profile.bio) << "\",";
-			if (safe_url (profile.avatar)) {
-				cout << "\"avatar\":\"" << escape_json (profile.avatar) << "\",";
-			} else {
-				cout << "\"avatar\":\"\",";
-			}
-		}
-
-		cout << "\"intersection\":[";
-		for (unsigned int cn_intersection = 0; cn_intersection < intersection.size (); cn_intersection ++) {
-			if (0 < cn_intersection) {
-				cout << ",";
-			}
-			cout << "\"" << escape_json (escape_utf8_fragment (intersection [cn_intersection])) << "\"";
-		}
-		cout << "]";
-
-		cout << "}";
-	}
-	cout << "]";
+	cout << result;
+	
+	add_to_cache (host, user, result);
 }
 
 
