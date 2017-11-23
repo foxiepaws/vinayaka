@@ -515,18 +515,6 @@ static void get_profile_impl (string atom_query, string &a_screen_name, string &
 					const char * content_text = content_element->GetText ();
 					if (content_text != nullptr) {
 						toots.push_back (string {content_text});
-						toots.push_back (string {content_text});
-					}
-				}
-			} else if (string {verb_text} == string {"http://activitystrea.ms/schema/1.0/share"}) {
-				XMLElement * activity_object_element = entry_element->FirstChildElement ("activity:object");
-				if (activity_object_element != nullptr) {
-					XMLElement * content_element = activity_object_element->FirstChildElement ("content");
-					if (content_element != nullptr) {
-						const char * content_text = content_element->GetText ();
-						if (content_text != nullptr) {
-							toots.push_back (string {content_text});
-						}
 					}
 				}
 			}
@@ -581,18 +569,6 @@ static void get_profile_impl (string atom_query, string &a_screen_name, string &
 						const char * content_text = content_element->GetText ();
 						if (content_text != nullptr) {
 							toots.push_back (string {content_text});
-							toots.push_back (string {content_text});
-						}
-					}
-				} else if (string {verb_text} == string {"http://activitystrea.ms/schema/1.0/share"}) {
-					XMLElement * activity_object_element = entry_element->FirstChildElement ("activity:object");
-					if (activity_object_element != nullptr) {
-						XMLElement * content_element = activity_object_element->FirstChildElement ("content");
-						if (content_element != nullptr) {
-							const char * content_text = content_element->GetText ();
-							if (content_text != nullptr) {
-								toots.push_back (string {content_text});
-							}
 						}
 					}
 				}
@@ -701,8 +677,6 @@ vector <string> get_words (string host, string user, unsigned int word_length, u
 	vector <string> toots;
 	get_profile (host, user, screen_name, bio, toots);
 	toots.push_back (screen_name);
-	toots.push_back (screen_name);
-	toots.push_back (bio);
 	toots.push_back (bio);
 	vector <string> words = get_words_from_toots (toots, word_length, vocabulary_size);
 	return words;

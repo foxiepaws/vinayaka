@@ -325,8 +325,6 @@ int main (int argc, char **argv)
 	vector <string> toots;
 	get_profile (host, user, screen_name, bio, toots);
 	toots.push_back (screen_name);
-	toots.push_back (screen_name);
-	toots.push_back (bio);
 	toots.push_back (bio);
 
 	vector <ModelTopology> models = {
