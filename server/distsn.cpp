@@ -439,6 +439,9 @@ vector <string> get_words_from_toots (vector <string> toots, unsigned int word_l
 static void get_profile_impl (string atom_query, string &a_screen_name, string &a_bio, vector <string> &a_toots, string &a_avatar)
 {
 	try {
+		vector <string> timeline;
+
+		cerr << atom_query << endl;
 		string atom_reply = http_get (atom_query);
 		
 		XMLDocument atom_document;
@@ -482,6 +485,17 @@ static void get_profile_impl (string atom_query, string &a_screen_name, string &
 				a_bio = string {note_text};
 			}
 		}
+		
+		string next_url;
+		for (XMLElement * link_element = feed_element->FirstChildElement ("link");
+			link_element != nullptr;
+			link_element = link_element->NextSiblingElement ("link"))
+		{
+			if (link_element->Attribute ("rel", "next") && link_element->Attribute ("href")) {
+				next_url = link_element->Attribute ("href");
+			}
+		}
+		
 		vector <string> toots;
 		for (XMLElement * entry_element = feed_element->FirstChildElement ("entry");
 			entry_element != nullptr;
@@ -517,7 +531,76 @@ static void get_profile_impl (string atom_query, string &a_screen_name, string &
 				}
 			}
 		}
-		a_toots = toots;
+		
+		timeline.insert (timeline.end (), toots.begin (), toots.end ());
+
+		for (unsigned int cn = 0; cn < 10; cn ++) {
+			if (next_url.empty ()) {
+				break;
+			}
+			cerr << next_url << endl;
+			string atom_reply = http_get (next_url);
+		
+			XMLDocument atom_document;
+			XMLError atom_parse_error = atom_document.Parse (atom_reply.c_str ());
+			if (atom_parse_error != XML_SUCCESS) {
+				throw (UserException {__LINE__});
+			}
+			XMLElement * root_element = atom_document.RootElement ();
+			if (root_element == nullptr) {
+				throw (UserException {__LINE__});
+			}
+			XMLElement * feed_element = root_element;
+
+			next_url.clear ();
+			for (XMLElement * link_element = feed_element->FirstChildElement ("link");
+				link_element != nullptr;
+				link_element = link_element->NextSiblingElement ("link"))
+			{
+				if (link_element->Attribute ("rel", "next") && link_element->Attribute ("href")) {
+					next_url = link_element->Attribute ("href");
+				}
+			}
+		
+			vector <string> toots;
+			for (XMLElement * entry_element = feed_element->FirstChildElement ("entry");
+				entry_element != nullptr;
+				entry_element = entry_element->NextSiblingElement ("entry"))
+			{
+				XMLElement * verb_element = entry_element->FirstChildElement ("activity:verb");
+				if (verb_element == nullptr) {
+					throw (UserException {__LINE__});
+				}
+				const char * verb_text = verb_element->GetText ();
+				if (verb_text == nullptr) {
+					throw (UserException {__LINE__});
+				}
+				if (string {verb_text} == string {"http://activitystrea.ms/schema/1.0/post"}) {
+					XMLElement * content_element = entry_element->FirstChildElement ("content");
+					if (content_element != nullptr) {
+						const char * content_text = content_element->GetText ();
+						if (content_text != nullptr) {
+							toots.push_back (string {content_text});
+							toots.push_back (string {content_text});
+						}
+					}
+				} else if (string {verb_text} == string {"http://activitystrea.ms/schema/1.0/share"}) {
+					XMLElement * activity_object_element = entry_element->FirstChildElement ("activity:object");
+					if (activity_object_element != nullptr) {
+						XMLElement * content_element = activity_object_element->FirstChildElement ("content");
+						if (content_element != nullptr) {
+							const char * content_text = content_element->GetText ();
+							if (content_text != nullptr) {
+								toots.push_back (string {content_text});
+							}
+						}
+					}
+				}
+			}
+			timeline.insert (timeline.end (), toots.begin (), toots.end ());
+		}
+
+		a_toots = timeline;
 	} catch (HttpException e) {
 		throw (UserException {__LINE__});
 	}
