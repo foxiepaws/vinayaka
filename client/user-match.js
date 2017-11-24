@@ -18,7 +18,7 @@ function search (detail) {
 		search_impl (host, user, detail);
 	} else {
 		document.getElementById ('placeholder').innerHTML =
-			'<string>ユーザー名とホスト名が入力されていません。</strong>';
+			'<strong>ユーザー名とホスト名が入力されていません。</strong>';
 	}
 }
 
@@ -40,22 +40,22 @@ function search_impl (host, user, detail) {
 					var users = JSON.parse (response_text);
 					if (typeof users === 'string') {
 						document.getElementById ('placeholder').innerHTML =
-							'<string>' + escapeHtml (users) + '</strong>';
+							'<strong>' + escapeHtml (users) + '</strong>';
 					} else {
 						show_users (users, detail, host, user);
 					}
 				} catch (e) {
 					document.getElementById ('placeholder').innerHTML =
-						'<string>絶望と仲良くなろうよ。</strong>';
+						'<strong>絶望と仲良くなろうよ。</strong>';
 				}
 			} else {
 				document.getElementById ('placeholder').innerHTML =
-					'<string>情報を取得できませんでした。</strong>';
+					'<strong>情報を取得できませんでした。</strong>';
 			}
 		}
 	}
 	document.getElementById ('placeholder').innerHTML =
-		'<string>お待ちください。</strong>';
+		'<strong>お待ちください。</strong>';
 	document.getElementById ('search-button').setAttribute ('disabled', 'disabled');
 	document.getElementById ('detail-button').setAttribute ('disabled', 'disabled');
 	request.send ();
