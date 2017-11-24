@@ -6,6 +6,10 @@ then
 else
 	echo 'Content-Type: application/json'
 	echo ''
-	echo '"ただいま混み合っております。数分お待ちいただいてからご利用ください。"'
+	echo -n '"ただいま混み合っております。数分お待ちいただいてからご利用ください。現在 '
+	echo -n "$(ps ax | fgrep vinayaka-user-match-impl | head -n 1 | awk '{print $7}')"
+	echo -n @
+	echo -n "$(ps ax | fgrep vinayaka-user-match-impl | head -n 1 | awk '{print $6}')"
+	echo -n ' さんを計算しています。"'
 fi
 
