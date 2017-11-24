@@ -42,7 +42,7 @@ function search_impl (host, user, detail) {
 						document.getElementById ('placeholder').innerHTML =
 							'<string>' + escapeHtml (users) + '</strong>';
 					} else {
-						show_users (users, detail);
+						show_users (users, detail, host, user);
 					}
 				} catch (e) {
 					document.getElementById ('placeholder').innerHTML =
@@ -96,7 +96,7 @@ function escapeHtml (text) {
 };
 
 
-function show_users (users, detail) {
+function show_users (users, detail, current_host, current_user) {
 var placeholder = document.getElementById ('placeholder');
 var html = '';
 var cn;
@@ -112,39 +112,43 @@ if (detail) {
 for (cn = 0; cn < users.length && cn < limit; cn ++) {
 	var user;
 	user = users [cn];
-	var user_html =
-		'<p>' +
-		'<a href="' +
-		'https://' + user.host + '/users/' + user.user +
-		'" target="vinayaka-external-user-profile">' +
-		'<img class="avatar" src="';
-	if (user.avatar && 0 < user.avatar.length) {
-		user_html += user.avatar;
-	} else {
-		user_html += 'missing.svg';
-	}
-	user_html +=
-		'">' +
-		'</a>' +
-		'<br>' +
-		'<a href="' +
-		'https://' + user.host + '/users/' + user.user +
-		'" target="vinayaka-external-user-profile">' +
-		user.user + '@<wbr>' + user.host +
-		'</a>' +
-		'<br>' +
-		'類似度 ' + user.similarity.toFixed (0);
-	if (detail) {
-		user_html += '</p><p>';
-		user_html += '<small>';
-		for (cn_intersection = 0; cn_intersection < user.intersection.length; cn_intersection ++) {
-			user_html += escapeHtml (user.intersection[cn_intersection]);
-			user_html += " ";
+	if (detail ||
+		(! (user.host === current_host && user.user === current_user)))
+	{
+		var user_html =
+			'<p>' +
+			'<a href="' +
+			'https://' + user.host + '/users/' + user.user +
+			'" target="vinayaka-external-user-profile">' +
+			'<img class="avatar" src="';
+		if (user.avatar && 0 < user.avatar.length) {
+			user_html += user.avatar;
+		} else {
+			user_html += 'missing.svg';
 		}
-		user_html += '</small>';
+		user_html +=
+			'">' +
+			'</a>' +
+			'<br>' +
+			'<a href="' +
+			'https://' + user.host + '/users/' + user.user +
+			'" target="vinayaka-external-user-profile">' +
+			user.user + '@<wbr>' + user.host +
+			'</a>' +
+			'<br>' +
+			'類似度 ' + user.similarity.toFixed (0);
+		if (detail) {
+			user_html += '</p><p>';
+			user_html += '<small>';
+			for (cn_intersection = 0; cn_intersection < user.intersection.length; cn_intersection ++) {
+				user_html += escapeHtml (user.intersection[cn_intersection]);
+				user_html += " ";
+			}
+			user_html += '</small>';
+		}
+		user_html += '</p>';
+		html += user_html;
 	}
-	user_html += '</p>';
-	html += user_html;
 }
 placeholder.innerHTML = html;
 } /* function show_users (users) { */
