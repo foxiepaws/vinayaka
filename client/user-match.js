@@ -171,3 +171,43 @@ document.getElementById ('user-input').addEventListener ('input', function () {
 }, false); /* window.addEventListener ('load', function () { */
 
 
+window.addEventListener ('load', function () {
+	var match = /^\?([\w\.\-]+)\+(\w+)$/.exec (window.location.search);
+	if (match) {
+		var host = match [1];
+		var user = match [2];
+		document.getElementById ('user-input').value = user + '@' + host;
+		search_impl (host, user, false);
+	}
+}, false); /* window.addEventListener ('load', function () { */
+
+
+window.addEventListener ('load', function () {
+if (window.location.search.length <= 1) {
+	var request = new XMLHttpRequest;
+	request.open ('GET', '/cgi-bin/vinayaka-report-cache-api.cgi');
+	request.onload = function () {
+		if (request.readyState === request.DONE && request.status === 200) {
+			var response_text = request.responseText;
+			var users = JSON.parse (response_text);
+			if (0 < users.length) {
+				var html = '';
+				html += '<p>以下のみなさまは計算結果をキャッシュ済みのため、お待ちいただくことなく表示できます。</p>';
+				for (var cn = 0; cn < users.length; cn ++) {
+					var user = users[cn];
+					html +=
+						'<p>' +
+						'<a href="?' + encodeURIComponent (user.host) + '+' + encodeURIComponent (user.user) + '">' +
+						escapeHtml (user.user) + '@' + escapeHtml (user.host) +
+						'</a>' +
+						'</p>';
+				}
+				document.getElementById ('placeholder').innerHTML =　html;
+			}
+		}
+	}
+	request.send ();
+}
+}, false); /* window.addEventListener ('load', function () { */
+
+
