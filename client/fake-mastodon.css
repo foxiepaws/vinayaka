@@ -71,6 +71,8 @@ input[type=button] {
 	font-size: 1em;
 	width: 128px;
 	height: 48px;
+	margin-right: 8px;
+	margin-bottom: 8px;
 }
 
 div.inputs {
