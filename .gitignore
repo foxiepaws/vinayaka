@@ -37,5 +37,5 @@ vinayaka-user-match-impl
 vinayaka-user-avatar-cron
 vinayaka-user-match-cache-fetcher
 vinayaka-report-cache-api.cgi
-
+vinayaka-model-collector-impl
 

@@ -27,11 +27,12 @@ objects = \
 cgi_binaries = \
 	vinayaka-report-cache-api.cgi
 cron_binaries = \
-	vinayaka-user-words-impl \
 	vinayaka-user-avatar-cron
 impl_binaries = \
+	vinayaka-user-words-impl \
 	vinayaka-user-match-impl \
-	vinayaka-user-match-cache-fetcher
+	vinayaka-user-match-cache-fetcher \
+	vinayaka-model-collector-impl
 impl_scripts = \
 	vinayaka-user-match-resource-guard
 binaries = $(cgi_binaries) $(cron_binaries) $(impl_binaries)
@@ -40,7 +41,8 @@ cgi_scripts = \
 	vinayaka-user-profiles-api.cgi
 cron_scripts = \
 	vinayaka-user-words-meta-cron \
-	vinayaka-clear-cache-cron
+	vinayaka-clear-cache-cron \
+	vinayaka-model-collector-cron
 cgis = $(cgi_binaries) $(cgi_scripts)
 crons = $(cron_binaries) $(cron_scripts)
 impls = $(impl_binaries) $(impl_scripts)
@@ -66,6 +68,9 @@ vinayaka-user-match-cache-fetcher: tinyxml2.o distsn.o cache-fetcher.o
 
 vinayaka-report-cache-api.cgi: tinyxml2.o distsn.o report-cache.o
 	$(CXX) tinyxml2.o distsn.o report-cache.o -lcurl $(CFLAGS) -o $@
+
+vinayaka-model-collector-impl: tinyxml2.o distsn.o model-collector.o
+	$(CXX) tinyxml2.o distsn.o model-collector.o -lcurl $(CFLAGS) -o $@
 
 install: $(cgis)
 	$(INSTALL_PROGRAM) $(cgis) --target-directory=$(cgidir)
