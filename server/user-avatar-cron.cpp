@@ -69,7 +69,7 @@ static void write_to_storage (vector <pair <User, Profile>> users_and_profiles, 
 	out << "[";
 	for (unsigned int a = 0; a < users_and_profiles.size (); a ++) {
 		if (0 < a) {
-			out << ",";
+		  out << "," << endl;
 		}
 		auto user_and_profile = users_and_profiles.at (a);
 		auto user = user_and_profile.first;
