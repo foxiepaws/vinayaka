@@ -438,7 +438,7 @@ vector <string> get_words_from_toots (vector <string> toots, unsigned int word_l
 }
 
 
-static void get_profile_impl (string atom_query, string &a_screen_name, string &a_bio, vector <string> &a_toots, string &a_avatar)
+static void get_profile_impl (bool pagenation, string atom_query, string &a_screen_name, string &a_bio, vector <string> &a_toots)
 {
 	try {
 		vector <string> timeline;
@@ -456,16 +456,6 @@ static void get_profile_impl (string atom_query, string &a_screen_name, string &
 			throw (UserException {__LINE__});
 		}
 		XMLElement * feed_element = root_element;
-
-		string avatar;
-		XMLElement * logo_element = feed_element->FirstChildElement ("logo");
-		if (logo_element != nullptr) {
-			const char * logo_text = logo_element->GetText ();
-			if (logo_text != nullptr) {
-				avatar = string {logo_text};
-			}
-		}
-		a_avatar = avatar;
 
 		XMLElement * author_element = feed_element->FirstChildElement ("author");
 		if (author_element == nullptr) {
@@ -489,12 +479,14 @@ static void get_profile_impl (string atom_query, string &a_screen_name, string &
 		}
 		
 		string next_url;
-		for (XMLElement * link_element = feed_element->FirstChildElement ("link");
-			link_element != nullptr;
-			link_element = link_element->NextSiblingElement ("link"))
-		{
-			if (link_element->Attribute ("rel", "next") && link_element->Attribute ("href")) {
-				next_url = link_element->Attribute ("href");
+		if (pagenation) {
+			for (XMLElement * link_element = feed_element->FirstChildElement ("link");
+				link_element != nullptr;
+				link_element = link_element->NextSiblingElement ("link"))
+			{
+				if (link_element->Attribute ("rel", "next") && link_element->Attribute ("href")) {
+					next_url = link_element->Attribute ("href");
+				}
 			}
 		}
 		
@@ -585,22 +577,15 @@ static void get_profile_impl (string atom_query, string &a_screen_name, string &
 }
 
 
-void get_profile (string host, string user, string &a_screen_name, string &a_bio, vector <string> &a_toots, string & a_avatar)
+void get_profile (bool pagenation, string host, string user, string &a_screen_name, string &a_bio, vector <string> &a_toots)
 {
 	try {
 		string query = string {"https://"} + host + string {"/users/"} + user + string {".atom"};
-		get_profile_impl (query, a_screen_name, a_bio, a_toots, a_avatar);
+		get_profile_impl (pagenation, query, a_screen_name, a_bio, a_toots);
 	} catch (UserException e) {
 		string query = string {"https://"} + host + string {"/users/"} + user + string {"/feed.atom"};
-		get_profile_impl (query, a_screen_name, a_bio, a_toots, a_avatar);
+		get_profile_impl (pagenation, query, a_screen_name, a_bio, a_toots);
 	}
-}
-
-
-void get_profile (string host, string user, string &a_screen_name, string &a_bio, vector <string> &a_toots)
-{
-	string avatar;
-	get_profile (host, user, a_screen_name, a_bio, a_toots, avatar);
 }
 
 
@@ -671,13 +656,13 @@ void get_profile (string host, string user, string &a_screen_name, string &a_bio
 }
 
 
-vector <string> get_words (string host, string user, unsigned int word_length, unsigned int vocabulary_size)
+vector <string> get_words (bool pagenation, string host, string user, unsigned int word_length, unsigned int vocabulary_size)
 {
 	cerr << user << "@" << host << endl;
 	string screen_name;
 	string bio;
 	vector <string> toots;
-	get_profile (host, user, screen_name, bio, toots);
+	get_profile (pagenation, host, user, screen_name, bio, toots);
 	toots.push_back (screen_name);
 	toots.push_back (bio);
 	vector <string> words = get_words_from_toots (toots, word_length, vocabulary_size);

@@ -93,7 +93,7 @@ static void get_and_save_words (unsigned int word_length, unsigned int vocabular
 	vector <pair <User, vector <string>>> users_and_words;
 	for (auto user: users) {
 		try {
-			auto words = get_words (user.host, user.user, word_length, vocabulary_size);
+			auto words = get_words (false /* pagenation */, user.host, user.user, word_length, vocabulary_size);
 			users_and_words.push_back (pair <User, vector <string>> {user, words});
 		} catch (UserException e) {
 			cerr << "Error " << user.user << "@" << user.host << " " << e.line << endl;

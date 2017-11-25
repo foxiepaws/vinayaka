@@ -322,7 +322,7 @@ int main (int argc, char **argv)
 	string screen_name;
 	string bio;
 	vector <string> toots;
-	get_profile (host, user, screen_name, bio, toots);
+	get_profile (true /* pagenation */, host, user, screen_name, bio, toots);
 	toots.push_back (screen_name);
 	toots.push_back (bio);
 
