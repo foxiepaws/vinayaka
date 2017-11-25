@@ -217,7 +217,7 @@ var g_share_intent = '';
 
 function activate_share_button (users, current_host, current_user) {
 	var intent = '';
-	intent += '@' + current_user + '@' + current_host + "\n" +
+	intent += '@' + current_user + '@' + current_host + " " +
 		'に似ているユーザー' + "\n\n";
 	for (var cn = 0; cn < 6 && cn < users.length; cn ++) {
 		var user = users[cn];
@@ -227,7 +227,7 @@ function activate_share_button (users, current_host, current_user) {
 	}
 	intent += "\n";
 	intent += 'マストドンユーザーマッチング' + "\n";
-	intent += 'http://vinayaka.distsn.org' + "\n";
+	intent += 'http://vinayaka.distsn.org' + " ";
 	intent += '#vinayaka' + "\n";
 	g_share_intent = intent;
 	document.getElementById ('share-button').removeAttribute ('style');
