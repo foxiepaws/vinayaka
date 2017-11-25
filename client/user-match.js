@@ -43,6 +43,7 @@ function search_impl (host, user, detail) {
 							'<strong>' + escapeHtml (users) + '</strong>';
 					} else {
 						show_users (users, detail, host, user);
+						activate_share_button (users, host, user);
 					}
 				} catch (e) {
 					document.getElementById ('placeholder').innerHTML =
@@ -210,4 +211,35 @@ if (window.location.search.length <= 1) {
 }
 }, false); /* window.addEventListener ('load', function () { */
 
+
+var g_share_intent = '';
+
+
+function activate_share_button (users, current_host, current_user) {
+	var intent = '';
+	intent += '@' + current_user + '@' + current_host + "\n" +
+		'に似ているユーザー' + "\n\n";
+	for (var cn = 0; cn < 6 && cn < users.length; cn ++) {
+		var user = users[cn];
+		if (! (user.host === current_host && user.user === current_user)) {
+			intent += '@' + user.user + '@' + user.host + "\n";
+		}
+	}
+	intent += "\n";
+	intent += 'マストドンユーザーマッチング' + "\n";
+	intent += 'http://vinayaka.distsn.org' + "\n";
+	intent += '#vinayaka' + "\n";
+	g_share_intent = intent;
+	document.getElementById ('share-button').removeAttribute ('style');
+};
+
+
+window.addEventListener ('load', function () {
+document.getElementById ('share-button').addEventListener ('click', function () {
+	var intent = g_share_intent;
+	/* intent = intent.replace (/@/g, '$'); */
+	var url = 'https://masha.re/#' + encodeURIComponent (intent);
+	window.open (url);
+}, false); /* document.getElementById ('share-button').addEventListener ('click', function () { */
+}, false); /* window.addEventListener ('load', function () { */
 
