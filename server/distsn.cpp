@@ -171,6 +171,8 @@ string escape_json (string in)
 	for (auto c: in) {
 		if (c == '\n') {
 			out += string {"\\n"};
+		} else if (0x00 <= c && c <= 0x20) {
+			out += string {"�"};
 		} else if (c == '"'){
 			out += string {"\\\""};
 		} else if (c == '\\'){
