@@ -329,9 +329,7 @@ int main (int argc, char **argv)
 	vector <ModelTopology> models = {
 		ModelTopology {6, 400},
 		ModelTopology {9, 400},
-		ModelTopology {12, 400},
-		ModelTopology {15, 400},
-		ModelTopology {18, 400}
+		ModelTopology {12, 400}
 	};
 	
 	set <string> words_of_listener = get_words_of_listener (toots, models);
