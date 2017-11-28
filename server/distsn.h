@@ -54,6 +54,13 @@ public:
 };
 
 
+class ParseException: public ExceptionWithLineNumber {
+public:
+	ParseException () { };
+	ParseException (unsigned int a_line): ExceptionWithLineNumber (a_line) { };
+};
+
+
 class UserAndWords {
 public:
 	std::string user;
@@ -76,6 +83,9 @@ void get_profile (std::string host, std::string user, std::string &a_screen_name
 std::vector <std::string> get_words (bool pagenation, std::string host, std::string user, unsigned int word_length, unsigned int vocabulary_size);
 
 std::vector <UserAndWords> read_storage (std::string filename);
+
+std::vector <std::vector <std::string>> parse_csv (FILE *in);
+std::string escape_csv (std::string in);
 
 
 #endif /* #ifndef DISTSN_H */

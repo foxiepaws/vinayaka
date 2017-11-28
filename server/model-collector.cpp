@@ -35,30 +35,18 @@ public:
 
 static void write_to_storage (vector <pair <User, vector <string>>> users_and_words, ofstream &out)
 {
-	out << "[";
-	for (unsigned int a = 0; a < users_and_words.size (); a ++) {
-		if (0 < a) {
-			out << ",";
-		}
-		auto user_and_words = users_and_words.at (a);
+	for (auto user_and_words: users_and_words) {
 		auto user = user_and_words.first;
 		auto words = user_and_words.second;
 		out
-			<< "{"
-			<< "\"host\":\"" << escape_json (user.host) << "\","
-			<< "\"user\":\"" << escape_json (user.user) << "\","
-			<< "\"words\":"
-			<< "[";
-			for (unsigned int b = 0; b < words.size (); b ++) {
-				if (0 < b) {
-					out << ",";
-				}
-				auto word = words.at (b);
-				out << "\"" << escape_json (word) << "\"";
+			<< "\"" << escape_csv (user.host) << "\","
+			<< "\"" << escape_csv (user.user) << "\",";
+
+			for (auto word: words) {
+				out << "\"" << escape_csv (word) << "\",";
 			}
-		out << "]" << "}";
+		out << endl;
 	}
-	out << "]";
 }
 
 
@@ -135,7 +123,7 @@ static void save_union_of_history (unsigned int word_length, unsigned int vocabu
 		users_and_words.push_back (pair <User, vector <string>> {user, top_words});
 	}
 	stringstream filename;
-	filename << "/var/lib/vinayaka/user-words." << word_length << "." << vocabulary_size << ".json";
+	filename << "/var/lib/vinayaka/user-words." << word_length << "." << vocabulary_size << ".csv";
 	ofstream out {filename.str ()};
 	write_to_storage (users_and_words, out);
 }

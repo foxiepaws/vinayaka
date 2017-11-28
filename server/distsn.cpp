@@ -1,3 +1,4 @@
+#include <iostream>
 #include <sstream>
 #include <curl/curl.h>
 #include "distsn.h"
@@ -710,5 +711,92 @@ vector <UserAndWords> read_storage (string filename)
 	return memo;
 }
 
+
+vector <vector <string>> parse_csv (FILE *in)
+{
+        string s;
+        for (; ; ) {
+                if (feof (in)) {
+                        break;
+                }
+                char b [1024];
+                fgets (b, 1024, in);
+                s += string {b};
+        }
+        
+        unsigned int state = 0;
+        string cell_cache;
+        vector <string> row_cache;
+        vector <vector <string>> table_cache;
+        
+        unsigned int line = 1;
+        
+        for (auto c: s) {
+        	if (c == '\n') {
+        		line ++;
+        	}
+        	switch (state) {
+        	case 0:
+        		if (c == '"') {
+        			state = 1;
+        		} else if (c == '\r') {
+        			/* Do nothing, */
+        		} else if (c == '\n') {
+        			table_cache.push_back (row_cache);
+        			row_cache.clear ();
+        		} else {
+				return table_cache;
+        		}
+        		break;
+        	case 1:
+        		if (c == '"') {
+        			state = 2;
+        		} else {
+        			cell_cache.push_back (c);
+        		}
+        		break;
+        	case 2:
+        		if (c == '"') {
+        			cell_cache.push_back ('"');
+        			state = 1;
+        		} else if (c == ',') {
+        			state = 0;
+        			row_cache.push_back (cell_cache);
+        			cell_cache.clear ();
+        		} else if (c == '\r') {
+        			/* Do nothing, */
+        		} else if (c == '\n') {
+        			row_cache.push_back (cell_cache);
+        			cell_cache.clear ();
+        			table_cache.push_back (row_cache);
+        			row_cache.clear ();
+        		} else {
+        			cerr << "Line: " << line << endl;
+        			cerr << "Character: " << c << endl;
+        			throw ParseException {__LINE__};
+        		}
+        		break;
+        	default:
+       			throw ParseException {__LINE__};
+        	}
+        }
+        
+        return table_cache;
+}
+
+
+string escape_csv (string in)
+{
+	string out;
+	for (auto c: in) {
+		if (c == '"') {
+			out.push_back ('"');
+			out.push_back ('"');
+		} else {
+			out.push_back (c);
+		}
+	}
+	return out;
+}
 
 

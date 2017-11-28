@@ -124,20 +124,31 @@ static map <User, set <string>> get_words_of_speakers (vector <ModelTopology> mo
 	map <User, set <string>> users_to_words;
 	for (auto model: models) {
 		stringstream filename;
-		filename << "/var/lib/vinayaka/user-words." << model.word_length << "." << model.vocabulary_size << ".json";
-		try {
-			vector <UserAndWords> users_and_words = read_storage (filename.str ());
-			for (auto user_and_words: users_and_words) {
-				User user {user_and_words.host, user_and_words.user};
-				set <string> words {user_and_words.words.begin (), user_and_words.words.end ()};
-				if (users_to_words.find (user) == users_to_words.end ()) {
-					users_to_words.insert (pair <User, set <string>> {user, words});
-				} else {
-					users_to_words.at (user).insert (words.begin (), words.end ());
+		filename << "/var/lib/vinayaka/user-words." << model.word_length << "." << model.vocabulary_size << ".csv";
+		FILE *in = fopen (filename.str ().c_str (), "r");
+		if (in == nullptr) {
+			cerr << "File not found: " << filename.str () << endl;
+		} else {
+			try {
+				vector <vector <string>> table = parse_csv (in);
+				fclose (in);
+				for (auto row: table) {
+					if (2 < row.size ()) {
+						User user {row.at (0), row.at (1)};
+						set <string> words;
+						for (unsigned int cn = 2; cn < row.size (); cn ++) {
+							words.insert (row.at (cn));
+						}
+						if (users_to_words.find (user) == users_to_words.end ()) {
+							users_to_words.insert (pair <User, set <string>> {user, words});
+						} else {
+							users_to_words.at (user).insert (words.begin (), words.end ());
+						}
+					}
 				}
+			} catch (ParseException e) {
+				cerr << "ParseException " << e.line << " " << filename.str () << endl;
 			}
-		} catch (ModelException e) {
-			cerr << "ModelException " << e.line << " " << filename.str () << endl;
 		}
 	}
 	return users_to_words;
