@@ -94,9 +94,38 @@ static vector <string> get_top_words (vector <string> a_words, unsigned int a_vo
 }
 
 	
+static vector <User> get_users ()
+{
+	vector <User> users;
+	string query = string {"http://distsn.org/cgi-bin/distsn-user-recommendation-api.cgi?5000"};
+	cerr << query << endl;
+	string reply = http_get (query);
+	picojson::value json_value;
+	string error = picojson::parse (json_value, reply);
+	if (! error.empty ()) {
+		cerr << error << endl;
+		exit (1);
+	}
+	auto user_jsons = json_value.get <picojson::array> ();
+	for (auto user_json: user_jsons) {
+		auto user_object = user_json.get <picojson::object> ();
+		string host = user_object.at (string {"host"}).get <string> ();
+		string username = user_object.at (string {"username"}).get <string> ();
+		users.push_back (User {host, username});
+	}
+	return users;
+}
+
+
 static void save_union_of_history (unsigned int word_length, unsigned int vocabulary_size)
 {
 	map <User, vector <string>> users_to_words;
+
+	auto users = get_users ();
+	for (auto user: users) {
+		users_to_words.insert (pair <User, vector <string>> {user, vector <string> {}});
+	}
+
 	for (unsigned int cn = 0; cn < history_variations; cn ++) {
 		stringstream filename;
 		filename << "/var/lib/vinayaka/user-words." << word_length << "." << vocabulary_size << "." << cn << ".json";
@@ -105,9 +134,7 @@ static void save_union_of_history (unsigned int word_length, unsigned int vocabu
 			for (auto user_and_words: users_and_words) {
 				User user {user_and_words.host, user_and_words.user};
 				vector <string> words {user_and_words.words};
-				if (users_to_words.find (user) == users_to_words.end ()) {
-					users_to_words.insert (pair <User, vector <string>> {user, words});
-				} else {
+				if (users_to_words.find (user) != users_to_words.end ()) {
 					users_to_words.at (user).insert (users_to_words.at (user).end (), words.begin (), words.end ());
 				}
 			}
