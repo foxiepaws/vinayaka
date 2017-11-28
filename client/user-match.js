@@ -237,8 +237,13 @@ function activate_share_button (users, current_host, current_user) {
 window.addEventListener ('load', function () {
 document.getElementById ('share-button').addEventListener ('click', function () {
 	var intent = g_share_intent;
-	/* intent = intent.replace (/@/g, '$'); */
-	var url = 'https://masha.re/#' + encodeURIComponent (intent);
+	var host = window.localStorage.getItem ('host');
+	var url;
+	if (host && 0 < host.length) {
+		url = 'http://' + host + '/share?text=' + encodeURIComponent (intent);
+	} else {
+		url = 'https://masha.re/#' + encodeURIComponent (intent);
+	}
 	window.open (url);
 }, false); /* document.getElementById ('share-button').addEventListener ('click', function () { */
 }, false); /* window.addEventListener ('load', function () { */
