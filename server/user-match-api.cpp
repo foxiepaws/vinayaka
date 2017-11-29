@@ -289,35 +289,10 @@ static string format_result
 
 static void add_to_cache (string host, string user, string result)
 {
-	picojson::array results;
-	FILE * in = fopen ("/var/lib/vinayaka/match-cache.json", "rb");
-	if (in != nullptr) {
-		string s;
-		for (; ; ) {
-			if (feof (in)) {
-			break;
-		}
-		char b [1024];
-			fgets (b, 1024, in);
-			s += string {b};
-		}
-		picojson::value json_value;
-		picojson::parse (json_value, s);
-		results = json_value.get <picojson::array> ();
-		fclose (in);
-	}
-	ofstream out {"/var/lib/vinayaka/match-cache.json"};
-	out << "[";
-	out << "{";
-	out << "\"host\":\"" << host << "\",";
-	out << "\"user\":\"" << user << "\",";
-	out << "\"result\":" << result;
-	out << "}";
-	for (unsigned int cn = 0; cn < results.size (); cn ++) {
-		out << ",";
-		out << results.at (cn).serialize ();
-	}
-	out << "]";
+	ofstream out {"/var/lib/vinayaka/match-cache.csv", std::ofstream::out | std::ofstream::app};
+	out << "\"" << escape_csv (host) << "\",";
+	out << "\"" << escape_csv (user) << "\",";
+	out << "\"" << escape_csv (result) << "\"" << endl;
 }
 
 

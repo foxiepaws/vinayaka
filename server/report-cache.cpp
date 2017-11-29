@@ -9,37 +9,27 @@ using namespace std;
 
 int main (int argc, char *argv [])
 {
-	picojson::array results;
-	FILE * in = fopen ("/var/lib/vinayaka/match-cache.json", "rb");
+	vector <vector <string>> table;
+	FILE * in = fopen ("/var/lib/vinayaka/match-cache.csv", "rb");
 	if (in != nullptr) {
-		string s;
-		for (; ; ) {
-			if (feof (in)) {
-			break;
-		}
-		char b [1024];
-			fgets (b, 1024, in);
-			s += string {b};
-		}
-		picojson::value json_value;
-		picojson::parse (json_value, s);
-		results = json_value.get <picojson::array> ();
+		table = parse_csv (in);
 		fclose (in);
 	}
 	cout << "Content-Type: application/json" << endl << endl;
 	cout << "[";
-	for (unsigned int cn = 0; cn < results.size (); cn ++) {
-		if (0 < cn) {
-			cout << ",";
+	for (unsigned int cn = 0; cn < table.size (); cn ++) {
+		auto row = table.at (cn);
+		if (2 < row.size ()) {
+			if (0 < cn) {
+				cout << ",";
+			}
+			string host {row.at (0)};
+			string user {row.at (1)};
+			cout << "{"
+				<< "\"host\":\"" << escape_json (host) << "\","
+				<< "\"user\":\"" << escape_json (user) << "\""
+				<< "}";
 		}
-		auto result = results.at (cn);
-		auto result_object = result.get <picojson::object> ();
-		string host = result_object.at (string {"host"}).get <string> ();
-		string user = result_object.at (string {"user"}).get <string> ();
-		cout << "{"
-			<< "\"host\":\"" << escape_json (host) << "\","
-			<< "\"user\":\"" << escape_json (user) << "\""
-			<< "}";
 	}
 	cout << "]";
 }

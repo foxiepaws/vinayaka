@@ -12,30 +12,17 @@ int main (int argc, char *argv [])
 	string host {argv [1]};
 	string user {argv [2]};
 
-	picojson::array results;
-	FILE * in = fopen ("/var/lib/vinayaka/match-cache.json", "rb");
+	vector <vector <string>> table;
+	FILE * in = fopen ("/var/lib/vinayaka/match-cache.csv", "rb");
 	if (in != nullptr) {
-		string s;
-		for (; ; ) {
-			if (feof (in)) {
-			break;
-		}
-		char b [1024];
-			fgets (b, 1024, in);
-			s += string {b};
-		}
-		picojson::value json_value;
-		picojson::parse (json_value, s);
-		results = json_value.get <picojson::array> ();
+		table = parse_csv (in);
 		fclose (in);
 	}
-	for (auto result: results) {
-		auto result_object = result.get <picojson::object> ();
-		if (result_object.at (string {"host"}).get <string> () == host
-			&& result_object.at (string {"user"}).get <string> () == user)
-		{
+	for (auto row: table) {
+		if (2 < row.size () && row.at (0) == host && row.at (1) == user) {
+			string result {row.at (2)};
 			cout << "Content-Type: application/json" << endl << endl;
-			cout << result_object. at (string {"result"}).serialize ();
+			cout << result;
 			return 0;
 		}
 	}

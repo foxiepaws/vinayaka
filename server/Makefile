@@ -88,6 +88,7 @@ initialize:
 
 refresh:
 	-$(RM) /var/lib/vinayaka/*.json
+	-$(RM) /var/lib/vinayaka/*.csv
 
 clean:
 	-$(RM) $(objects) $(binaries)
