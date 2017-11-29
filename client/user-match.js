@@ -81,9 +81,11 @@ window.addEventListener ('load', function () {
 
 window.addEventListener ('load', function () {
 document.getElementById ('search-button').addEventListener ('click', function () {
+	document.getElementById ('explanation-detail').setAttribute ('style', 'display: none;');
 	search (false);
 }, false);
 document.getElementById ('detail-button').addEventListener ('click', function () {
+	document.getElementById ('explanation-detail').removeAttribute ('style');
 	search (true);
 }, false);
 }, false); /* window.addEventListener ('load', function () { */
