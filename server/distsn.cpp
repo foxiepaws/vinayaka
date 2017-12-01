@@ -404,13 +404,26 @@ static bool valid_word (string word)
 }
 
 
+static bool enquete_toot (string toot)
+{
+	return toot.find (string {"friends.nico"}) != string::npos
+		&& toot.find (string {"アンケート"}) != string::npos;
+}
+
+
+static bool valid_toot (string toot)
+{
+	return ! enquete_toot (toot);
+}
+
+
 vector <string> get_words_from_toots (vector <string> toots, unsigned int word_length, unsigned int vocabulary_size)
 {
 	map <string, unsigned int> occupancy_count_map;
 	for (auto raw_toot: toots) {
 		string toot = remove_html (raw_toot);
 		toot = remove_url (toot);
-		if (word_length <= toot.size ()) {
+		if (valid_toot (toot) && word_length <= toot.size ()) {
 			for (unsigned int offset = 0; offset <= toot.size () - word_length; offset ++) {
 				string word = toot.substr (offset, word_length);
 				if (valid_word (word)) {
