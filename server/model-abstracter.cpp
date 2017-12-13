@@ -30,6 +30,7 @@ public:
 	string extreme_b;
 public:
 	void update_diameter ();
+	void divide (AbstractWord &a, AbstractWord &b) const;
 };
 
 
@@ -108,9 +109,45 @@ int main (int argc, char **argv)
 		root.words.push_back (word_and_speakers.first);
 	}
 	root.update_diameter ();
-	cout << root.diameter << endl;
-	cout << root.extreme_a << endl;
-	cout << root.extreme_b << endl;
+	
+	vector <AbstractWord> abstract_words;
+	abstract_words.push_back (root);
+	
+	for (; ; ) {
+		cerr << abstract_words.size () << endl;
+		if (256 <= abstract_words.size ()) {
+			break;
+		}
+		unsigned int max_diameter_index = 0;
+		unsigned int max_diameter = 0;
+		for (unsigned int cn = 0; cn < abstract_words.size (); cn ++) {
+			if (max_diameter < abstract_words.at (cn).diameter) {
+				max_diameter = abstract_words.at (cn).diameter;
+				max_diameter_index = cn;
+			}
+		}
+		if (max_diameter == 0) {
+			break;
+		}
+		const AbstractWord &divided = abstract_words.at (max_diameter_index);
+		AbstractWord a;
+		AbstractWord b;
+		divided.divide (a, b);
+		a.update_diameter ();
+		b.update_diameter ();
+		abstract_words.at (max_diameter_index) = a;
+		abstract_words.push_back (b);
+	}
+
+	ofstream out {"/var/lib/vinayaka/abstract-words.csv"};
+	
+	for (auto abstract_word: abstract_words) {
+		out << "\"" << escape_csv (abstract_word.label) << "\",";
+		for (auto word: abstract_word.words) {
+			out << "\"" << escape_csv (word) << "\",";
+		}
+		out << endl;
+	}
 }
 
 
@@ -139,6 +176,25 @@ void AbstractWord::update_diameter ()
 	diameter = distance (a, b);
 	extreme_a = a;
 	extreme_b = b;
+}
+
+
+void AbstractWord::divide (AbstractWord &a, AbstractWord &b) const
+{
+	a.label = extreme_a;
+	a.words.clear ();
+	b.label = extreme_b;
+	b.words.clear ();
+
+	for (auto word: words) {
+		unsigned int distance_a = distance (word, extreme_a);
+		unsigned int distance_b = distance (word, extreme_b);
+		if (distance_a < distance_b) {
+			a.words.push_back (word);
+		} else {
+			b.words.push_back (word);
+		}
+	}
 }
 
 
