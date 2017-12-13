@@ -119,36 +119,33 @@ static set <string> get_words_of_listener (vector <string> toots, vector <ModelT
 };
 
 
-static map <User, set <string>> get_words_of_speakers (vector <ModelTopology> models)
+static map <User, set <string>> get_words_of_speakers ()
 {
 	map <User, set <string>> users_to_words;
-	for (auto model: models) {
-		stringstream filename;
-		filename << "/var/lib/vinayaka/user-words." << model.word_length << "." << model.vocabulary_size << ".csv";
-		FILE *in = fopen (filename.str ().c_str (), "r");
-		if (in == nullptr) {
-			cerr << "File not found: " << filename.str () << endl;
-		} else {
-			try {
-				vector <vector <string>> table = parse_csv (in);
-				fclose (in);
-				for (auto row: table) {
-					if (2 < row.size ()) {
-						User user {row.at (0), row.at (1)};
-						set <string> words;
-						for (unsigned int cn = 2; cn < row.size (); cn ++) {
-							words.insert (row.at (cn));
-						}
-						if (users_to_words.find (user) == users_to_words.end ()) {
-							users_to_words.insert (pair <User, set <string>> {user, words});
-						} else {
-							users_to_words.at (user).insert (words.begin (), words.end ());
-						}
+	string filename {"/var/lib/vinayaka/user-words.csv"};
+	FILE *in = fopen (filename.c_str (), "r");
+	if (in == nullptr) {
+		cerr << "File not found: " << filename << endl;
+	} else {
+		try {
+			vector <vector <string>> table = parse_csv (in);
+			fclose (in);
+			for (auto row: table) {
+				if (2 < row.size ()) {
+					User user {row.at (0), row.at (1)};
+					set <string> words;
+					for (unsigned int cn = 2; cn < row.size (); cn ++) {
+						words.insert (row.at (cn));
+					}
+					if (users_to_words.find (user) == users_to_words.end ()) {
+						users_to_words.insert (pair <User, set <string>> {user, words});
+					} else {
+						users_to_words.at (user).insert (words.begin (), words.end ());
 					}
 				}
-			} catch (ParseException e) {
-				cerr << "ParseException " << e.line << " " << filename.str () << endl;
 			}
+		} catch (ParseException e) {
+			cerr << "ParseException " << e.line << " " << filename << endl;
 		}
 	}
 	return users_to_words;
@@ -318,7 +315,7 @@ int main (int argc, char **argv)
 	};
 	
 	set <string> words_of_listener = get_words_of_listener (toots, models);
-	map <User, set <string>> speaker_to_words = get_words_of_speakers (models);
+	map <User, set <string>> speaker_to_words = get_words_of_speakers ();
 
 	vector <UserAndSimilarity> speakers_and_similarity;
 	map <User, set <string>> speaker_to_intersection;
