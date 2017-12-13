@@ -33,7 +33,8 @@ impl_binaries = \
 	vinayaka-user-match-impl \
 	vinayaka-user-match-cache-fetcher \
 	vinayaka-model-collector-impl \
-	vinayaka-super-model-collector-impl
+	vinayaka-super-model-collector-impl \
+	vinayaka-model-abstracter-impl
 impl_scripts = \
 	vinayaka-user-match-resource-guard
 binaries = $(cgi_binaries) $(cron_binaries) $(impl_binaries)
@@ -75,6 +76,9 @@ vinayaka-model-collector-impl: tinyxml2.o distsn.o model-collector.o
 
 vinayaka-super-model-collector-impl: tinyxml2.o distsn.o super-model-collector.o
 	$(CXX) tinyxml2.o distsn.o super-model-collector.o -lcurl $(CFLAGS) -o $@
+
+vinayaka-model-abstracter-impl: tinyxml2.o distsn.o model-abstracter.o
+	$(CXX) tinyxml2.o distsn.o model-abstracter.o -lcurl $(CFLAGS) -o $@
 
 install: $(cgis)
 	$(INSTALL_PROGRAM) $(cgis) --target-directory=$(cgidir)
