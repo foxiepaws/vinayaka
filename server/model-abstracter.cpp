@@ -31,6 +31,10 @@ public:
 public:
 	void update_diameter ();
 	void divide (AbstractWord &a, AbstractWord &b) const;
+public:
+	bool operator < (const AbstractWord &r) const {
+		return label < r.label;
+	};
 };
 
 
@@ -110,33 +114,41 @@ int main (int argc, char **argv)
 	}
 	root.update_diameter ();
 	
-	vector <AbstractWord> abstract_words;
-	abstract_words.push_back (root);
+	set <AbstractWord> abstract_words;
+	abstract_words.insert (root);
 	
 	for (; ; ) {
 		cerr << abstract_words.size () << endl;
 		if (256 <= abstract_words.size ()) {
 			break;
 		}
-		unsigned int max_diameter_index = 0;
+		AbstractWord divided;
 		unsigned int max_diameter = 0;
-		for (unsigned int cn = 0; cn < abstract_words.size (); cn ++) {
-			if (max_diameter < abstract_words.at (cn).diameter) {
-				max_diameter = abstract_words.at (cn).diameter;
-				max_diameter_index = cn;
+		for (auto &abstract_word: abstract_words) {
+			if (max_diameter < abstract_word.diameter) {
+				max_diameter = abstract_word.diameter;
+				divided = abstract_word;
 			}
 		}
+		cerr << "max_diameter: " << max_diameter << endl;
 		if (max_diameter == 0) {
 			break;
 		}
-		const AbstractWord &divided = abstract_words.at (max_diameter_index);
+		abstract_words.erase (divided);
 		AbstractWord a;
 		AbstractWord b;
 		divided.divide (a, b);
-		a.update_diameter ();
-		b.update_diameter ();
-		abstract_words.at (max_diameter_index) = a;
-		abstract_words.push_back (b);
+		
+		const unsigned int minimum_size_of_abstract_word = 3;
+		
+		if (minimum_size_of_abstract_word <= a.words.size ()) {
+			a.update_diameter ();
+			abstract_words.insert (a);
+		}
+		if (minimum_size_of_abstract_word <= b.words.size ()) {
+			b.update_diameter ();
+			abstract_words.insert (b);
+		}
 	}
 
 	ofstream out {"/var/lib/vinayaka/abstract-words.csv"};
