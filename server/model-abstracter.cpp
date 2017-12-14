@@ -142,9 +142,9 @@ int main (int argc, char **argv)
 	ofstream out {"/var/lib/vinayaka/abstract-words.csv"};
 	
 	for (auto abstract_word: abstract_words) {
-		out << "\"" << escape_csv (abstract_word.label) << "\",";
+		out << "\"" << escape_csv (escape_utf8_fragment (abstract_word.label)) << "\",";
 		for (auto word: abstract_word.words) {
-			out << "\"" << escape_csv (word) << "\",";
+			out << "\"" << escape_csv (escape_utf8_fragment (word)) << "\",";
 		}
 		out << endl;
 	}

@@ -86,6 +86,7 @@ std::vector <UserAndWords> read_storage (std::string filename);
 
 std::vector <std::vector <std::string>> parse_csv (FILE *in);
 std::string escape_csv (std::string in);
+std::string escape_utf8_fragment (std::string in);
 
 
 #endif /* #ifndef DISTSN_H */

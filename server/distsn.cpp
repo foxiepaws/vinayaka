@@ -816,3 +816,28 @@ string escape_csv (string in)
 }
 
 
+string escape_utf8_fragment (string in) {
+	string out;
+	for (unsigned int cn = 0; cn < in.size (); cn ++) {
+		unsigned int c = static_cast <unsigned char> (in.at (cn));
+		if ((0x00 <= c && c < 0x20) || c == ' ') {
+			out += "�";
+		} else if ((0xc2 <= c && c <= 0xdf && in.size () - cn < 2)
+			|| (0xe0 <= c && c <= 0xef && in.size () - cn < 3)
+			|| (0xf0 <= c && c <= 0xf7 && in.size () - cn < 4)
+			|| (0xf8 <= c && c <= 0xfb && in.size () - cn < 5)
+			|| (0xfc <= c && c <= 0xfd && in.size () - cn < 6))
+		{
+			for (unsigned int x = 0; x < in.size () - cn; x ++) {
+				out += "�";
+			}
+			break;
+		} else {
+			out.push_back (c);
+		}
+	}
+	return out;
+}
+
+
+
