@@ -12,15 +12,6 @@
 using namespace std;
 
 
-class UserAndAbstractWords {
-public:
-	string host;
-	string user;
-	vector <string> words;
-	vector <string> abstract_words;
-};
-
-
 class AbstractWord {
 public:
 	string label;
@@ -38,8 +29,13 @@ public:
 };
 
 
-static vector <UserAndAbstractWords> users_and_words;
+static const unsigned int abstract_word_size = 400;
+static const unsigned int minimum_size_of_abstract_word = 3;
+
+
+static vector <UserAndWords> users_and_words;
 static map <string, vector <unsigned int>> words_to_speakers;
+static map <string, unsigned int> concrete_to_abstract_words;
 
 
 static void get_users_and_words ()
@@ -57,7 +53,7 @@ static void get_users_and_words ()
 
 	for (auto row: table) {
 		if (2 < row.size ()) {
-			UserAndAbstractWords user_and_words;
+			UserAndWords user_and_words;
 			user_and_words.host = row.at (0);
 			user_and_words.user = row.at (1);
 			for (unsigned int cn = 2; cn < row.size (); cn ++) {
@@ -103,11 +99,8 @@ static unsigned int distance (const string &word_a, const string &word_b)
 }
 
 
-int main (int argc, char **argv)
+static void get_abstract_words ()
 {
-	get_users_and_words ();
-	get_words_to_speakers ();
-	
 	AbstractWord root;
 	for (auto word_and_speakers: words_to_speakers) {
 		root.words.push_back (word_and_speakers.first);
@@ -119,7 +112,7 @@ int main (int argc, char **argv)
 	
 	for (; ; ) {
 		cerr << abstract_words.size () << endl;
-		if (256 <= abstract_words.size ()) {
+		if (abstract_word_size <= abstract_words.size ()) {
 			break;
 		}
 		AbstractWord divided;
@@ -138,8 +131,6 @@ int main (int argc, char **argv)
 		AbstractWord a;
 		AbstractWord b;
 		divided.divide (a, b);
-		
-		const unsigned int minimum_size_of_abstract_word = 3;
 		
 		if (minimum_size_of_abstract_word <= a.words.size ()) {
 			a.update_diameter ();
@@ -160,6 +151,57 @@ int main (int argc, char **argv)
 		}
 		out << endl;
 	}
+
+	vector <AbstractWord> abstract_words_vector {abstract_words.begin (), abstract_words.end ()};
+
+	for (unsigned int cn = 0; cn < abstract_words_vector.size (); cn ++) {
+		AbstractWord abstract_word = abstract_words_vector.at (cn);
+		for (string concrete_word: abstract_word.words) {
+			if (concrete_to_abstract_words.find (concrete_word) == concrete_to_abstract_words.end ()) {
+				concrete_to_abstract_words.insert (pair <string, unsigned int> {concrete_word, cn});
+			}
+		}
+	}
+}
+
+
+static void write_concrete_to_abstract_words ()
+{
+	ofstream out {"/var/lib/vinayaka/concrete-to-abstract-words.csv"};
+	
+	for (auto concrete_and_abstract_word: concrete_to_abstract_words) {
+		out << "\"" << escape_csv (concrete_and_abstract_word.first) << "\",";
+		out << "\"" << concrete_and_abstract_word.second << "\",";
+		out << endl;
+	}
+}
+
+
+static void write_abstract_user_words ()
+{
+	ofstream out {"/var/lib/vinayaka/abstract-user-words.csv"};
+	
+	for (auto user_and_words: users_and_words) {
+		out << "\"" << escape_csv (user_and_words.host) << "\",";
+		out << "\"" << escape_csv (user_and_words.user) << "\",";
+		for (auto concrete_word: user_and_words.words) {
+			if (concrete_to_abstract_words.find (concrete_word) != concrete_to_abstract_words.end ()) {
+				unsigned int abstract_word = concrete_to_abstract_words.at (concrete_word);
+				out << "\"" << abstract_word << "\",";
+			}
+		}
+		out << endl;
+	}
+}
+
+
+int main (int argc, char **argv)
+{
+	get_users_and_words ();
+	get_words_to_speakers ();
+	get_abstract_words ();
+	write_concrete_to_abstract_words ();
+	write_abstract_user_words ();
 }
 
 
