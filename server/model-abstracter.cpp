@@ -141,19 +141,21 @@ static void get_abstract_words ()
 			abstract_words.insert (b);
 		}
 	}
+	
+	vector <AbstractWord> abstract_words_vector {abstract_words.begin (), abstract_words.end ()};
 
 	ofstream out {"/var/lib/vinayaka/abstract-words.csv"};
-	
-	for (auto abstract_word: abstract_words) {
+
+	for (unsigned int cn = 0; cn < abstract_words_vector.size (); cn ++) {
+		AbstractWord abstract_word = abstract_words_vector.at (cn);
+		out << "\"" << cn << "\",";
 		out << "\"" << escape_csv (escape_utf8_fragment (abstract_word.label)) << "\",";
 		for (auto word: abstract_word.words) {
 			out << "\"" << escape_csv (escape_utf8_fragment (word)) << "\",";
 		}
 		out << endl;
 	}
-
-	vector <AbstractWord> abstract_words_vector {abstract_words.begin (), abstract_words.end ()};
-
+	
 	for (unsigned int cn = 0; cn < abstract_words_vector.size (); cn ++) {
 		AbstractWord abstract_word = abstract_words_vector.at (cn);
 		for (string concrete_word: abstract_word.words) {
