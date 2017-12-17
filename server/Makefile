@@ -63,8 +63,8 @@ vinayaka-user-words-impl: tinyxml2.o distsn.o user-words-cron.o
 vinayaka-user-match-impl: tinyxml2.o distsn.o user-match-api.o
 	$(CXX) tinyxml2.o distsn.o user-match-api.o -lcurl $(CFLAGS) -o $@
 
-vinayaka-user-avatar-cron: tinyxml2.o distsn.o user-avatar-cron.o
-	$(CXX) tinyxml2.o distsn.o user-avatar-cron.o -lcurl $(CFLAGS) -o $@
+vinayaka-user-avatar-cron: tinyxml2.o distsn.o user-avatar-cron.o sort-user-speed.o
+	$(CXX) tinyxml2.o distsn.o user-avatar-cron.o sort-user-speed.o -lcurl $(CFLAGS) -o $@
 
 vinayaka-user-match-cache-fetcher: tinyxml2.o distsn.o cache-fetcher.o
 	$(CXX) tinyxml2.o distsn.o cache-fetcher.o -lcurl $(CFLAGS) -o $@

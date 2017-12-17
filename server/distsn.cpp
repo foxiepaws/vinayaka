@@ -870,4 +870,73 @@ string escape_utf8_fragment (string in) {
 }
 
 
+/* Application name: vinayaka */
+/* Application ID: 743317923 */
+/* GadjL7MFZLb7h9zTdafxvEBRRsfbyGDyeLaExGF4abwTTRKzBY0mHShCUDwUV09qs03SJ3z9EYJvkDq82sBWll5wn8GBr37nRYDCOVE6K6Hcro2VRTDIeFLFVhlNsTQ5 */
+
+
+static set <string> get_international_hosts_impl ()
+{
+	const string resource {"https://instances.social/api/1.0/instances/list"};
+	const string parameters {"count=0&include_dead=false&include_down=true&include_closed=true"};
+	const string url {resource + string {"?"} + parameters};
+	vector <string> headers;
+	const string token {"GadjL7MFZLb7h9zTdafxvEBRRsfbyGDyeLaExGF4abwTTRKzBY0mHShCUDwUV09qs03SJ3z9EYJvkDq82sBWll5wn8GBr37nRYDCOVE6K6Hcro2VRTDIeFLFVhlNsTQ5"};
+	headers.push_back (string {"Authorization: Bearer "} + token);
+	string reply = http_get (url, headers);
+
+	picojson::value reply_value;
+	string error = picojson::parse (reply_value, reply);
+	if (! error.empty ()) {
+		cerr << __LINE__ << " " << error << endl;
+		return set <string> {};
+	}
+	if (! reply_value.is <picojson::object> ()) {
+		cerr << __LINE__ << endl;
+		return set <string> {};
+	}
+	auto reply_object = reply_value.get <picojson::object> ();
+	if (reply_object.find (string {"instances"}) == reply_object.end ()) {
+		cerr << __LINE__ << endl;
+		return set <string> {};
+	}
+	auto instances_value = reply_object.at (string {"instances"});
+	if (! instances_value.is <picojson::array> ()) {
+		cerr << __LINE__ << endl;
+		return set <string> {};
+	}
+	auto instances_array = instances_value.get <picojson::array> ();
+	
+	set <string> hosts;
+	
+	for (auto instance_value: instances_array) {
+		if (instance_value.is <picojson::object> ()) {
+			auto instance_object = instance_value.get <picojson::object> ();
+			if (instance_object.find (string {"name"}) != instance_object.end ()) {
+				auto name_value = instance_object.at (string {"name"});
+				if (name_value.is <string> ()) {
+					string name_string = name_value.get <string> ();
+					hosts.insert (name_string);
+				}
+			}
+		}
+	}
+	
+	return hosts;
+}
+
+
+set <string> get_international_hosts ()
+{
+	set <string> hosts = get_international_hosts_impl ();
+	hosts.insert (string {"pleroma.soykaf.com"});
+	hosts.insert (string {"pleroma.knzk.me"});
+	hosts.insert (string {"ketsuben.red"});
+	hosts.insert (string {"plrm.ht164.jp"});
+	hosts.insert (string {"pleroma.vocalodon.net"});
+	hosts.insert (string {"plero.ma"});
+	hosts.insert (string {"2.distsn.org"});
+	return hosts;
+}
+
 

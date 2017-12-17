@@ -2,6 +2,10 @@
 #define DISTSN_H
 
 
+#include <string>
+#include <vector>
+#include <set>
+#include <map>
 #include "tinyxml2.h"
 #include "picojson.h"
 
@@ -69,6 +73,20 @@ public:
 };
 
 
+class UserAndSpeed {
+public:
+	std::string host;
+	std::string username;
+	double speed;
+public:
+	UserAndSpeed (std::string a_host, std::string a_username, double a_speed) {
+		host = a_host;
+		username = a_username;
+		speed = a_speed;
+	};
+};
+
+
 std::string get_id (const picojson::value &toot);
 std::vector <picojson::value> get_timeline (std::string host);
 std::string http_get (std::string url);
@@ -88,6 +106,9 @@ std::vector <UserAndWords> read_storage (std::string filename);
 std::vector <std::vector <std::string>> parse_csv (FILE *in);
 std::string escape_csv (std::string in);
 std::string escape_utf8_fragment (std::string in);
+
+std::set <std::string> get_international_hosts ();
+std::vector <UserAndSpeed> get_users_and_speed ();
 
 
 #endif /* #ifndef DISTSN_H */
