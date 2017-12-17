@@ -22,7 +22,9 @@ www_files = \
 	user-match.js \
 	missing.svg \
 	user-speed.html \
-	user-speed.js
+	user-speed.js \
+	ja.html \
+	ja.js
 
 
 install: $(www_files)

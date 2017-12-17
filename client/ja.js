@@ -18,7 +18,7 @@ function search (detail) {
 		search_impl (host, user, detail);
 	} else {
 		document.getElementById ('placeholder').innerHTML =
-			'<strong>Username or instance is not available.</strong>';
+			'<strong>ユーザー名とホスト名が入力されていません。</strong>';
 	}
 }
 
@@ -39,24 +39,24 @@ function search_impl (host, user, detail) {
 				try {
 					var users = JSON.parse (response_text);
 					if (typeof users === 'string') {
-						var message = 'Sorry, our server is now too busy. Try it again later.';
 						document.getElementById ('placeholder').innerHTML =
-							'<strong>' + message + '</strong>';
+							'<strong>' + escapeHtml (users) + '</strong>';
 					} else {
 						show_users (users, detail, host, user);
+						activate_share_button (users, host, user);
 					}
 				} catch (e) {
 					document.getElementById ('placeholder').innerHTML =
-						'<strong>Sorry.</strong>';
+						'<strong>絶望と仲良くなろうよ。</strong>';
 				}
 			} else {
 				document.getElementById ('placeholder').innerHTML =
-					'<strong>Sorry.</strong>';
+					'<strong>情報を取得できませんでした。</strong>';
 			}
 		}
 	}
 	document.getElementById ('placeholder').innerHTML =
-		'<strong>Searching... (about 30 seconds)</strong>';
+		'<strong>お待ちください。</strong>';
 	document.getElementById ('search-button').setAttribute ('disabled', 'disabled');
 	document.getElementById ('detail-button').setAttribute ('disabled', 'disabled');
 	request.send ();
@@ -139,7 +139,7 @@ for (cn = 0; cn < users.length && cn < limit; cn ++) {
 			user.user + '@<wbr>' + user.host +
 			'</a>' +
 			'<br>' +
-			'Similarity ' + user.similarity.toFixed (0);
+			'類似度 ' + user.similarity.toFixed (0);
 		if (detail) {
 			user_html += '</p><p>';
 			user_html += '<small>';
@@ -165,8 +165,6 @@ document.getElementById ('user-input').addEventListener ('input', function () {
 	{
 		var user = user_and_host_array [0];
 		var options =
-			'<option value="' + user + '@' + 'mastodon.social' +'"></option>' +
-			'<option value="' + user + '@' + 'mastodon.cloud' +'"></option>' +
 			'<option value="' + user + '@' + 'mstdn.jp' +'"></option>' +
 			'<option value="' + user + '@' + 'pixiv.net' +'"></option>' +
 			'<option value="' + user + '@' + 'friends.nico' +'"></option>';
@@ -186,4 +184,40 @@ window.addEventListener ('load', function () {
 	}
 }, false); /* window.addEventListener ('load', function () { */
 
+
+var g_share_intent = '';
+
+
+function activate_share_button (users, current_host, current_user) {
+	var intent = '';
+	intent += '@' + current_user + '@' + current_host + " " +
+		'に似ているユーザー' + "\n\n";
+	for (var cn = 0; cn < 6 && cn < users.length; cn ++) {
+		var user = users[cn];
+		if (! (user.host === current_host && user.user === current_user)) {
+			intent += '@' + user.user + '@' + user.host + "\n";
+		}
+	}
+	intent += "\n";
+	intent += 'マストドンユーザーマッチング' + "\n";
+	intent += 'http://vinayaka.distsn.org' + " ";
+	intent += '#vinayaka' + "\n";
+	g_share_intent = intent;
+	document.getElementById ('share-button').removeAttribute ('style');
+};
+
+
+window.addEventListener ('load', function () {
+document.getElementById ('share-button').addEventListener ('click', function () {
+	var intent = g_share_intent;
+	var host = window.localStorage.getItem ('host');
+	var url;
+	if (host && 0 < host.length) {
+		url = 'http://' + host + '/share?text=' + encodeURIComponent (intent);
+	} else {
+		url = 'https://masha.re/#' + encodeURIComponent (intent);
+	}
+	window.open (url);
+}, false); /* document.getElementById ('share-button').addEventListener ('click', function () { */
+}, false); /* window.addEventListener ('load', function () { */
 
