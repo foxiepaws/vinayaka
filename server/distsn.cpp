@@ -140,6 +140,36 @@ string http_get (string url)
 }
 
 
+string http_get (string url, vector <string> headers)
+{
+	CURL *curl;
+	CURLcode res;
+	curl_global_init (CURL_GLOBAL_ALL);
+
+	curl = curl_easy_init ();
+	if (! curl) {
+		throw (HttpException {});
+	}
+	
+	struct curl_slist * list = nullptr;
+	for (auto &header: headers) {
+		list = curl_slist_append (list, header.c_str ());
+	}
+	
+	curl_easy_setopt (curl, CURLOPT_URL, url.c_str ());
+	curl_easy_setopt (curl, CURLOPT_HTTPHEADER, list);
+	string reply_1;
+	curl_easy_setopt (curl, CURLOPT_WRITEFUNCTION, writer);
+	curl_easy_setopt (curl, CURLOPT_WRITEDATA, & reply_1);
+	res = curl_easy_perform (curl);
+	curl_easy_cleanup (curl);
+	if (res != CURLE_OK) {
+		throw (HttpException {});
+	}
+	return reply_1;
+}
+
+
 time_t get_time (const picojson::value &toot)
 {
 	if (! toot.is <picojson::object> ()) {
