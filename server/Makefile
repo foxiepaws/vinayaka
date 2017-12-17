@@ -27,7 +27,8 @@ objects = \
 cgi_binaries = \
 	vinayaka-report-cache-api.cgi
 cron_binaries = \
-	vinayaka-user-avatar-cron
+	vinayaka-user-avatar-cron \
+	vinayaka-user-speed-cron
 impl_binaries = \
 	vinayaka-user-words-impl \
 	vinayaka-user-match-impl \
@@ -80,6 +81,9 @@ vinayaka-super-model-collector-impl: tinyxml2.o distsn.o super-model-collector.o
 vinayaka-model-abstracter-impl: tinyxml2.o distsn.o model-abstracter.o
 	$(CXX) tinyxml2.o distsn.o model-abstracter.o -lcurl $(CFLAGS) -o $@
 
+vinayaka-user-speed-cron: tinyxml2.o distsn.o user-speed-cron.o
+	$(CXX) tinyxml2.o distsn.o user-speed-cron.o -lcurl $(CFLAGS) -o $@
+
 install: $(cgis)
 	$(INSTALL_PROGRAM) $(cgis) --target-directory=$(cgidir)
 	$(INSTALL_PROGRAM) $(crons) --target-directory=$(bindir)
@@ -92,6 +96,7 @@ uninstall:
 
 initialize:
 	$(MKDIR) -p /var/lib/vinayaka
+	$(MKDIR) -p /var/lib/vinayaka/user-speed
 	$(CHMOD) -R a+rwx /var/lib/vinayaka
 
 refresh:
