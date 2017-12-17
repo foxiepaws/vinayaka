@@ -25,7 +25,6 @@ objects = \
 	user-match-api.o \
 	user-avatar-cron.o
 cgi_binaries = \
-	vinayaka-report-cache-api.cgi \
 	vinayaka-user-speed-api.cgi
 cron_binaries = \
 	vinayaka-user-avatar-cron \
@@ -69,9 +68,6 @@ vinayaka-user-avatar-cron: tinyxml2.o distsn.o user-avatar-cron.o sort-user-spee
 
 vinayaka-user-match-cache-fetcher: tinyxml2.o distsn.o cache-fetcher.o
 	$(CXX) tinyxml2.o distsn.o cache-fetcher.o -lcurl $(CFLAGS) -o $@
-
-vinayaka-report-cache-api.cgi: tinyxml2.o distsn.o report-cache.o
-	$(CXX) tinyxml2.o distsn.o report-cache.o -lcurl $(CFLAGS) -o $@
 
 vinayaka-model-collector-impl: tinyxml2.o distsn.o model-collector.o sort-user-speed.o
 	$(CXX) tinyxml2.o distsn.o model-collector.o sort-user-speed.o -lcurl $(CFLAGS) -o $@
