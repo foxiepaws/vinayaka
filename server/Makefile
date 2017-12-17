@@ -58,8 +58,8 @@ impls = $(impl_binaries) $(impl_scripts)
 
 all: $(binaries)
 
-vinayaka-user-words-impl: tinyxml2.o distsn.o user-words-cron.o
-	$(CXX) tinyxml2.o distsn.o user-words-cron.o -lcurl $(CFLAGS) -o $@
+vinayaka-user-words-impl: tinyxml2.o distsn.o user-words-cron.o sort-user-speed.o
+	$(CXX) tinyxml2.o distsn.o user-words-cron.o sort-user-speed.o -lcurl $(CFLAGS) -o $@
 
 vinayaka-user-match-impl: tinyxml2.o distsn.o user-match-api.o
 	$(CXX) tinyxml2.o distsn.o user-match-api.o -lcurl $(CFLAGS) -o $@
@@ -73,8 +73,8 @@ vinayaka-user-match-cache-fetcher: tinyxml2.o distsn.o cache-fetcher.o
 vinayaka-report-cache-api.cgi: tinyxml2.o distsn.o report-cache.o
 	$(CXX) tinyxml2.o distsn.o report-cache.o -lcurl $(CFLAGS) -o $@
 
-vinayaka-model-collector-impl: tinyxml2.o distsn.o model-collector.o
-	$(CXX) tinyxml2.o distsn.o model-collector.o -lcurl $(CFLAGS) -o $@
+vinayaka-model-collector-impl: tinyxml2.o distsn.o model-collector.o sort-user-speed.o
+	$(CXX) tinyxml2.o distsn.o model-collector.o sort-user-speed.o -lcurl $(CFLAGS) -o $@
 
 vinayaka-super-model-collector-impl: tinyxml2.o distsn.o super-model-collector.o
 	$(CXX) tinyxml2.o distsn.o super-model-collector.o -lcurl $(CFLAGS) -o $@

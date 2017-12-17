@@ -35,22 +35,12 @@ public:
 
 static vector <User> get_users ()
 {
+	vector <UserAndSpeed> users_and_speed = get_users_and_speed ();
 	vector <User> users;
-	string query = string {"http://distsn.org/cgi-bin/distsn-user-recommendation-api.cgi?10000"};
-	cerr << query << endl;
-	string reply = http_get (query);
-	picojson::value json_value;
-	string error = picojson::parse (json_value, reply);
-	if (! error.empty ()) {
-		cerr << error << endl;
-		exit (1);
-	}
-	auto user_jsons = json_value.get <picojson::array> ();
-	for (auto user_json: user_jsons) {
-		auto user_object = user_json.get <picojson::object> ();
-		string host = user_object.at (string {"host"}).get <string> ();
-		string username = user_object.at (string {"username"}).get <string> ();
-		users.push_back (User {host, username});
+	for (unsigned int cn = 0; cn < users_and_speed.size () && cn < 20000; cn ++) {
+		UserAndSpeed user_and_speed = users_and_speed.at (cn);
+		User user {user_and_speed.host, user_and_speed.username};
+		users.push_back (user);
 	}
 	return users;
 }
