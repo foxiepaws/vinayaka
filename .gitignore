@@ -41,5 +41,6 @@ vinayaka-model-collector-impl
 vinayaka-super-model-collector-impl
 vinayaka-model-abstracter-impl
 vinayaka-user-speed-cron
+vinayaka-user-speed-api.cgi
 
 

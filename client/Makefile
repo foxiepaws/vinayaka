@@ -20,7 +20,9 @@ www_files = \
 	kasaikuminkan.jpg \
 	google214b9ca3f27d115d.html \
 	user-match.js \
-	missing.svg
+	missing.svg \
+	user-speed.html \
+	user-speed.js
 
 
 install: $(www_files)

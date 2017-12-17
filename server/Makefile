@@ -25,7 +25,8 @@ objects = \
 	user-match-api.o \
 	user-avatar-cron.o
 cgi_binaries = \
-	vinayaka-report-cache-api.cgi
+	vinayaka-report-cache-api.cgi \
+	vinayaka-user-speed-api.cgi
 cron_binaries = \
 	vinayaka-user-avatar-cron \
 	vinayaka-user-speed-cron
@@ -83,6 +84,9 @@ vinayaka-model-abstracter-impl: tinyxml2.o distsn.o model-abstracter.o
 
 vinayaka-user-speed-cron: tinyxml2.o distsn.o user-speed-cron.o
 	$(CXX) tinyxml2.o distsn.o user-speed-cron.o -lcurl $(CFLAGS) -o $@
+
+vinayaka-user-speed-api.cgi: tinyxml2.o distsn.o sort-user-speed.o user-speed-api.o
+	$(CXX) tinyxml2.o distsn.o sort-user-speed.o user-speed-api.o -lcurl $(CFLAGS) -o $@
 
 install: $(cgis)
 	$(INSTALL_PROGRAM) $(cgis) --target-directory=$(cgidir)
