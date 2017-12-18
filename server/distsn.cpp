@@ -977,13 +977,19 @@ static set <string> get_international_hosts_impl ()
 set <string> get_international_hosts ()
 {
 	set <string> hosts = get_international_hosts_impl ();
+	
+	/* Pleroma */
 	hosts.insert (string {"pleroma.soykaf.com"});
 	hosts.insert (string {"pleroma.knzk.me"});
 	hosts.insert (string {"ketsuben.red"});
 	hosts.insert (string {"plrm.ht164.jp"});
 	hosts.insert (string {"pleroma.vocalodon.net"});
 	hosts.insert (string {"plero.ma"});
+	hosts.insert (string {"pleroma.taketodon.com"});
+	
+	/* Mastodon */
 	hosts.insert (string {"2.distsn.org"});
+
 	return hosts;
 }
 
