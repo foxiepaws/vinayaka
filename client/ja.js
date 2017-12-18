@@ -84,6 +84,14 @@ document.getElementById ('search-button').addEventListener ('click', function ()
 	document.getElementById ('explanation-detail').setAttribute ('style', 'display: none;');
 	search (false);
 }, false);
+
+document.getElementById ('user-input').addEventListener ('keydown', function (event) {
+	if (event.key === 'Enter') {
+		document.getElementById ('explanation-detail').setAttribute ('style', 'display: none;');
+		search (false);
+	}
+}, false);
+
 document.getElementById ('detail-button').addEventListener ('click', function () {
 	document.getElementById ('explanation-detail').removeAttribute ('style');
 	search (true);
