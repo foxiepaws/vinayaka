@@ -1,6 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include <curl/curl.h>
+#include <cassert>
 #include "distsn.h"
 
 
@@ -354,6 +355,52 @@ static string remove_url (string in)
 }
 
 
+static string remove_character_reference (string in)
+{
+	string out;
+	string code;
+	unsigned int state = 0;
+	for (auto c: in) {
+		switch (state) {
+		case 0:
+			if (c == '&') {
+				code.push_back (c);
+				state = 1;
+			} else {
+				out.push_back (c);
+			}
+			break;
+		case 1:
+			if (c == ';') {
+				code.push_back (c);
+				if (code == string {"&amp;"}) {
+					out += string {"&"};
+				} else if (code == string {"&lt;"}) {
+					out += string {"<"};
+				} else if (code == string {"&gt;"}) {
+					out += string {">"};
+				} else if (code == string {"&quot;"}) {
+					out += string {"\""};
+				} else if (code == string {"&apos;"}) {
+					out += string {"'"};
+				} else {
+					out += code;
+				}
+				code.clear ();
+				state = 0;
+			} else {
+				code.push_back (c);
+			}
+			break;
+		default:
+			assert (false);
+		}
+	}
+	out += code;
+	return out;
+}
+
+
 class OccupancyCount {
 public:
 	string word;
@@ -453,6 +500,7 @@ vector <string> get_words_from_toots (vector <string> toots, unsigned int word_l
 	for (auto raw_toot: toots) {
 		string toot = remove_html (raw_toot);
 		toot = remove_url (toot);
+		toot = remove_character_reference (toot);
 		if (valid_toot (toot) && word_length <= toot.size ()) {
 			for (unsigned int offset = 0; offset <= toot.size () - word_length; offset ++) {
 				string word = toot.substr (offset, word_length);
