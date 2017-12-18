@@ -40,7 +40,7 @@ static map <string, double> read_storage (FILE *in)
 }
 
 
-bool by_speed (const UserAndSpeed &a, const UserAndSpeed b)
+static bool by_speed (const UserAndSpeed &a, const UserAndSpeed b)
 {
 	return b.speed < a.speed;
 }
