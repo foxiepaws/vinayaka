@@ -34,17 +34,32 @@ for (cn = 0; cn < users.length; cn ++) {
 	var user;
 	user = users [cn];
 	var score_s = (user.manual_score_available? user.manual_score.toFixed (1): '<b style="color: red">?</b>');
-	var user_html =
-		'<p>' +
-		'<a href="' +
-		'https://' + user.host + '/users/' + user.username +
-		'" target="vinayaka-external-user-profile">' +
-		user.username + '@<wbr>' + user.host +
-		'</a>' +
-		'&emsp;' +
-		(user.speed * 60 * 60 * 24).toFixed (1) + ' TPD' + ' ' +
-		'(' + (cn + 1).toFixed (0) + ')' +
-		'</p>';
+	var user_html = '';
+	if (user.blacklisted) {
+		user_html =
+			'<p>' +
+			'<span class="headline">' +
+			user.username + '@<wbr>' + user.host +
+			'</span>' +
+			'<br>' +
+			(user.speed * 60 * 60 * 24).toFixed (1) + ' TPD' + ' ' +
+			'(' + (cn + 1).toFixed (0) + ')' +
+			'<br>' +
+			'<small>Suspicion of bot, spam or harassment</small>' +
+			'</p>';
+	} else {
+		user_html =
+			'<p>' +
+			'<a href="' +
+			'https://' + user.host + '/users/' + user.username +
+			'" target="vinayaka-external-user-profile" class="headline">' +
+			user.username + '@<wbr>' + user.host +
+			'</a>' +
+			'<br>' +
+			(user.speed * 60 * 60 * 24).toFixed (1) + ' TPD' + ' ' +
+			'(' + (cn + 1).toFixed (0) + ')' +
+			'</p>';
+	}
 	html += user_html;
 }
 placeholder.innerHTML = html;

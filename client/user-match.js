@@ -126,28 +126,39 @@ for (cn = 0; cn < users.length && cn < limit; cn ++) {
 	if (detail ||
 		(! (user.host === current_host && user.user === current_user)))
 	{
-		var user_html =
-			'<p>' +
-			'<a href="' +
-			'https://' + user.host + '/users/' + user.user +
-			'" target="vinayaka-external-user-profile">' +
-			'<img class="avatar" src="';
-		if (user.avatar && 0 < user.avatar.length) {
-			user_html += user.avatar;
+		var user_html = '';
+		if (user.blacklisted) {
+			user_html +=
+				'<p>' +
+				'<img class="avatar" src="blacklisted.png">' +
+				'<span class="headline">' + user.user + '@<wbr>' + user.host + '</span>' +
+				'<br>' +
+				'Similarity ' + user.similarity.toFixed (0) +
+				'<br>' +
+				'<small>Suspicion of bot, spam or harassment</small>';
 		} else {
-			user_html += 'missing.png';
+			user_html +=
+				'<p>' +
+				'<a href="' +
+				'https://' + user.host + '/users/' + user.user +
+				'" target="vinayaka-external-user-profile">' +
+				'<img class="avatar" src="';
+			if (user.avatar && 0 < user.avatar.length) {
+				user_html += user.avatar;
+			} else {
+				user_html += 'missing.png';
+			}
+			user_html +=
+				'">' +
+				'</a>' +
+				'<a href="' +
+				'https://' + user.host + '/users/' + user.user +
+				'" target="vinayaka-external-user-profile" class="headline">' +
+				user.user + '@<wbr>' + user.host +
+				'</a>' +
+				'<br>' +
+				'Similarity ' + user.similarity.toFixed (0);
 		}
-		user_html +=
-			'">' +
-			'</a>' +
-			'<br>' +
-			'<a href="' +
-			'https://' + user.host + '/users/' + user.user +
-			'" target="vinayaka-external-user-profile">' +
-			user.user + '@<wbr>' + user.host +
-			'</a>' +
-			'<br>' +
-			'Similarity ' + user.similarity.toFixed (0);
 		if (detail) {
 			user_html += '</p><p>';
 			user_html += '<small>';

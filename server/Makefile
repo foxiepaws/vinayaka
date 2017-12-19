@@ -17,6 +17,7 @@ CHMOD = chmod
 
 cgidir = /usr/lib/cgi-bin
 bindir = /usr/local/bin
+etcdir = /etc/vinayaka
 
 objects = \
 	tinyxml2.o \
@@ -49,6 +50,7 @@ cron_scripts = \
 cgis = $(cgi_binaries) $(cgi_scripts)
 crons = $(cron_binaries) $(cron_scripts)
 impls = $(impl_binaries) $(impl_scripts)
+etcs = blacklisted_users.csv
 
 .SUFFIXES: .cpp .o
 
@@ -60,8 +62,8 @@ all: $(binaries)
 vinayaka-user-words-impl: tinyxml2.o distsn.o user-words-cron.o sort-user-speed.o
 	$(CXX) tinyxml2.o distsn.o user-words-cron.o sort-user-speed.o -lcurl $(CFLAGS) -o $@
 
-vinayaka-user-match-impl: tinyxml2.o distsn.o user-match-api.o
-	$(CXX) tinyxml2.o distsn.o user-match-api.o -lcurl $(CFLAGS) -o $@
+vinayaka-user-match-impl: tinyxml2.o distsn.o user-match-api.o sort-user-speed.o
+	$(CXX) tinyxml2.o distsn.o user-match-api.o  sort-user-speed.o -lcurl $(CFLAGS) -o $@
 
 vinayaka-user-avatar-cron: tinyxml2.o distsn.o user-avatar-cron.o sort-user-speed.o
 	$(CXX) tinyxml2.o distsn.o user-avatar-cron.o sort-user-speed.o -lcurl $(CFLAGS) -o $@
@@ -88,8 +90,12 @@ install: $(cgis)
 	$(INSTALL_PROGRAM) $(cgis) --target-directory=$(cgidir)
 	$(INSTALL_PROGRAM) $(crons) --target-directory=$(bindir)
 	$(INSTALL_PROGRAM) $(impls) --target-directory=$(bindir)
+	$(MKDIR) -p $(etcdir)
+	$(INSTALL_DATA) $(etcs) --target-directory=$(etcdir)
 
 uninstall:
+	-$(RM) $(addprefix $(etcdir)/,$(etcs))
+	-$(RMDIR) $(etcdir)
 	-$(RM) $(addprefix $(bindir)/,$(impls))
 	-$(RM) $(addprefix $(bindir)/,$(crons))
 	-$(RM) $(addprefix $(cgidir)/,$(cgis))

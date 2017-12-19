@@ -26,7 +26,7 @@ www_files = \
 	ja.html \
 	ja.js \
 	missing.png \
-	penalty.png
+	blacklisted.png
 
 
 install: $(www_files)

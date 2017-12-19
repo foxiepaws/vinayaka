@@ -78,11 +78,29 @@ public:
 	std::string host;
 	std::string username;
 	double speed;
+	bool blacklisted;
 public:
-	UserAndSpeed (std::string a_host, std::string a_username, double a_speed) {
+	UserAndSpeed (std::string a_host, std::string a_username, double a_speed, bool a_blacklisted) {
 		host = a_host;
 		username = a_username;
 		speed = a_speed;
+		blacklisted = a_blacklisted;
+	};
+};
+
+
+class User {
+public:
+	std::string host;
+	std::string user;
+public:
+	User () { /* Do nothing. */ };
+	User (std::string a_host, std::string a_user) {
+		host = a_host;
+		user = a_user;
+	};
+	bool operator < (const User &r) const {
+		return host < r.host || (host == r.host && user < r.user);
 	};
 };
 
@@ -108,7 +126,11 @@ std::string escape_csv (std::string in);
 std::string escape_utf8_fragment (std::string in);
 
 std::set <std::string> get_international_hosts ();
+
+
+/* sort-user-speed.cpp */
 std::vector <UserAndSpeed> get_users_and_speed ();
+std::set <User> get_blacklisted_users ();
 
 
 #endif /* #ifndef DISTSN_H */

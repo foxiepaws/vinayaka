@@ -6,39 +6,8 @@ body {
 a:link {color: rgb(60%,80%,100%); }
 a:visited {color: rgb(70%,60%,80%); }
 
-#placeholder a {
+.headline {
 	font-size: 120%;
-}
-
-a.headline {
-	font-size: 120%;
-}
-
-ul > li {
-	margin-bottom: 0.5em;
-}
-
-img.preview {
-	width: 192px;
-	height: 192px;
-	border-color: gray;
-	border-width: thin;
-	border-style: solid;
-	object-fit: cover;
-}
-
-table {
-	border-color: white;
-	border-style: solid;
-	border-spacing: 0px;
-}
-
-td {
-	padding: 0.5em;
-}
-
-th {
-	padding: 0.5em;
 }
 
 input[type=button] {

@@ -24,22 +24,6 @@ public:
 };
 
 
-class User {
-public:
-	string host;
-	string user;
-public:
-	User () { /* Do nothing. */ };
-	User (string a_host, string a_user) {
-		host = a_host;
-		user = a_user;
-	};
-	bool operator < (const User &r) const {
-		return host < r.host || (host == r.host && user < r.user);
-	};
-};
-
-
 class Profile {
 public:
 	string screen_name;
@@ -210,7 +194,8 @@ static bool safe_url (string url)
 static string format_result
 	(vector <UserAndSimilarity> speakers_and_similarity,
 	map <User, set <string>> speaker_to_intersection,
-	map <User, Profile> users_to_profile)
+	map <User, Profile> users_to_profile,
+	set <User> blacklisted_users)
 {
 	stringstream out;
 	out << "[";
@@ -226,6 +211,8 @@ static string format_result
 			<< "\"host\":\"" << escape_json (speaker.host) << "\","
 			<< "\"user\":\"" << escape_json (speaker.user) << "\","
 			<< "\"similarity\":" << speaker.similarity << ",";
+		bool blacklisted = (blacklisted_users.find (User {speaker.host, speaker.user}) != blacklisted_users.end ());
+		out << "\"blacklisted\":" << (blacklisted? "true": "false") << ",";
 
 		if (users_to_profile.find (User {speaker.host, speaker.user}) == users_to_profile.end ()) {
 			out
@@ -312,8 +299,9 @@ int main (int argc, char **argv)
 	stable_sort (speakers_and_similarity.begin (), speakers_and_similarity.end (), by_similarity_desc);
 
 	map <User, Profile> users_to_profile = read_profiles ();
+	set <User> blacklisted_users = get_blacklisted_users ();
 
-	string result = format_result (speakers_and_similarity, speaker_to_intersection, users_to_profile);
+	string result = format_result (speakers_and_similarity, speaker_to_intersection, users_to_profile, blacklisted_users);
 	cout << "Content-Type: application/json" << endl << endl;
 	cout << result;
 	

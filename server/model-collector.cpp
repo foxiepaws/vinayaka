@@ -17,22 +17,6 @@ using namespace tinyxml2;
 using namespace std;
 
 
-class User {
-public:
-	string host;
-	string user;
-public:
-	User () { /* Do nothing. */ };
-	User (string a_host, string a_user) {
-		host = a_host;
-		user = a_user;
-	};
-	bool operator < (const User &r) const {
-		return host < r.host || (host == r.host && user < r.user);
-	};
-};
-
-
 static void write_to_storage (vector <pair <User, vector <string>>> users_and_words, ofstream &out)
 {
 	for (auto user_and_words: users_and_words) {

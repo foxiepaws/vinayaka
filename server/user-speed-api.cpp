@@ -26,7 +26,8 @@ int main (int argc, char **argv)
 			<< "{"
 			<< "\"host\":\"" << escape_json (user.host) << "\","
 			<< "\"username\":\"" << escape_json (user.username) << "\","
-			<< "\"speed\":" << scientific << user.speed
+			<< "\"speed\":" << scientific << user.speed << ","
+			<< "\"blacklisted\":" << (user.blacklisted? "true": "false")
 			<< "}";
 	}
 	cout << "]";
