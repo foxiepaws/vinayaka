@@ -10,6 +10,7 @@ window.addEventListener ('load', function () {
 				var response_text = request.responseText;
 				var users = JSON.parse (response_text);
 				show_users (users);
+				document.getElementById ('anti-harassment-message').removeAttribute ('style');
 			}
 		}
 	}

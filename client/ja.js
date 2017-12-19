@@ -43,6 +43,7 @@ function search_impl (host, user, detail) {
 							'<strong>' + escapeHtml (users) + '</strong>';
 					} else {
 						show_users (users, detail, host, user);
+						document.getElementById ('anti-harassment-message').removeAttribute ('style');
 						activate_share_button (users, host, user);
 					}
 				} catch (e) {
@@ -55,6 +56,7 @@ function search_impl (host, user, detail) {
 			}
 		}
 	}
+	document.getElementById ('anti-harassment-message').setAttribute ('style', 'display:none;');
 	document.getElementById ('placeholder').innerHTML =
 		'<strong>お待ちください。</strong>';
 	document.getElementById ('search-button').setAttribute ('disabled', 'disabled');

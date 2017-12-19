@@ -44,6 +44,7 @@ function search_impl (host, user, detail) {
 							'<strong>' + message + '</strong>';
 					} else {
 						show_users (users, detail, host, user);
+						document.getElementById ('anti-harassment-message').removeAttribute ('style');
 					}
 				} catch (e) {
 					document.getElementById ('placeholder').innerHTML =
@@ -55,6 +56,7 @@ function search_impl (host, user, detail) {
 			}
 		}
 	}
+	document.getElementById ('anti-harassment-message').setAttribute ('style', 'display:none;');
 	document.getElementById ('placeholder').innerHTML =
 		'<strong>Searching... (about 30 seconds)</strong>';
 	document.getElementById ('search-button').setAttribute ('disabled', 'disabled');
