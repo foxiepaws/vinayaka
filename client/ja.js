@@ -120,7 +120,9 @@ if (detail) {
 	limit = 100;
 }
 
-for (cn = 0; cn < users.length && cn < limit; cn ++) {
+var number_of_blacklisted_users = 0;
+
+for (cn = 0; cn < users.length && cn < limit + number_of_blacklisted_users; cn ++) {
 	var user;
 	user = users [cn];
 	if (detail ||
@@ -128,6 +130,7 @@ for (cn = 0; cn < users.length && cn < limit; cn ++) {
 	{
 		var user_html = '';
 		if (user.blacklisted) {
+			number_of_blacklisted_users ++;
 			user_html +=
 				'<p>' +
 				'<img class="avatar" src="blacklisted.png">' +
