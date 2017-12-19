@@ -135,7 +135,7 @@ for (cn = 0; cn < users.length && cn < limit; cn ++) {
 		if (user.avatar && 0 < user.avatar.length) {
 			user_html += user.avatar;
 		} else {
-			user_html += 'missing.svg';
+			user_html += 'missing.png';
 		}
 		user_html +=
 			'">' +

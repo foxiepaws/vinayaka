@@ -24,7 +24,9 @@ www_files = \
 	user-speed.html \
 	user-speed.js \
 	ja.html \
-	ja.js
+	ja.js \
+	missing.png \
+	penalty.png
 
 
 install: $(www_files)
