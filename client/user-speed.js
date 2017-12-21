@@ -40,13 +40,12 @@ for (cn = 0; cn < users.length; cn ++) {
 		user_html =
 			'<p>' +
 			'<span class="headline">' +
-			user.username + '@<wbr>' + user.host +
+			user.username + '@<wbr>' + user.host + ' ' +
+			'<a class="icon" href="javascript:openBlacklistExplanation()">?</a>' +
 			'</span>' +
 			'<br>' +
 			(user.speed * 60 * 60 * 24).toFixed (1) + ' TPD' + ' ' +
 			'(' + (cn + 1).toFixed (0) + ')' +
-			'<br>' +
-			'<small>Suspicion of bot, spam or harassment</small>' +
 			'</p>';
 	} else {
 		user_html =
@@ -65,5 +64,10 @@ for (cn = 0; cn < users.length; cn ++) {
 }
 placeholder.innerHTML = html;
 } /* function show_users (users) { */
+
+
+window.openBlacklistExplanation = function () {
+	alert ('Suspicion of bot, spam or harassment.');
+};
 
 

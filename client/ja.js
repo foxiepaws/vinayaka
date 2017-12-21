@@ -136,11 +136,11 @@ for (cn = 0; cn < users.length && cn < limit + number_of_blacklisted_users; cn +
 			user_html +=
 				'<p>' +
 				'<img class="avatar" src="blacklisted.png">' +
-				'<span class="headline">' + user.user + '@<wbr>' + user.host + '</span>' +
+				'<span class="headline">' + user.user + '@<wbr>' + user.host + ' ' +
+				'<a class="icon" href="javascript:openBlacklistExplanation()">?</a>' +
+				'</span>' +
 				'<br>' +
-				'類似度 ' + user.similarity.toFixed (0) +
-				'<br>' +
-				'<small>不正なアカウントの疑い</small>';
+				'類似度 ' + user.similarity.toFixed (0);
 		} else {
 			user_html +=
 				'<p>' +
@@ -244,4 +244,10 @@ document.getElementById ('share-button').addEventListener ('click', function () 
 	window.open (url);
 }, false); /* document.getElementById ('share-button').addEventListener ('click', function () { */
 }, false); /* window.addEventListener ('load', function () { */
+
+
+window.openBlacklistExplanation = function () {
+	alert ('Suspicion of bot, spam or harassment.');
+};
+
 

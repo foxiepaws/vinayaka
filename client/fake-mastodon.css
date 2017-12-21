@@ -61,3 +61,9 @@ p {
 	clear: both;
 }
 
+a.icon {
+	font-weight: bold;
+	text-decoration: none;
+}
+
+

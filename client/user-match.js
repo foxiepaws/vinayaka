@@ -136,11 +136,11 @@ for (cn = 0; cn < users.length && cn < limit + number_of_blacklisted_users; cn +
 			user_html +=
 				'<p>' +
 				'<img class="avatar" src="blacklisted.png">' +
-				'<span class="headline">' + user.user + '@<wbr>' + user.host + '</span>' +
+				'<span class="headline">' + user.user + '@<wbr>' + user.host + ' ' +
+				'<a class="icon" href="javascript:openBlacklistExplanation()">?</a>' +
+				'</span>' +
 				'<br>' +
-				'Similarity ' + user.similarity.toFixed (0) +
-				'<br>' +
-				'<small>Suspicion of bot, spam or harassment</small>';
+				'Similarity ' + user.similarity.toFixed (0);
 		} else {
 			user_html +=
 				'<p>' +
@@ -209,5 +209,10 @@ window.addEventListener ('load', function () {
 		search_impl (host, user, false);
 	}
 }, false); /* window.addEventListener ('load', function () { */
+
+
+window.openBlacklistExplanation = function () {
+	alert ('Suspicion of bot, spam or harassment.');
+};
 
 
