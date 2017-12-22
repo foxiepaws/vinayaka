@@ -228,8 +228,7 @@ function activate_share_button (users, current_host, current_user) {
 		}
 	}
 	intent += "\n";
-	intent += 'Mastodon User Matching' + "\n";
-	intent += 'http://vinayaka.distsn.org' + "\n";
+	intent += 'http://MastodonUserMatching.tk' + "\n";
 	intent += '#MastodonUserMatching' + "\n";
 	g_share_intent = intent;
 	document.getElementById ('share-button').removeAttribute ('style');
