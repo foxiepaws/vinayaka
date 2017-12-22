@@ -45,6 +45,7 @@ function search_impl (host, user, detail) {
 					} else {
 						show_users (users, detail, host, user);
 						document.getElementById ('anti-harassment-message').removeAttribute ('style');
+						activate_share_button (users, host, user);
 					}
 				} catch (e) {
 					document.getElementById ('placeholder').innerHTML =
@@ -208,6 +209,45 @@ window.addEventListener ('load', function () {
 		document.getElementById ('user-input').value = user + '@' + host;
 		search_impl (host, user, false);
 	}
+}, false); /* window.addEventListener ('load', function () { */
+
+
+
+
+var g_share_intent = '';
+
+
+function activate_share_button (users, current_host, current_user) {
+	var intent = '';
+	intent += '@' + current_user + '@' + current_host + ' ' +
+		'is similar to:' + "\n\n";
+	for (var cn = 0; cn < 6 && cn < users.length; cn ++) {
+		var user = users[cn];
+		if (! (user.host === current_host && user.user === current_user)) {
+			intent += user.user + '@' + user.host + "\n";
+		}
+	}
+	intent += "\n";
+	intent += 'Mastodon User Matching' + "\n";
+	intent += 'http://vinayaka.distsn.org' + "\n";
+	intent += '#MastodonUserMatching' + "\n";
+	g_share_intent = intent;
+	document.getElementById ('share-button').removeAttribute ('style');
+};
+
+
+window.addEventListener ('load', function () {
+document.getElementById ('share-button').addEventListener ('click', function () {
+	var intent = g_share_intent;
+	var host = window.localStorage.getItem ('host');
+	var url;
+	if (host && 0 < host.length) {
+		url = 'http://' + host + '/share?text=' + encodeURIComponent (intent);
+	} else {
+		url = 'https://masha.re/#' + encodeURIComponent (intent);
+	}
+	window.open (url);
+}, false); /* document.getElementById ('share-button').addEventListener ('click', function () { */
 }, false); /* window.addEventListener ('load', function () { */
 
 

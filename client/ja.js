@@ -214,18 +214,18 @@ var g_share_intent = '';
 
 function activate_share_button (users, current_host, current_user) {
 	var intent = '';
-	intent += '@' + current_user + '@' + current_host + " " +
+	intent += '@' + current_user + '@' + current_host + ' ' +
 		'に似ているユーザー' + "\n\n";
 	for (var cn = 0; cn < 6 && cn < users.length; cn ++) {
 		var user = users[cn];
 		if (! (user.host === current_host && user.user === current_user)) {
-			intent += '@' + user.user + '@' + user.host + "\n";
+			intent += user.user + '@' + user.host + "\n";
 		}
 	}
 	intent += "\n";
 	intent += 'マストドンユーザーマッチング' + "\n";
-	intent += 'http://vinayaka.distsn.org' + " ";
-	intent += '#vinayaka' + "\n";
+	intent += 'http://vinayaka.distsn.org/ja.html' + "\n";
+	intent += '#マストドンユーザーマッチング' + "\n";
 	g_share_intent = intent;
 	document.getElementById ('share-button').removeAttribute ('style');
 };
