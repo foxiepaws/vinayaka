@@ -3,6 +3,7 @@
 語彙の類似からマストドンのユーザーを推挙するウェブアプリケーション
 
 http://vinayaka.distsn.org
+(Alias: http://mastodonusermatching.tk)
 
 ## API
 
@@ -14,21 +15,14 @@ UTF-8 の JSON が返ります。
 
 (Recommends Ubuntu)
 
-$ sudo apt install git make gcc g++ libcurl4-openssl-dev apache2
-
-$ git clone https://github.com/distsn/vinayaka.git
-
-$ cd vinayaka
-
-$ make
-
-$ sudo make install
-
-$ sudo make initialize
-
-$ sudo make activate-cgi
-
-$ crontab -e
+    $ sudo apt install git make gcc g++ libcurl4-openssl-dev apache2
+    $ git clone https://github.com/distsn/vinayaka.git
+    $ cd vinayaka
+    $ make
+    $ sudo make install
+    $ sudo make initialize
+    $ sudo make activate-cgi
+    $ crontab -e
 
 Write following code in crontab:
 
@@ -40,12 +34,8 @@ Write following code in crontab:
 
 # Update
 
-$ cd vinayaka
-
-$ git pull
-
-$ make clean
-
-$ make
-
-$ sudo make install
+    $ cd vinayaka
+    $ git pull
+    $ make clean
+    $ make
+    $ sudo make install
