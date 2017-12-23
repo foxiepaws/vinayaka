@@ -90,6 +90,7 @@ int main (int argc, char **argv)
 	vector <ModelTopology> models = {
 		ModelTopology {6, 400},
 		ModelTopology {9, 400},
+		ModelTopology {12, 400},
 	};
 	
 	map <User, set <string>> speaker_to_words = get_words_of_speakers (models);
