@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if test $(ps ax | fgrep vinayaka-user-match-impl | wc -l) -lt 2
+if test $(ps ax | fgrep vinayaka-user-match-impl | wc -l) -lt 4
 then
 	/usr/local/bin/vinayaka-user-match-impl "$1" "$2"
 else
