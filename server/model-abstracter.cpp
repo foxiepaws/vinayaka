@@ -103,8 +103,8 @@ static double distance (const string &word_a, const string &word_b)
 
 static set <AbstractWord> get_abstract_words_impl (AbstractWord abstract_word)
 {
-	cerr << "abstract_word.words.size: " << abstract_word.words.size () << endl;
-	cerr << "abstract_word.diameter: " << abstract_word.diameter << endl;
+	cout << "abstract_word.words.size: " << abstract_word.words.size () << endl;
+	cout << "abstract_word.diameter: " << abstract_word.diameter << endl;
 
 	set <AbstractWord> abstract_words;
 
@@ -126,7 +126,7 @@ static set <AbstractWord> get_abstract_words_impl (AbstractWord abstract_word)
 		}
 	}
 
-	cerr << "abstract_words.size: " << abstract_words.size () << endl;
+	cout << "abstract_words.size: " << abstract_words.size () << endl;
 	return abstract_words;
 }
 
