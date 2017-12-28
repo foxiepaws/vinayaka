@@ -181,11 +181,17 @@ static void write_abstract_user_words ()
 	for (auto user_and_words: users_and_words) {
 		out << "\"" << escape_csv (user_and_words.host) << "\",";
 		out << "\"" << escape_csv (user_and_words.user) << "\",";
+		set <string> abstract_words;
 		for (auto concrete_word: user_and_words.words) {
-			if (concrete_to_abstract_words.find (concrete_word) != concrete_to_abstract_words.end ()) {
+			if (concrete_to_abstract_words.find (concrete_word) == concrete_to_abstract_words.end ()) {
+				abstract_words.insert (concrete_word);
+			} else {
 				string abstract_word = concrete_to_abstract_words.at (concrete_word);
-				out << "\"" << escape_csv (abstract_word) << "\",";
+				abstract_words.insert (abstract_word);
 			}
+		}
+		for (auto word: abstract_words) {
+			out << "\"" << escape_csv (word) << "\",";
 		}
 		out << endl;
 	}
