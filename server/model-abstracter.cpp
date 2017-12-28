@@ -101,6 +101,36 @@ static double distance (const string &word_a, const string &word_b)
 }
 
 
+static set <AbstractWord> get_abstract_words_impl (AbstractWord abstract_word)
+{
+	cerr << "abstract_word.words.size: " << abstract_word.words.size () << endl;
+	cerr << "abstract_word.diameter: " << abstract_word.diameter << endl;
+
+	set <AbstractWord> abstract_words;
+
+	if (abstract_word.diameter <= diameter_tolerance) {
+		abstract_words.insert (abstract_word);
+	} else {
+		AbstractWord a;
+		AbstractWord b;
+		abstract_word.divide (a, b);
+		if (minimum_size_of_abstract_word <= a.words.size ()) {
+			a.update_diameter ();
+			set <AbstractWord> abstract_words_a = get_abstract_words_impl (a);
+			abstract_words.insert (abstract_words_a.begin (), abstract_words_a.end ());
+		}
+		if (minimum_size_of_abstract_word <= b.words.size ()) {
+			b.update_diameter ();
+			set <AbstractWord> abstract_words_b = get_abstract_words_impl (b);
+			abstract_words.insert (abstract_words_b.begin (), abstract_words_b.end ());
+		}
+	}
+
+	cerr << "abstract_words.size: " << abstract_words.size () << endl;
+	return abstract_words;
+}
+
+
 static void get_abstract_words ()
 {
 	AbstractWord root;
@@ -109,39 +139,7 @@ static void get_abstract_words ()
 	}
 	root.update_diameter ();
 	
-	set <AbstractWord> abstract_words;
-	abstract_words.insert (root);
-	
-	for (; ; ) {
-		cerr << "size: " << abstract_words.size () << endl;
-		AbstractWord divided;
-		bool found = false;
-		for (auto &abstract_word: abstract_words) {
-			if (diameter_tolerance < abstract_word.diameter) {
-				found = true;
-				divided = abstract_word;
-				break;
-			}
-		}
-		if (! found) {
-			break;
-		}
-		cerr << "diameter: " << divided.diameter << endl;
-
-		abstract_words.erase (divided);
-		AbstractWord a;
-		AbstractWord b;
-		divided.divide (a, b);
-		
-		if (minimum_size_of_abstract_word <= a.words.size ()) {
-			a.update_diameter ();
-			abstract_words.insert (a);
-		}
-		if (minimum_size_of_abstract_word <= b.words.size ()) {
-			b.update_diameter ();
-			abstract_words.insert (b);
-		}
-	}
+	set <AbstractWord> abstract_words = get_abstract_words_impl (root);
 	
 	ofstream out {"/var/lib/vinayaka/abstract-words.csv"};
 
