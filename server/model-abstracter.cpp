@@ -16,7 +16,7 @@ class AbstractWord {
 public:
 	string label;
 	vector <string> words;
-	unsigned int diameter;
+	double diameter;
 	string extreme_a;
 	string extreme_b;
 public:
@@ -29,13 +29,13 @@ public:
 };
 
 
-static const unsigned int abstract_word_size = 400;
-static const unsigned int minimum_size_of_abstract_word = 3;
+double maximum_distance = 0.25;
+static const unsigned int minimum_size_of_abstract_word = 2;
 
 
 static vector <UserAndWords> users_and_words;
 static map <string, vector <unsigned int>> words_to_speakers;
-static map <string, unsigned int> concrete_to_abstract_words;
+static map <string, string> concrete_to_abstract_words;
 
 
 static void get_users_and_words ()
@@ -84,7 +84,7 @@ static void get_words_to_speakers ()
 }
 
 
-static unsigned int distance (const string &word_a, const string &word_b)
+static double distance (const string &word_a, const string &word_b)
 {
 	const vector <unsigned int> speakers_a = words_to_speakers.at (word_a);
 	const vector <unsigned int> speakers_b = words_to_speakers.at (word_b);
@@ -112,11 +112,8 @@ static void get_abstract_words ()
 	
 	for (; ; ) {
 		cerr << abstract_words.size () << endl;
-		if (abstract_word_size <= abstract_words.size ()) {
-			break;
-		}
 		AbstractWord divided;
-		unsigned int max_diameter = 0;
+		double max_diameter = 0;
 		for (auto &abstract_word: abstract_words) {
 			if (max_diameter < abstract_word.diameter) {
 				max_diameter = abstract_word.diameter;
@@ -124,9 +121,10 @@ static void get_abstract_words ()
 			}
 		}
 		cerr << "max_diameter: " << max_diameter << endl;
-		if (max_diameter == 0) {
+		if (max_diameter <= maximum_distance) {
 			break;
 		}
+
 		abstract_words.erase (divided);
 		AbstractWord a;
 		AbstractWord b;
@@ -142,13 +140,9 @@ static void get_abstract_words ()
 		}
 	}
 	
-	vector <AbstractWord> abstract_words_vector {abstract_words.begin (), abstract_words.end ()};
-
 	ofstream out {"/var/lib/vinayaka/abstract-words.csv"};
 
-	for (unsigned int cn = 0; cn < abstract_words_vector.size (); cn ++) {
-		AbstractWord abstract_word = abstract_words_vector.at (cn);
-		out << "\"" << cn << "\",";
+	for (auto abstract_word: abstract_words) {
 		out << "\"" << escape_csv (escape_utf8_fragment (abstract_word.label)) << "\",";
 		for (auto word: abstract_word.words) {
 			out << "\"" << escape_csv (escape_utf8_fragment (word)) << "\",";
@@ -156,11 +150,10 @@ static void get_abstract_words ()
 		out << endl;
 	}
 	
-	for (unsigned int cn = 0; cn < abstract_words_vector.size (); cn ++) {
-		AbstractWord abstract_word = abstract_words_vector.at (cn);
+	for (auto abstract_word: abstract_words) {
 		for (string concrete_word: abstract_word.words) {
 			if (concrete_to_abstract_words.find (concrete_word) == concrete_to_abstract_words.end ()) {
-				concrete_to_abstract_words.insert (pair <string, unsigned int> {concrete_word, cn});
+				concrete_to_abstract_words.insert (pair <string, string> {concrete_word, abstract_word.label});
 			}
 		}
 	}
@@ -173,7 +166,7 @@ static void write_concrete_to_abstract_words ()
 	
 	for (auto concrete_and_abstract_word: concrete_to_abstract_words) {
 		out << "\"" << escape_csv (concrete_and_abstract_word.first) << "\",";
-		out << "\"" << concrete_and_abstract_word.second << "\",";
+		out << "\"" << escape_csv (concrete_and_abstract_word.second) << "\",";
 		out << endl;
 	}
 }
@@ -188,8 +181,8 @@ static void write_abstract_user_words ()
 		out << "\"" << escape_csv (user_and_words.user) << "\",";
 		for (auto concrete_word: user_and_words.words) {
 			if (concrete_to_abstract_words.find (concrete_word) != concrete_to_abstract_words.end ()) {
-				unsigned int abstract_word = concrete_to_abstract_words.at (concrete_word);
-				out << "\"" << abstract_word << "\",";
+				string abstract_word = concrete_to_abstract_words.at (concrete_word);
+				out << "\"" << escape_csv (abstract_word) << "\",";
 			}
 		}
 		out << endl;
@@ -215,10 +208,10 @@ void AbstractWord::update_diameter ()
 
 	for (unsigned int cn = 0; cn < iteration; cn ++) {
 		string max_distance_word = b;
-		unsigned int max_distance = 0;
+		double max_distance = 0;
 		
 		for (auto word: words) {
-			unsigned int this_distance = distance (b, word);
+			double this_distance = distance (b, word);
 			if (max_distance < this_distance) {
 				max_distance = this_distance;
 				max_distance_word = word;
@@ -243,8 +236,8 @@ void AbstractWord::divide (AbstractWord &a, AbstractWord &b) const
 	b.words.clear ();
 
 	for (auto word: words) {
-		unsigned int distance_a = distance (word, extreme_a);
-		unsigned int distance_b = distance (word, extreme_b);
+		double distance_a = distance (word, extreme_a);
+		double distance_b = distance (word, extreme_b);
 		if (distance_a < distance_b) {
 			a.words.push_back (word);
 		} else {
