@@ -199,7 +199,7 @@ static string format_result
 {
 	stringstream out;
 	out << "[";
-	for (unsigned int cn = 0; cn < speakers_and_similarity.size () && cn < 1000; cn ++) {
+	for (unsigned int cn = 0; cn < speakers_and_similarity.size () && cn < 400; cn ++) {
 		if (0 < cn) {
 			out << ",";
 		}
@@ -223,7 +223,7 @@ static string format_result
 			Profile profile = users_to_profile.at (User {speaker.host, speaker.user});
 			out
 				<< "\"screen_name\":\"" << escape_json (profile.screen_name) << "\","
-				<< "\"bio\":\"" << escape_json (profile.bio) << "\",";
+				<< "\"bio\":\"\","
 			if (safe_url (profile.avatar)) {
 				out << "\"avatar\":\"" << escape_json (profile.avatar) << "\",";
 			} else {

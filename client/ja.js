@@ -117,7 +117,7 @@ var cn_intersection;
 var limit;
 
 if (detail) {
-	limit = 1000;
+	limit = 400;
 } else {
 	limit = 100;
 }
