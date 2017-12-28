@@ -95,7 +95,9 @@ static double distance (const string &word_a, const string &word_b)
 		speakers_b.begin (),
 		speakers_b.end (),
 		inserter (intersection, intersection.end ()));
-	return speakers_a.size () + speakers_b.size () - 2 * intersection.size ();
+	unsigned int numerator = speakers_a.size () + speakers_b.size () - 2 * intersection.size ();
+	unsigned int denominator = speakers_a.size () + speakers_b.size () - intersection.size ();
+	return static_cast <double> (numerator) / static_cast <double> (denominator);
 }
 
 
@@ -111,7 +113,7 @@ static void get_abstract_words ()
 	abstract_words.insert (root);
 	
 	for (; ; ) {
-		cerr << abstract_words.size () << endl;
+		cerr << "size: " << abstract_words.size () << endl;
 		AbstractWord divided;
 		double max_diameter = 0;
 		for (auto &abstract_word: abstract_words) {
@@ -202,29 +204,39 @@ int main (int argc, char **argv)
 
 void AbstractWord::update_diameter ()
 {
-	string a;
-	string b = words.at (0);
-	unsigned int iteration = 4 + max (0.0, log (words.size ()) / log (2));
+	if (words.size () == 1) {
+		diameter = 0;
+		extreme_a = words.at (0);
+		extreme_b = words.at (0);
+	} else if (words.size () == 2) {
+		diameter = distance (words.at (0), words.at (1));
+		extreme_a = words.at (0);
+		extreme_b = words.at (1);
+	} else {
+		string a;
+		string b = words.at (0);
+		unsigned int iteration = 4 + max (0.0, log (words.size ()) / log (2));
 
-	for (unsigned int cn = 0; cn < iteration; cn ++) {
-		string max_distance_word = b;
-		double max_distance = 0;
+		for (unsigned int cn = 0; cn < iteration; cn ++) {
+			string max_distance_word = b;
+			double max_distance = 0;
 		
-		for (auto word: words) {
-			double this_distance = distance (b, word);
-			if (max_distance < this_distance) {
-				max_distance = this_distance;
-				max_distance_word = word;
+			for (auto word: words) {
+				double this_distance = distance (b, word);
+				if (max_distance < this_distance) {
+					max_distance = this_distance;
+					max_distance_word = word;
+				}
 			}
-		}
 		
-		a = b;
-		b = max_distance_word;
-	}
+			a = b;
+			b = max_distance_word;
+		}
 	
-	diameter = distance (a, b);
-	extreme_a = a;
-	extreme_b = b;
+		diameter = distance (a, b);
+		extreme_a = a;
+		extreme_b = b;
+	}
 }
 
 
