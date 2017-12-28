@@ -29,7 +29,7 @@ public:
 };
 
 
-double maximum_distance = 0.25;
+double diameter_tolerance = 0.25;
 static const unsigned int minimum_size_of_abstract_word = 2;
 
 
@@ -115,17 +115,18 @@ static void get_abstract_words ()
 	for (; ; ) {
 		cerr << "size: " << abstract_words.size () << endl;
 		AbstractWord divided;
-		double max_diameter = 0;
+		bool found = false;
 		for (auto &abstract_word: abstract_words) {
-			if (max_diameter < abstract_word.diameter) {
-				max_diameter = abstract_word.diameter;
+			if (diameter_tolerance < abstract_word.diameter) {
+				found = true;
 				divided = abstract_word;
+				break;
 			}
 		}
-		cerr << "max_diameter: " << max_diameter << endl;
-		if (max_diameter <= maximum_distance) {
+		if (! found) {
 			break;
 		}
+		cerr << "diameter: " << divided.diameter << endl;
 
 		abstract_words.erase (divided);
 		AbstractWord a;
