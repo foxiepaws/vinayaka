@@ -227,10 +227,17 @@ void AbstractWord::update_diameter ()
 					max_distance = this_distance;
 					max_distance_word = word;
 				}
+				if (1.0 <= max_distance) {
+					break;
+				}
 			}
-		
+					
 			a = b;
 			b = max_distance_word;
+			
+			if (1.0 <= max_distance) {
+				break;
+			}
 		}
 	
 		diameter = distance (a, b);
