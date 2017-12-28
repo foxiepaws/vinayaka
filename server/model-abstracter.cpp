@@ -259,13 +259,22 @@ void AbstractWord::divide (AbstractWord &a, AbstractWord &b) const
 	b.label = extreme_b;
 	b.words.clear ();
 
+	unsigned int toggle = 0;
+
 	for (auto word: words) {
 		double distance_a = distance (word, extreme_a);
 		double distance_b = distance (word, extreme_b);
 		if (distance_a < distance_b) {
 			a.words.push_back (word);
-		} else {
+		} else if (distance_b < distance_a){
 			b.words.push_back (word);
+		} else {
+			if (toggle == 0) {
+				a.words.push_back (word);
+			} else {
+				b.words.push_back (word);
+			}
+			toggle = (toggle + 1) % 2;
 		}
 	}
 }
