@@ -79,10 +79,9 @@ static set <string> get_words_of_listener (vector <string> toots, vector <ModelT
 };
 
 
-static map <User, set <string>> get_words_of_speakers ()
+static map <User, set <string>> get_words_of_speakers (string filename)
 {
 	map <User, set <string>> users_to_words;
-	string filename {"/var/lib/vinayaka/user-words.csv"};
 	FILE *in = fopen (filename.c_str (), "r");
 	if (in == nullptr) {
 		cerr << "File not found: " << filename << endl;
@@ -256,6 +255,34 @@ static void add_to_cache (string host, string user, string result)
 }
 
 
+static map <string, string> get_concrete_to_abstract_words ()
+{
+	map <string, string> concrete_to_abstract_words;
+	string filename = string {"/var/lib/vinayaka/concrete-to-abstract-words.csv"};
+	FILE * in = fopen (filename.c_str (), "r");
+	if (in == nullptr) {
+		cerr << "File not found: " << filename << endl;
+	} else {
+		try {
+			vector <vector <string>> table = parse_csv (in);
+			for (auto row: table) {
+				if (2 <= row.size ()) {
+					string concrete_word = row.at (0);
+					string abstract_word = row.at (1);
+					if (concrete_to_abstract_words.find (concrete_word) == concrete_to_abstract_words.end ()) {
+						concrete_to_abstract_words.insert (pair <string, string> {concrete_word, abstract_word});
+					}
+				}
+			}
+		} catch (ParseException e) {
+			/* Just expose an error. */
+			cerr << "ParseException: " << e.line << endl;
+		}
+	}
+	return concrete_to_abstract_words;
+}
+
+
 int main (int argc, char **argv)
 {
 	if (argc < 3) {
@@ -278,8 +305,21 @@ int main (int argc, char **argv)
 		ModelTopology {12, 400},
 	};
 	
-	set <string> words_of_listener = get_words_of_listener (toots, models);
-	map <User, set <string>> speaker_to_words = get_words_of_speakers ();
+	set <string> concrete_words_of_listener = get_words_of_listener (toots, models);
+	map <string, string> concrete_to_abstract_words = get_concrete_to_abstract_words ();
+	cerr << "concrete_to_abstract_words.size () = " << concrete_to_abstract_words.size () << endl;
+	set<string> words_of_listener;
+	for (auto concrete_word: concrete_words_of_listener) {
+		if (concrete_to_abstract_words.find (concrete_word) == concrete_to_abstract_words.end ()) {
+			words_of_listener.insert (concrete_word);
+		} else {
+			string abstract_word = concrete_to_abstract_words.at (concrete_word);
+			words_of_listener.insert (abstract_word);
+		}
+	}
+	
+	map <User, set <string>> speaker_to_words
+		= get_words_of_speakers (string {"/var/lib/vinayaka/abstract-user-words.csv"});
 
 	vector <UserAndSimilarity> speakers_and_similarity;
 	map <User, set <string>> speaker_to_intersection;
