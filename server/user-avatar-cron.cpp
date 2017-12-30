@@ -17,14 +17,6 @@ using namespace tinyxml2;
 using namespace std;
 
 
-class Profile {
-public:
-	string screen_name;
-	string bio;
-	string avatar;
-};
-
-
 static vector <User> get_users ()
 {
 	vector <UserAndSpeed> users_and_speed = get_users_and_speed ();

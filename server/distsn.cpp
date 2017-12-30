@@ -994,3 +994,82 @@ set <string> get_international_hosts ()
 }
 
 
+map <User, Profile> read_profiles ()
+{
+	FILE * in = fopen ("/var/lib/vinayaka/user-profiles.json", "rb");
+	if (in == nullptr) {
+		return map <User, Profile> {};
+	}
+	string s;
+	for (; ; ) {
+		if (feof (in)) {
+		break;
+	}
+	char b [1024];
+		fgets (b, 1024, in);
+		s += string {b};
+	}
+	picojson::value json_value;
+	picojson::parse (json_value, s);
+	auto array = json_value.get <picojson::array> ();
+
+	map <User, Profile> users_to_profile;
+
+	for (auto user_value: array) {
+		auto user_object = user_value.get <picojson::object> ();
+		string host;
+		if (user_object.find (string {"host"}) != user_object.end ()) {
+			host = user_object.at (string {"host"}).get <string> ();
+		}
+		string user;
+		if (user_object.find (string {"user"}) != user_object.end ()) {
+			user = user_object.at (string {"user"}).get <string> ();
+		}
+		string screen_name;
+		if (user_object.find (string {"screen_name"}) != user_object.end ()) {
+			screen_name = user_object.at (string {"screen_name"}).get <string> ();
+		}
+		string bio;
+		if (user_object.find (string {"bio"}) != user_object.end ()) {
+			bio = user_object.at (string {"bio"}).get <string> ();
+		}
+		string avatar;
+		if (user_object.find (string {"avatar"}) != user_object.end ()) {
+			avatar = user_object.at (string {"avatar"}).get <string> ();
+		}
+		Profile profile;
+		profile.screen_name = screen_name;
+		profile.bio = bio;
+		profile.avatar = avatar;
+		users_to_profile.insert (pair <User, Profile> {User {host, user}, profile});
+	}
+	return users_to_profile;
+}
+
+
+static bool charactor_for_url (char c)
+{
+	return
+		('a' <= c && c <= 'z')
+		|| ('A' <= c && c <= 'Z')
+		|| ('0' <= c && c <= '9')
+		|| c == ':'
+		|| c == '/'
+		|| c == '.'
+		|| c == '-'
+		|| c == '_'
+		|| c == '%';
+}
+
+
+bool safe_url (string url)
+{
+	for (auto c: url) {
+		if (! charactor_for_url (c)) {
+			return false;
+		}
+	}
+	return true;
+}
+
+

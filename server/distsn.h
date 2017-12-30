@@ -105,6 +105,14 @@ public:
 };
 
 
+class Profile {
+public:
+	std::string screen_name;
+	std::string bio;
+	std::string avatar;
+};
+
+
 std::string get_id (const picojson::value &toot);
 std::vector <picojson::value> get_timeline (std::string host);
 std::string http_get (std::string url);
@@ -126,6 +134,8 @@ std::string escape_csv (std::string in);
 std::string escape_utf8_fragment (std::string in);
 
 std::set <std::string> get_international_hosts ();
+std::map <User, Profile> read_profiles ();
+bool safe_url (std::string url);
 
 
 /* sort-user-speed.cpp */
