@@ -26,7 +26,8 @@ www_files = \
 	ja.html \
 	ja.js \
 	missing.png \
-	blacklisted.png
+	blacklisted.png \
+	user-speed-ja.html
 
 
 install: $(www_files)
