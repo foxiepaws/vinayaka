@@ -7,9 +7,15 @@ http://vinayaka.distsn.org
 
 ## API
 
+いずれもUTF-8 の JSON が返ります。
+
+### 似ているユーザーを検索
+
 http://vinayaka.distsn.org/cgi-bin/vinayaka-user-match-api.cgi?mstdn.jp+nullkal
 
-UTF-8 の JSON が返ります。
+### 流速順ユーザーリスト
+
+http://vinayaka.distsn.org/cgi-bin/vinayaka-user-speed-api.cgi
 
 ## Install
 
