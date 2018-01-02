@@ -39,7 +39,7 @@ vector <picojson::value> get_timeline (string host)
 	vector <picojson::value> timeline;
 
 	{
-		string reply = http_get (string {"https://"} + host + string {"/api/v1/timelines/public?local=true&limit=40"});
+		string reply = http_get_quick (string {"https://"} + host + string {"/api/v1/timelines/public?local=true&limit=40"});
 
 		picojson::value json_value;
 		string error = picojson::parse (json_value, reply);
@@ -86,7 +86,7 @@ vector <picojson::value> get_timeline (string host)
 			+ host
 			+ string {"/api/v1/timelines/public?local=true&limit=40&max_id="}
 			+ bottom_id;
-		string reply = http_get (query);
+		string reply = http_get_quick (query);
 
 		picojson::value json_value;
 		string error = picojson::parse (json_value, reply);
@@ -136,6 +136,31 @@ string http_get (string url)
 	curl_easy_cleanup (curl);
 	if (res != CURLE_OK) {
 		throw (HttpException {});
+	}
+	return reply_1;
+}
+
+
+string http_get_quick (string url)
+{
+	CURL *curl;
+	CURLcode res;
+	curl_global_init (CURL_GLOBAL_ALL);
+
+	curl = curl_easy_init ();
+	if (! curl) {
+		throw (HttpException {__LINE__});
+	}
+	curl_easy_setopt (curl, CURLOPT_URL, url.c_str ());
+	string reply_1;
+	curl_easy_setopt (curl, CURLOPT_WRITEFUNCTION, writer);
+	curl_easy_setopt (curl, CURLOPT_WRITEDATA, & reply_1);
+	curl_easy_setopt (curl,  CURLOPT_CONNECTTIMEOUT, 60);
+	curl_easy_setopt (curl,  CURLOPT_TIMEOUT, 60);
+	res = curl_easy_perform (curl);
+	curl_easy_cleanup (curl);
+	if (res != CURLE_OK) {
+		throw (HttpException {__LINE__});
 	}
 	return reply_1;
 }
@@ -536,7 +561,7 @@ static void get_profile_impl (bool pagenation, string atom_query, string &a_scre
 		vector <string> timeline;
 
 		cerr << atom_query << endl;
-		string atom_reply = http_get (atom_query);
+		string atom_reply = http_get_quick (atom_query);
 		
 		XMLDocument atom_document;
 		XMLError atom_parse_error = atom_document.Parse (atom_reply.c_str ());
@@ -613,7 +638,7 @@ static void get_profile_impl (bool pagenation, string atom_query, string &a_scre
 				break;
 			}
 			cerr << next_url << endl;
-			string atom_reply = http_get (next_url);
+			string atom_reply = http_get_quick (next_url);
 		
 			XMLDocument atom_document;
 			XMLError atom_parse_error = atom_document.Parse (atom_reply.c_str ());
@@ -687,7 +712,7 @@ static void get_profile_impl (string atom_query, string &a_screen_name, string &
 		vector <string> timeline;
 
 		cerr << atom_query << endl;
-		string atom_reply = http_get (atom_query);
+		string atom_reply = http_get_quick (atom_query);
 		
 		XMLDocument atom_document;
 		XMLError atom_parse_error = atom_document.Parse (atom_reply.c_str ());
