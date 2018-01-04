@@ -21,6 +21,7 @@ int main (int argc, char *argv [])
 	for (auto row: table) {
 		if (2 < row.size () && row.at (0) == host && row.at (1) == user) {
 			string result {row.at (2)};
+			cout << "Access-Control-Allow-Origin: *" << endl;
 			cout << "Content-Type: application/json" << endl << endl;
 			cout << result;
 			return 0;
