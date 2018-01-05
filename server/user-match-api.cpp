@@ -7,6 +7,7 @@
 #include <sstream>
 #include <fstream>
 #include <set>
+#include <ctime>
 #include "picojson.h"
 #include "tinyxml2.h"
 #include "distsn.h"
@@ -161,10 +162,12 @@ static string format_result
 
 static void add_to_cache (string host, string user, string result)
 {
+	time_t now = time (nullptr);
 	ofstream out {"/var/lib/vinayaka/match-cache.csv", std::ofstream::out | std::ofstream::app};
 	out << "\"" << escape_csv (host) << "\",";
 	out << "\"" << escape_csv (user) << "\",";
-	out << "\"" << escape_csv (result) << "\"" << endl;
+	out << "\"" << escape_csv (result) << "\",";
+	out << "\"" << now << "\"" << endl;
 }
 
 

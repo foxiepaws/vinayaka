@@ -1,4 +1,3 @@
 #!/bin/bash
-
-/bin/rm -f /var/lib/vinayaka/match-cache.csv
+/usr/local/bin/vinayaka-clear-cache-impl
 
