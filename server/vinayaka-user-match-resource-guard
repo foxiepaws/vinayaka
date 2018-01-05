@@ -1,12 +1,4 @@
 #!/bin/bash
+/usr/local/bin/vinayaka-user-match-impl "$1" "$2"
 
-if test $(ps ax | fgrep vinayaka-user-match-impl | wc -l) -lt 5
-then
-	/usr/local/bin/vinayaka-user-match-impl "$1" "$2"
-else
-	echo 'Access-Control-Allow-Origin: *'
-	echo 'Content-Type: application/json'
-	echo ''
-	echo -n '"ただいま混み合っております。数分お待ちいただいてからご利用ください。"'
-fi
 
