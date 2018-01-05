@@ -136,7 +136,7 @@ static string format_result
 			Profile profile = users_to_profile.at (User {speaker.host, speaker.user});
 			out
 				<< "\"screen_name\":\"" << escape_json (profile.screen_name) << "\","
-				<< "\"bio\":\"\",";
+				<< "\"bio\":\"" << escape_json (profile.bio) << "\",";
 			if (safe_url (profile.avatar)) {
 				out << "\"avatar\":\"" << escape_json (profile.avatar) << "\",";
 			} else {
