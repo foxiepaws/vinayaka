@@ -3,7 +3,7 @@
 
 window.addEventListener ('load', function () {
 	var request = new XMLHttpRequest;
-	request.open ('GET', '/cgi-bin/vinayaka-user-speed-api.cgi');
+	request.open ('GET', '/cgi-bin/vinayaka-user-speed-api.cgi?100');
 	request.onload = function () {
 		if (request.readyState === request.DONE) {
 			if (request.status === 200) {
@@ -16,6 +16,43 @@ window.addEventListener ('load', function () {
 	}
 	request.send ();
 }, false); /* window.addEventListener ('load', function () { */
+
+
+window.load_1000 = function () {
+	document.getElementById ('a-1000').removeAttribute ('href');
+	var request = new XMLHttpRequest;
+	request.open ('GET', '/cgi-bin/vinayaka-user-speed-api.cgi?1000');
+	request.onload = function () {
+		if (request.readyState === request.DONE) {
+			if (request.status === 200) {
+				var response_text = request.responseText;
+				var users = JSON.parse (response_text);
+				show_users (users);
+				document.getElementById ('anti-harassment-message').removeAttribute ('style');
+			}
+		}
+	}
+	request.send ();
+};
+
+
+window.load_full = function () {
+	document.getElementById ('a-1000').removeAttribute ('href');
+	document.getElementById ('a-full').removeAttribute ('href');
+	var request = new XMLHttpRequest;
+	request.open ('GET', '/cgi-bin/vinayaka-user-speed-api.cgi');
+	request.onload = function () {
+		if (request.readyState === request.DONE) {
+			if (request.status === 200) {
+				var response_text = request.responseText;
+				var users = JSON.parse (response_text);
+				show_users (users);
+				document.getElementById ('anti-harassment-message').removeAttribute ('style');
+			}
+		}
+	}
+	request.send ();
+};
 
 
 function escapeHtml (text) {
