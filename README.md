@@ -11,7 +11,9 @@ http://vinayaka.distsn.org
 
 ### 似ているユーザーを検索
 
-http://vinayaka.distsn.org/cgi-bin/vinayaka-user-match-api.cgi?mstdn.jp+nullkal
+http://vinayaka.distsn.org/cgi-bin/vinayaka-user-match-simple-api.cgi?mstdn.jp+nullkal (軽量)
+
+http://vinayaka.distsn.org/cgi-bin/vinayaka-user-match-api.cgi?mstdn.jp+nullkal (フル)
 
 ### 流速順ユーザーリスト
 
