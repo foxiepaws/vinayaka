@@ -38,6 +38,7 @@ static string get_lightweight_api (string in)
 		double similarity = user_object.at (string {"similarity"}).get <double> ();
 		bool blacklisted = user_object.at (string {"blacklisted"}).get <bool> ();
 		string screen_name = user_object.at (string {"screen_name"}).get <string> ();
+		string bio = user_object.at (string {"bio"}).get <string> ();
 		string avatar = user_object.at (string {"avatar"}).get <string> ();
 		
 		stringstream out_user;
@@ -48,6 +49,7 @@ static string get_lightweight_api (string in)
 			<< "\"similarity\":" << similarity << ","
 			<< "\"blacklisted\":" << (blacklisted? "true": "false") << ","
 			<< "\"screen_name\":\"" << escape_json (screen_name) << "\","
+			<< "\"bio\":\"" << escape_json (bio) << "\","
 			<< "\"avatar\":\"" << escape_json (avatar) << "\""
 			<< "}";
 		out += out_user.str ();
