@@ -259,10 +259,6 @@ int main (int argc, char **argv)
 	set <User> blacklisted_users = get_blacklisted_users ();
 
 	string result = format_result (speakers_and_similarity, speaker_to_intersection, users_to_profile, blacklisted_users);
-	cout << "Access-Control-Allow-Origin: *" << endl;
-	cout << "Content-Type: application/json" << endl << endl;
-	cout << result;
-	
 	add_to_cache (host, user, result);
 }
 

@@ -1098,3 +1098,35 @@ bool safe_url (string url)
 }
 
 
+string fetch_cache (string a_host, string a_user, bool & a_hit)
+{
+	a_hit = false;
+
+	vector <vector <string>> table;
+	FILE * in = fopen ("/var/lib/vinayaka/match-cache.csv", "rb");
+	if (in != nullptr) {
+		table = parse_csv (in);
+		fclose (in);
+	}
+
+	time_t now = time (nullptr);
+
+	for (auto row: table) {
+		if (3 < row.size ()
+			&& row.at (0) == a_host
+			&& row.at (1) == a_user)
+		{
+			stringstream timestamp_sstream {row.at (3)};
+			time_t timestamp_time_t;
+			timestamp_sstream >> timestamp_time_t;
+			if (difftime (now, timestamp_time_t) < 60 * 60) {
+				string result {row.at (2)};
+				a_hit = true;
+				return result;
+			}
+		}
+	}
+
+	return string {};
+}
+

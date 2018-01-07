@@ -1,7 +1,10 @@
+#include <cstdlib>
 #include <iostream>
 #include <ctime>
 #include <sstream>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include "picojson.h"
 #include "distsn.h"
 
@@ -14,33 +17,25 @@ int main (int argc, char *argv [])
 	string host {argv [1]};
 	string user {argv [2]};
 
-	vector <vector <string>> table;
-	FILE * in = fopen ("/var/lib/vinayaka/match-cache.csv", "rb");
-	if (in != nullptr) {
-		table = parse_csv (in);
-		fclose (in);
-	}
-
-	time_t now = time (nullptr);
-
-	for (auto row: table) {
-		if (3 < row.size ()
-			&& row.at (0) == host
-			&& row.at (1) == user)
-		{
-			stringstream timestamp_sstream {row.at (3)};
-			time_t timestamp_time_t;
-			timestamp_sstream >> timestamp_time_t;
-			if (difftime (now, timestamp_time_t) < 60 * 60) {
-				string result {row.at (2)};
-				cout << "Access-Control-Allow-Origin: *" << endl;
-				cout << "Content-Type: application/json" << endl << endl;
-				cout << result;
-				return 0;
-			}
+	bool hit;
+	string result = fetch_cache (host, user, hit);
+	if (hit) {
+		cout << "Access-Control-Allow-Origin: *" << endl;
+		cout << "Content-Type: application/json" << endl << endl;
+		cout << result;
+	} else {
+		pid_t pid = fork ();
+		if (pid == 0) {
+			execv ("/usr/local/bin/vinayaka-user-match-impl", argv);
+		} else {
+			int status;
+			waitpid (pid, &status, 0);
+			string result_2 = fetch_cache (host, user, hit);
+			cout << "Access-Control-Allow-Origin: *" << endl;
+			cout << "Content-Type: application/json" << endl << endl;
+			cout << result_2;
 		}
 	}
-	execv ("/usr/local/bin/vinayaka-user-match-resource-guard", argv);
 }
 
 

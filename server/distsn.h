@@ -137,6 +137,7 @@ std::string escape_utf8_fragment (std::string in);
 std::set <std::string> get_international_hosts ();
 std::map <User, Profile> read_profiles ();
 bool safe_url (std::string url);
+std::string fetch_cache (std::string a_host, std::string a_user, bool & a_hit);
 
 
 /* sort-user-speed.cpp */
