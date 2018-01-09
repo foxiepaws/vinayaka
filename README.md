@@ -17,7 +17,9 @@ http://vinayaka.distsn.org/cgi-bin/vinayaka-user-match-api.cgi?mstdn.jp+nullkal 
 
 ### 流速順ユーザーリスト
 
-http://vinayaka.distsn.org/cgi-bin/vinayaka-user-speed-api.cgi
+http://vinayaka.distsn.org/cgi-bin/vinayaka-user-speed-api.cgi?100 (上位n人)
+
+http://vinayaka.distsn.org/cgi-bin/vinayaka-user-speed-api.cgi (フル)
 
 ## Install
 
