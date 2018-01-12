@@ -496,12 +496,33 @@ static bool all_hiragana (string word)
 }
 
 
+static bool is_space (char c)
+{
+	return c == ' ';
+}
+
+
+static unsigned int number_of_spaces (string s)
+{
+	unsigned int cn = 0;
+	for (auto c: s) {
+		if (is_space (c)) {
+			cn ++;
+		}
+	}
+	return cn;
+}
+
+
 static bool valid_word (string word)
 {
 	bool invalid
 		= (! starts_with_utf8_codepoint_boundary (word))
 		|| (word.size () < 9 && all_kana (word))
-		|| (word.size () < 12 && all_hiragana (word));
+		|| (word.size () < 12 && all_hiragana (word))
+		|| (word.size () < 9 && 2 <= number_of_spaces (word))
+		|| (word.size () < 12 && 3 <= number_of_spaces (word))
+		|| (word.size () < 15 && 4 <= number_of_spaces (word));
 	return ! invalid;
 }
 
