@@ -137,7 +137,7 @@ for (cn = 0; cn < users.length && cn < limit + number_of_blacklisted_users; cn +
 			user_html +=
 				'<p>' +
 				'<img class="avatar" src="blacklisted.png">' +
-				'<span class="headline">' + user.user + '@<wbr>' + user.host + ' ' +
+				'<span class="headline">' + escapeHtml (user.user) + '@<wbr>' + escapeHtml (user.host) + ' ' +
 				'<a class="icon" href="javascript:openBlacklistExplanation()">?</a>' +
 				'</span>' +
 				'<br>' +
@@ -146,11 +146,11 @@ for (cn = 0; cn < users.length && cn < limit + number_of_blacklisted_users; cn +
 			user_html +=
 				'<p>' +
 				'<a href="' +
-				'https://' + user.host + '/users/' + user.user +
+				'https://' + encodeURIComponent (user.host) + '/users/' + encodeURIComponent (user.user) +
 				'" target="vinayaka-external-user-profile">' +
 				'<img class="avatar" src="';
 			if (user.avatar && 0 < user.avatar.length) {
-				user_html += user.avatar;
+				user_html += encodeURI (user.avatar);
 			} else {
 				user_html += 'missing.png';
 			}
@@ -158,9 +158,9 @@ for (cn = 0; cn < users.length && cn < limit + number_of_blacklisted_users; cn +
 				'">' +
 				'</a>' +
 				'<a href="' +
-				'https://' + user.host + '/users/' + user.user +
+				'https://' + encodeURIComponent (user.host) + '/users/' + encodeURIComponent (user.user) +
 				'" target="vinayaka-external-user-profile" class="headline">' +
-				user.user + '@<wbr>' + user.host +
+				escapeHtml (user.user) + '@<wbr>' + escapeHtml (user.host) +
 				'</a>' +
 				'<br>' +
 				'類似度 ' + user.similarity.toFixed (0);
