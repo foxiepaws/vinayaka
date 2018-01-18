@@ -29,7 +29,7 @@ public:
 };
 
 
-double diameter_tolerance = 0.25;
+double diameter_tolerance = 0.5;
 static const unsigned int minimum_size_of_abstract_word = 2;
 
 
