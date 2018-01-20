@@ -1,11 +1,11 @@
 FROM ubuntu:16.04
 
-LABEL maintainer="https://github.com/neetshin/vinayaka" \
+LABEL maintainer="https://github.com/distsn/vinayaka" \
       description="語彙の類似からマストドンのユーザーを推挙するウェブアプリケーション"
 
 EXPOSE 80
 
-WORKDIR /var/lib/vinayaka
+WORKDIR /vinayaka
 
 RUN apt-get update \
  && apt-get install -y \
@@ -20,9 +20,9 @@ RUN apt-get update \
  && ln -s /etc/apache2/mods-available/cgi.load /etc/apache2/mods-enabled/cgi.load
 
 COPY ./vinayaka.conf /etc/apache2/sites-enabled
-COPY . /var/lib/vinayaka
+COPY . /vinayaka
 
-RUN chmod -R 777 /var/lib/vinayaka \
+RUN chmod -R 777 /vinayaka \
  && make \
  && make install \
  && make initialize
