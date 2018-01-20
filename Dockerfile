@@ -22,8 +22,7 @@ RUN apt-get update \
 COPY ./vinayaka.conf /etc/apache2/sites-enabled
 COPY . /vinayaka
 
-RUN chmod -R 777 /vinayaka \
- && make \
+RUN make \
  && make install \
  && make initialize
 
