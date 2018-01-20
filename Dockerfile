@@ -34,4 +34,8 @@ RUN echo '\
 50 *   * * * /usr/local/bin/vinayaka-clear-cache-cron\n\
 ' >> /etc/crontab
 
-ENTRYPOINT ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
+COPY docker_entrypoint.sh /usr/local/bin/run
+
+RUN chmod +x /usr/local/bin/run
+
+ENTRYPOINT ["/usr/local/bin/run"]
