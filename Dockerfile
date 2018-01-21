@@ -26,16 +26,10 @@ RUN make \
  && make install \
  && make initialize
 
-RUN echo '\
-10 */3 * * * /usr/local/bin/vinayaka-user-speed-cron\n\
-20 4   * * * /usr/local/bin/vinayaka-user-avatar-cron\n\
-30 5   * * * /usr/local/bin/vinayaka-user-words-meta-cron\n\
-40 */4 * * * /usr/local/bin/vinayaka-model-collector-cron\n\
-50 *   * * * /usr/local/bin/vinayaka-clear-cache-cron\n\
-' >> /etc/crontab
-
 COPY docker_entrypoint.sh /usr/local/bin/run
+COPY vinayaka-cron /etc/cron.d/vinayaka-cron
 
-RUN chmod +x /usr/local/bin/run
+RUN chmod +x /usr/local/bin/run \
+ && chmod 644 /etc/cron.d/vinayaka-cron
 
 ENTRYPOINT ["/usr/local/bin/run"]
