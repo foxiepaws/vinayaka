@@ -42,7 +42,7 @@ Write following code in crontab:
     40 */3 * * * /usr/local/bin/vinayaka-model-collector-cron
     50 *   * * * /usr/local/bin/vinayaka-clear-cache-cron
 
-# Update
+## Update
 
     $ cd vinayaka
     $ git pull
