@@ -1,0 +1,5 @@
+10 */3 * * * root /usr/local/bin/vinayaka-user-speed-cron
+20 4   * * * root /usr/local/bin/vinayaka-user-avatar-cron
+30 5   * * * root /usr/local/bin/vinayaka-user-words-meta-cron
+40 */4 * * * root /usr/local/bin/vinayaka-model-collector-cron
+50 *   * * * root /usr/local/bin/vinayaka-clear-cache-cron
