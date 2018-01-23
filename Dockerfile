@@ -32,4 +32,6 @@ COPY vinayaka-cron /etc/cron.d/vinayaka-cron
 RUN chmod +x /usr/local/bin/run \
  && chmod 644 /etc/cron.d/vinayaka-cron
 
+VOLUME [ "/var/lib/vinayaka" ]
+
 ENTRYPOINT ["/usr/local/bin/run"]
