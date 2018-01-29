@@ -40,6 +40,7 @@ static string get_lightweight_api (string in)
 		string screen_name = user_object.at (string {"screen_name"}).get <string> ();
 		string bio = user_object.at (string {"bio"}).get <string> ();
 		string avatar = user_object.at (string {"avatar"}).get <string> ();
+		bool following = user_object.at (string {"following"}).get <bool> ();
 		
 		stringstream out_user;
 		out_user
@@ -50,7 +51,8 @@ static string get_lightweight_api (string in)
 			<< "\"blacklisted\":" << (blacklisted? "true": "false") << ","
 			<< "\"screen_name\":\"" << escape_json (screen_name) << "\","
 			<< "\"bio\":\"" << escape_json (bio) << "\","
-			<< "\"avatar\":\"" << escape_json (avatar) << "\""
+			<< "\"avatar\":\"" << escape_json (avatar) << "\","
+			<< "\"following\":" << (following? "true": "false")
 			<< "}";
 		out += out_user.str ();
 	}
