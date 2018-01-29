@@ -240,13 +240,6 @@ int main (int argc, char **argv)
 	string host {argv [1]};
 	string user {argv [2]};
 	cerr << user << "@" << host << endl;
-	
-	auto friends = get_friends (host, user);
-	for (auto i: friends) {
-		cerr << i << endl;
-	}
-	
-#if 0
 	string screen_name;
 	string bio;
 	vector <string> toots;
@@ -311,7 +304,6 @@ int main (int argc, char **argv)
 		blacklisted_users,
 		friends);
 	add_to_cache (host, user, result);
-#endif
 }
 
 
