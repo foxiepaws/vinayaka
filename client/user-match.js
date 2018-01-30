@@ -142,7 +142,8 @@ for (cn = 0; cn < users.length && cn < limit + number_of_blacklisted_users; cn +
 				'<a class="icon" href="javascript:openBlacklistExplanation()">?</a>' +
 				'</span>' +
 				'<br>' +
-				'Similarity ' + user.similarity.toFixed (0);
+				'Similarity ' + user.similarity.toFixed (0) +
+				(user.following? '<br>Following': '');
 		} else {
 			user_html +=
 				'<p>' +
@@ -164,7 +165,8 @@ for (cn = 0; cn < users.length && cn < limit + number_of_blacklisted_users; cn +
 				escapeHtml (user.user) + '@<wbr>' + escapeHtml (user.host) +
 				'</a>' +
 				'<br>' +
-				'Similarity ' + user.similarity.toFixed (0);
+				'Similarity ' + user.similarity.toFixed (0) +
+				(user.following? '<br>Following': '');
 		}
 		if (detail) {
 			user_html += '</p><p>';

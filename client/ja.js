@@ -141,7 +141,8 @@ for (cn = 0; cn < users.length && cn < limit + number_of_blacklisted_users; cn +
 				'<a class="icon" href="javascript:openBlacklistExplanation()">?</a>' +
 				'</span>' +
 				'<br>' +
-				'類似度 ' + user.similarity.toFixed (0);
+				'類似度 ' + user.similarity.toFixed (0) +
+				(user.following? '<br>フォローしています': '');
 		} else {
 			user_html +=
 				'<p>' +
@@ -163,7 +164,8 @@ for (cn = 0; cn < users.length && cn < limit + number_of_blacklisted_users; cn +
 				escapeHtml (user.user) + '@<wbr>' + escapeHtml (user.host) +
 				'</a>' +
 				'<br>' +
-				'類似度 ' + user.similarity.toFixed (0);
+				'類似度 ' + user.similarity.toFixed (0) +
+				(user.following? '<br>フォローしています': '');
 		}
 		if (detail) {
 			user_html += '</p><p>';
