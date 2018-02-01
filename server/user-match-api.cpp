@@ -108,8 +108,7 @@ static string format_result
 	(vector <UserAndSimilarity> speakers_and_similarity,
 	map <User, set <string>> speaker_to_intersection,
 	map <User, Profile> users_to_profile,
-	set <User> blacklisted_users,
-	set <string> friends)
+	set <User> blacklisted_users)
 {
 	stringstream out;
 	out << "[";
@@ -144,9 +143,6 @@ static string format_result
 				out << "\"avatar\":\"\",";
 			}
 		}
-
-		bool following = (friends.find (speaker.user + string {"@"} + speaker.host) != friends.end ());
-		out << "\"following\":" << (following? "true": "false") << ",";
 
 		out << "\"intersection\":[";
 		for (unsigned int cn_intersection = 0; cn_intersection < intersection.size (); cn_intersection ++) {
@@ -200,35 +196,6 @@ static map <string, string> get_concrete_to_abstract_words ()
 		}
 	}
 	return concrete_to_abstract_words;
-}
-
-
-static set <string> get_friends (string host, string user)
-{
-	string url = string {"https://"} + host + string {"/api/statuses/friends.json?user_id="} + user;
-	string reply_string = http_get_quick (url);
-	picojson::value reply_value;
-	string error = picojson::parse (reply_value, reply_string);
-	if (! error.empty ()) {
-		cerr << error << endl;
-		throw (UserException {__LINE__});
-	}
-	if (! reply_value.is <picojson::array> ()) {
-		throw (UserException {__LINE__});
-	}
-	auto friends_array = reply_value.get <picojson::array> ();
-	set <string> friends_string;
-	for (auto friend_value: friends_array) {
-		if (friend_value.is <picojson::object> ()) {
-			auto friend_object = friend_value.get <picojson::object> ();
-			auto screen_name_value = friend_object.at (string {"screen_name"});
-			if (screen_name_value.is <string> ()) {
-				string screen_name_string = screen_name_value.get <string> ();
-				friends_string.insert (screen_name_string);
-			}
-		}
-	}
-	return friends_string;
 }
 
 
@@ -290,19 +257,11 @@ int main (int argc, char **argv)
 	map <User, Profile> users_to_profile = read_profiles ();
 	set <User> blacklisted_users = get_blacklisted_users ();
 
-	set <string> friends;
-	try {
-		friends = get_friends (host, user);
-	} catch (ExceptionWithLineNumber e) {
-		cerr << "Not expose friends: " << e.line << endl;
-	}
-
 	string result = format_result
 		(speakers_and_similarity,
 		speaker_to_intersection,
 		users_to_profile,
-		blacklisted_users,
-		friends);
+		blacklisted_users);
 	add_to_cache (host, user, result);
 }
 

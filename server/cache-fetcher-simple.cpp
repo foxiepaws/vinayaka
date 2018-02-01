@@ -11,7 +11,7 @@
 using namespace std;
 
 
-static string get_lightweight_api (string in)
+static string get_lightweight_api (string in, string listener_host, string listener_user)
 {
 	string out;
 
@@ -24,6 +24,13 @@ static string get_lightweight_api (string in)
 
 	auto users_array = json_value.get <picojson::array> ();
 	
+	set <string> friends;
+	try {
+		friends = get_friends (listener_host, listener_user);
+	} catch (ExceptionWithLineNumber e) {
+		cerr << "Not expose friends: " << e.line << endl;
+	}
+
 	out += string {"["};
 
 	for (unsigned int cn = 0; cn < 100 && cn < users_array.size (); cn ++) {
@@ -40,7 +47,7 @@ static string get_lightweight_api (string in)
 		string screen_name = user_object.at (string {"screen_name"}).get <string> ();
 		string bio = user_object.at (string {"bio"}).get <string> ();
 		string avatar = user_object.at (string {"avatar"}).get <string> ();
-		bool following = user_object.at (string {"following"}).get <bool> ();
+		bool following = (friends.find (user + string {"@"} + host) != friends.end ());
 		
 		stringstream out_user;
 		out_user
@@ -73,7 +80,7 @@ int main (int argc, char *argv [])
 	if (hit) {
 		cout << "Access-Control-Allow-Origin: *" << endl;
 		cout << "Content-Type: application/json" << endl << endl;
-		cout << get_lightweight_api (result);
+		cout << get_lightweight_api (result, host, user);
 	} else {
 		pid_t pid = fork ();
 		if (pid == 0) {
@@ -84,7 +91,7 @@ int main (int argc, char *argv [])
 			string result_2 = fetch_cache (host, user, hit);
 			cout << "Access-Control-Allow-Origin: *" << endl;
 			cout << "Content-Type: application/json" << endl << endl;
-			cout << get_lightweight_api (result_2);
+			cout << get_lightweight_api (result_2, host, user);
 		}
 	}
 }

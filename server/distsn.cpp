@@ -1129,3 +1129,34 @@ string fetch_cache (string a_host, string a_user, bool & a_hit)
 	return string {};
 }
 
+
+set <string> get_friends (string host, string user)
+{
+	string url = string {"https://"} + host + string {"/api/statuses/friends.json?user_id="} + user;
+	string reply_string = http_get_quick (url);
+	picojson::value reply_value;
+	string error = picojson::parse (reply_value, reply_string);
+	if (! error.empty ()) {
+		cerr << error << endl;
+		throw (UserException {__LINE__});
+	}
+	if (! reply_value.is <picojson::array> ()) {
+		throw (UserException {__LINE__});
+	}
+	auto friends_array = reply_value.get <picojson::array> ();
+	set <string> friends_string;
+	for (auto friend_value: friends_array) {
+		if (friend_value.is <picojson::object> ()) {
+			auto friend_object = friend_value.get <picojson::object> ();
+			auto screen_name_value = friend_object.at (string {"screen_name"});
+			if (screen_name_value.is <string> ()) {
+				string screen_name_string = screen_name_value.get <string> ();
+				friends_string.insert (screen_name_string);
+			}
+		}
+	}
+	return friends_string;
+}
+
+
+

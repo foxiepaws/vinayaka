@@ -138,6 +138,7 @@ std::set <std::string> get_international_hosts ();
 std::map <User, Profile> read_profiles ();
 bool safe_url (std::string url);
 std::string fetch_cache (std::string a_host, std::string a_user, bool & a_hit);
+std::set <std::string> get_friends (std::string host, std::string user);
 
 
 /* sort-user-speed.cpp */

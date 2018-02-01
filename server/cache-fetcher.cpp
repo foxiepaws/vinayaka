@@ -1,4 +1,3 @@
-#include <cstdlib>
 #include <iostream>
 #include <ctime>
 #include <sstream>
@@ -12,6 +11,83 @@
 using namespace std;
 
 
+static string get_advanced_api (string in, string listener_host, string listener_user)
+{
+	string out;
+
+	picojson::value json_value;
+	string json_parse_error = picojson::parse (json_value, in);
+	if (! json_parse_error.empty ()) {
+		cerr << json_parse_error << endl;
+		exit (1);
+	}
+
+	auto users_array = json_value.get <picojson::array> ();
+	
+	set <string> friends;
+	try {
+		friends = get_friends (listener_host, listener_user);
+	} catch (ExceptionWithLineNumber e) {
+		cerr << "Not expose friends: " << e.line << endl;
+	}
+
+	out += string {"["};
+
+	for (unsigned int cn = 0; cn < users_array.size (); cn ++) {
+		if (0 < cn) {
+			out += string {","};
+		}
+	
+		auto user_value = users_array.at (cn);
+		auto user_object = user_value.get <picojson::object> ();
+		string host = user_object.at (string {"host"}).get <string> ();
+		string user = user_object.at (string {"user"}).get <string> ();
+		double similarity = user_object.at (string {"similarity"}).get <double> ();
+		bool blacklisted = user_object.at (string {"blacklisted"}).get <bool> ();
+		string screen_name = user_object.at (string {"screen_name"}).get <string> ();
+		string bio = user_object.at (string {"bio"}).get <string> ();
+		string avatar = user_object.at (string {"avatar"}).get <string> ();
+		bool following = (friends.find (user + string {"@"} + host) != friends.end ());
+
+		vector <string> intersection;
+		auto intersection_array = user_object.at (string {"intersection"}).get <picojson::array> ();
+		for (auto word_value: intersection_array) {
+			string word_string = word_value.get <string> ();
+			intersection.push_back (word_string);
+		}
+		
+		stringstream out_user;
+		out_user
+			<< "{"
+			<< "\"host\":\"" << escape_json (host) << "\","
+			<< "\"user\":\"" << escape_json (user) << "\","
+			<< "\"similarity\":" << similarity << ","
+			<< "\"blacklisted\":" << (blacklisted? "true": "false") << ","
+			<< "\"screen_name\":\"" << escape_json (screen_name) << "\","
+			<< "\"bio\":\"" << escape_json (bio) << "\","
+			<< "\"avatar\":\"" << escape_json (avatar) << "\",";
+		out_user
+			<< "\"intersection\":[";
+		for (unsigned int cn = 0; cn < intersection.size (); cn ++) {
+			if (0 < cn) {
+				out_user << ",";
+			}
+			out_user << "\"" << escape_json (intersection.at (cn)) << "\"";
+		}
+		out_user
+			<< "],";
+		out_user
+			<< "\"following\":" << (following? "true": "false")
+			<< "}";
+		out += out_user.str ();
+	}
+
+	out += string {"]"};
+
+	return out;
+}
+
+
 int main (int argc, char *argv [])
 {
 	string host {argv [1]};
@@ -22,7 +98,7 @@ int main (int argc, char *argv [])
 	if (hit) {
 		cout << "Access-Control-Allow-Origin: *" << endl;
 		cout << "Content-Type: application/json" << endl << endl;
-		cout << result;
+		cout << get_advanced_api (result, host, user);
 	} else {
 		pid_t pid = fork ();
 		if (pid == 0) {
@@ -33,7 +109,7 @@ int main (int argc, char *argv [])
 			string result_2 = fetch_cache (host, user, hit);
 			cout << "Access-Control-Allow-Origin: *" << endl;
 			cout << "Content-Type: application/json" << endl << endl;
-			cout << result_2;
+			cout << get_advanced_api (result_2, host, user);
 		}
 	}
 }
