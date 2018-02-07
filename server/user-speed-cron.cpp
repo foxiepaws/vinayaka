@@ -30,7 +30,7 @@ static bool valid_username (string s)
 }
 
 
-static string get_username (const picojson::value &toot)
+static void get_username_and_acct (const picojson::value &toot, string &a_username, string &a_acct)
 {
 	if (! toot.is <picojson::object> ()) {
 		throw (TootException {});
@@ -44,6 +44,7 @@ static string get_username (const picojson::value &toot)
 		throw (TootException {});
 	}
 	auto account_map = account.get <picojson::object> ();
+
 	if (account_map.find (string {"username"}) == account_map.end ()) {
 		throw (TootException {});
 	}
@@ -55,7 +56,17 @@ static string get_username (const picojson::value &toot)
 	if (! valid_username (username_s)) {
 		throw (TootException {});
 	}
-	return username_s;
+	a_username = username_s;
+
+	if (account_map.find (string {"acct"}) == account_map.end ()) {
+		throw (TootException {});
+	}
+	auto acct = account_map.at (string {"acct"});
+	if (! acct.is <string> ()) {
+		throw (TootException {});
+	}
+	auto acct_s = acct.get <string> ();
+	a_acct = acct_s;
 }
 
 
@@ -95,6 +106,41 @@ static void write_storage (FILE *out, map <string, double> memo)
 		fprintf (out, "\"%s\":%e,", username.c_str (), speed);
 	}
 	fprintf (out, "}");
+}
+
+
+static void get_host_and_user_from_acct (string a_acct, string &a_host, string &a_user)
+{
+	string host;
+	string user;
+	unsigned int state = 0;
+	for (auto c: a_acct) {
+		switch (state) {
+		case 0:
+			if (c == '@') {
+				state = 1;
+			} else {
+				user.push_back (c);
+			}
+			break;
+		case 1:
+			host.push_back (c);
+			break;
+		default:
+			abort ();
+		}
+	}
+	a_host = host;
+	a_user = user;
+}
+
+
+static bool is_local_user (string a_host, string a_acct)
+{
+	string host;
+	string user;
+	get_host_and_user_from_acct (a_acct, host, user);
+	return host.empty () || a_host == host;
 }
 
 
@@ -154,11 +200,16 @@ static void for_host (string host)
 	map <string, unsigned int> occupancy;
 
 	for (auto toot: toots) {
-		string username = get_username (toot);
-		if (occupancy.find (username) == occupancy.end ()) {
-			occupancy.insert (pair <string, unsigned int> (username, 1));
-		} else {
-			occupancy.at (username) ++;
+		string username;
+		string acct;
+		get_username_and_acct (toot, username, acct);
+		/* cerr << username << " " << acct << " " << is_local_user (host, acct) << endl; */
+		if (is_local_user (host, acct)) {
+			if (occupancy.find (username) == occupancy.end ()) {
+				occupancy.insert (pair <string, unsigned int> (username, 1));
+			} else {
+				occupancy.at (username) ++;
+			}
 		}
 	}
 	
