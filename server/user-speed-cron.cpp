@@ -200,16 +200,20 @@ static void for_host (string host)
 	map <string, unsigned int> occupancy;
 
 	for (auto toot: toots) {
-		string username;
-		string acct;
-		get_username_and_acct (toot, username, acct);
-		/* cerr << username << " " << acct << " " << is_local_user (host, acct) << endl; */
-		if (is_local_user (host, acct)) {
-			if (occupancy.find (username) == occupancy.end ()) {
-				occupancy.insert (pair <string, unsigned int> (username, 1));
-			} else {
-				occupancy.at (username) ++;
+		try {
+			string username;
+			string acct;
+			get_username_and_acct (toot, username, acct);
+			/* cerr << username << " " << acct << " " << is_local_user (host, acct) << endl; */
+			if (is_local_user (host, acct)) {
+				if (occupancy.find (username) == occupancy.end ()) {
+					occupancy.insert (pair <string, unsigned int> (username, 1));
+				} else {
+					occupancy.at (username) ++;
+				}
 			}
+		} catch (TootException e) {
+			cerr << "TootException " << e.line << endl;
 		}
 	}
 	
