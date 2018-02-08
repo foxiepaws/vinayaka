@@ -8,6 +8,7 @@
 #include <fstream>
 #include <set>
 #include <ctime>
+#include <random>
 #include "picojson.h"
 #include "tinyxml2.h"
 #include "distsn.h"
@@ -109,11 +110,12 @@ static string format_result
 	map <User, set <string>> speaker_to_intersection,
 	map <User, Profile> users_to_profile,
 	set <User> blacklisted_users,
-	set <string> friends)
+	set <string> friends,
+	unsigned int sampling)
 {
 	stringstream out;
 	out << "[";
-	for (unsigned int cn = 0; cn < speakers_and_similarity.size () && cn < 400; cn ++) {
+	for (unsigned int cn = 0; cn < speakers_and_similarity.size () && cn < 400 / sampling; cn ++) {
 		if (0 < cn) {
 			out << ",";
 		}
@@ -203,6 +205,26 @@ static map <string, string> get_concrete_to_abstract_words ()
 }
 
 
+static map <User, set <string>> sampling_speaker_to_words (map <User, set <string>> in, unsigned int sampling)
+{
+	random_device device;
+	auto random_engine = default_random_engine (device ());
+	unsigned int index = uniform_int_distribution <unsigned int> {0, sampling - 1} (random_engine);
+	
+	map <User, set <string>> out;
+	unsigned int cn = 0;
+
+	for (auto i: in) {
+		if (cn % sampling == index) {
+			out.insert (i);
+		}
+		cn ++;
+	}
+	
+	return out;
+}
+
+
 int main (int argc, char **argv)
 {
 	if (argc < 3) {
@@ -210,7 +232,12 @@ int main (int argc, char **argv)
 	}
 	string host {argv [1]};
 	string user {argv [2]};
-	cerr << user << "@" << host << endl;
+	unsigned int sampling = 1;
+	if (3 < argc) {
+		stringstream {argv [3]} >> sampling;
+	}
+	cerr << user << "@" << host << " " << sampling << endl;
+	
 	string screen_name;
 	string bio;
 	vector <string> toots;
@@ -237,8 +264,10 @@ int main (int argc, char **argv)
 		}
 	}
 	
-	map <User, set <string>> speaker_to_words
+	map <User, set <string>> speaker_to_words_raw
 		= get_words_of_speakers (string {"/var/lib/vinayaka/abstract-user-words.csv"});
+		
+	map <User, set <string>> speaker_to_words = sampling_speaker_to_words (speaker_to_words_raw, sampling);
 
 	vector <UserAndSimilarity> speakers_and_similarity;
 	map <User, set <string>> speaker_to_intersection;
@@ -262,10 +291,12 @@ int main (int argc, char **argv)
 	set <User> blacklisted_users = get_blacklisted_users ();
 
 	set <string> friends;
-	try {
-		friends = get_friends (host, user);
-	} catch (ExceptionWithLineNumber e) {
-		cerr << "Not expose friends: " << e.line << endl;
+	if (0 < sampling) {
+		try {
+			friends = get_friends (host, user);
+		} catch (ExceptionWithLineNumber e) {
+			cerr << "Not expose friends: " << e.line << endl;
+		}
 	}
 	
 	string result = format_result
@@ -273,8 +304,14 @@ int main (int argc, char **argv)
 		speaker_to_intersection,
 		users_to_profile,
 		blacklisted_users,
-		friends);
-	add_to_cache (host, user, result);
+		friends,
+		sampling);
+	
+	if (1 < sampling) {
+		cout << result;
+	} else {
+		add_to_cache (host, user, result);
+	}
 }
 
 
