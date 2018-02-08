@@ -108,7 +108,8 @@ static string format_result
 	(vector <UserAndSimilarity> speakers_and_similarity,
 	map <User, set <string>> speaker_to_intersection,
 	map <User, Profile> users_to_profile,
-	set <User> blacklisted_users)
+	set <User> blacklisted_users,
+	set <string> friends)
 {
 	stringstream out;
 	out << "[";
@@ -143,6 +144,9 @@ static string format_result
 				out << "\"avatar\":\"\",";
 			}
 		}
+
+		bool following = (friends.find (speaker.user + string {"@"} + speaker.host) != friends.end ());
+		out << "\"following\":" << (following? "true": "false") << ",";
 
 		out << "\"intersection\":[";
 		for (unsigned int cn_intersection = 0; cn_intersection < intersection.size (); cn_intersection ++) {
@@ -257,11 +261,19 @@ int main (int argc, char **argv)
 	map <User, Profile> users_to_profile = read_profiles ();
 	set <User> blacklisted_users = get_blacklisted_users ();
 
+	set <string> friends;
+	try {
+		friends = get_friends (host, user);
+	} catch (ExceptionWithLineNumber e) {
+		cerr << "Not expose friends: " << e.line << endl;
+	}
+	
 	string result = format_result
 		(speakers_and_similarity,
 		speaker_to_intersection,
 		users_to_profile,
-		blacklisted_users);
+		blacklisted_users,
+		friends);
 	add_to_cache (host, user, result);
 }
 
