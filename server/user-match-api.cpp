@@ -73,8 +73,12 @@ static set <string> get_words_of_listener (vector <string> toots, vector <ModelT
 };
 
 
-static map <User, set <string>> get_words_of_speakers (string filename)
+static map <User, set <string>> get_words_of_speakers (string filename, unsigned int sampling)
 {
+	random_device device;
+	auto random_engine = default_random_engine (device ());
+	unsigned int index = uniform_int_distribution <unsigned int> {0, sampling - 1} (random_engine);
+
 	map <User, set <string>> users_to_words;
 	FILE *in = fopen (filename.c_str (), "r");
 	if (in == nullptr) {
@@ -83,6 +87,18 @@ static map <User, set <string>> get_words_of_speakers (string filename)
 		try {
 			vector <vector <string>> table = parse_csv (in);
 			fclose (in);
+			set <User> users_set;
+			for (auto row: table) {
+				if (2 < row.size ()) {
+					users_set.insert (User {row.at (0), row.at (1)});
+				}
+			}
+			vector <User> users_vector {users_set.begin (), users_set.end ()};
+			for (unsigned int cn = 0; cn < users_vector.size (); cn ++) {
+				if (cn % sampling == index) {
+					users_to_words.insert (pair <User, set <string>> {users_vector.at (cn), set <string> {}});
+				}
+			}
 			for (auto row: table) {
 				if (2 < row.size ()) {
 					User user {row.at (0), row.at (1)};
@@ -90,9 +106,7 @@ static map <User, set <string>> get_words_of_speakers (string filename)
 					for (unsigned int cn = 2; cn < row.size (); cn ++) {
 						words.insert (row.at (cn));
 					}
-					if (users_to_words.find (user) == users_to_words.end ()) {
-						users_to_words.insert (pair <User, set <string>> {user, words});
-					} else {
+					if (users_to_words.find (user) != users_to_words.end ()) {
 						users_to_words.at (user).insert (words.begin (), words.end ());
 					}
 				}
@@ -205,26 +219,6 @@ static map <string, string> get_concrete_to_abstract_words ()
 }
 
 
-static map <User, set <string>> sampling_speaker_to_words (map <User, set <string>> in, unsigned int sampling)
-{
-	random_device device;
-	auto random_engine = default_random_engine (device ());
-	unsigned int index = uniform_int_distribution <unsigned int> {0, sampling - 1} (random_engine);
-	
-	map <User, set <string>> out;
-	unsigned int cn = 0;
-
-	for (auto i: in) {
-		if (cn % sampling == index) {
-			out.insert (i);
-		}
-		cn ++;
-	}
-	
-	return out;
-}
-
-
 int main (int argc, char **argv)
 {
 	if (argc < 3) {
@@ -264,11 +258,9 @@ int main (int argc, char **argv)
 		}
 	}
 	
-	map <User, set <string>> speaker_to_words_raw
-		= get_words_of_speakers (string {"/var/lib/vinayaka/abstract-user-words.csv"});
+	map <User, set <string>> speaker_to_words
+		= get_words_of_speakers (string {"/var/lib/vinayaka/abstract-user-words.csv"}, sampling);
 		
-	map <User, set <string>> speaker_to_words = sampling_speaker_to_words (speaker_to_words_raw, sampling);
-
 	vector <UserAndSimilarity> speakers_and_similarity;
 	map <User, set <string>> speaker_to_intersection;
 	
@@ -291,7 +283,7 @@ int main (int argc, char **argv)
 	set <User> blacklisted_users = get_blacklisted_users ();
 
 	set <string> friends;
-	if (0 < sampling) {
+	if (1 < sampling) {
 		try {
 			friends = get_friends (host, user);
 		} catch (ExceptionWithLineNumber e) {
