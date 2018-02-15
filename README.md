@@ -23,11 +23,7 @@ http://vinayaka.distsn.org/cgi-bin/vinayaka-user-speed-api.cgi (フル)
 
 ## Install
 
-(Recommends Ubuntu)
-
-    $ sudo apt install git make gcc g++ libcurl4-openssl-dev apache2
-    $ git clone https://github.com/distsn/vinayaka.git
-    $ cd vinayaka
+    $ sudo apt install build-essential libcurl4-openssl-dev apache2
     $ make
     $ sudo make install
     $ sudo make initialize
@@ -44,8 +40,6 @@ Write following code in crontab:
 
 ## Update
 
-    $ cd vinayaka
-    $ git pull
     $ make clean
     $ make
     $ sudo make install
