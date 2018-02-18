@@ -181,10 +181,10 @@ for (cn = 0; cn < users.length && cn < limit + number_of_blacklisted_users; cn +
 	{
 		var user_html = '';
 		var m_following =
-			(m_language === 'ja'? 'フォローしています':
+			(g_language === 'ja'? 'フォローしています':
 			'Following')
 		var m_similarity =
-			(m_language === 'ja'? '類似度':
+			(g_language === 'ja'? '類似度':
 			'Similarity')
 		if (user.blacklisted) {
 			number_of_blacklisted_users ++;
@@ -273,7 +273,7 @@ var g_share_intent = '';
 
 function activate_share_button (users, current_host, current_user) {
 	var intent = '';
-	if (m_language === 'ja') {
+	if (g_language === 'ja') {
 		intent += '@' + current_user + '@' + current_host + ' ' +
 			'に似ているユーザー' + "\n\n";
 		for (var cn = 0; cn < 6 && cn < users.length; cn ++) {
