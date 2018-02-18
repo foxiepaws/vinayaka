@@ -20,7 +20,8 @@ function setJapaneseMessages () {
 		'm-code': 'コード',
 		'm-powerful-users': 'マストドン/Pleromaのヤベーやつら',
 		'a-full': 'すべて',
-		'm-tpd': 'TPD = トゥート/日'
+		'm-tpd': 'TPD = トゥート/日',
+		'anti-harassment-message': 'ボット、スパム、ハラスメントを通報するには <a href="https://github.com/distsn/vinayaka/blob/master/server/blacklisted_users.csv" target="_blank">blacklisted_users.csv</a> にプルリクエストを送ってください。'
 	}
 	for (var id in messages) {
 		var placeholder = document.getElementById (id);
