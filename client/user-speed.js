@@ -1,4 +1,34 @@
-/* Follow recommendation */
+var g_language
+
+
+window.addEventListener ('load', function () {
+	if (window.navigator.language === 'ja' || window.navigator.language.startsWith ('ja-')) {
+		g_language = 'ja'
+		setJapaneseMessages ();
+	} else {
+		g_language = 'en'
+	}
+}, false)
+
+
+function setJapaneseMessages () {
+	var messages = {
+		'm-matching': 'マッチング',
+		'm-users': 'ユーザー一覧',
+		'm-instances': 'インスタンス一覧',
+		'm-mystery': 'ミステリーポスト',
+		'm-code': 'コード',
+		'm-powerful-users': 'マストドン/Pleromaのヤベーやつら',
+		'a-full': 'すべて',
+		'm-tpd': 'TPD = トゥート/日'
+	}
+	for (var id in messages) {
+		var placeholder = document.getElementById (id);
+		if (placeholder) {
+			placeholder.innerHTML = messages[id]
+		}
+	}
+}
 
 
 window.addEventListener ('load', function () {
