@@ -14,8 +14,8 @@ window.addEventListener ('load', function () {
 function setJapaneseMessages () {
 	var messages = {
 		'm-matching': 'マッチング',
-		'm-users': 'ユーザー一覧',
-		'm-instances': 'インスタンス一覧',
+		'm-users': 'ユーザー',
+		'm-instances': 'インスタンス',
 		'm-mystery': 'ミステリーポスト',
 		'm-code': 'コード',
 		'm-powerful-users': 'マストドン/Pleromaのヤベーやつら',
