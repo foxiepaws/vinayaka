@@ -47,7 +47,7 @@ static string get_advanced_api (string in, string listener_host, string listener
 		string screen_name = user_object.at (string {"screen_name"}).get <string> ();
 		string bio = user_object.at (string {"bio"}).get <string> ();
 		string avatar = user_object.at (string {"avatar"}).get <string> ();
-		bool following = (friends.find (user + string {"@"} + host) != friends.end ());
+		bool following_bool = following (host, user, friends);
 
 		vector <string> intersection;
 		auto intersection_array = user_object.at (string {"intersection"}).get <picojson::array> ();
@@ -77,7 +77,7 @@ static string get_advanced_api (string in, string listener_host, string listener
 		out_user
 			<< "],";
 		out_user
-			<< "\"following\":" << (following? "true": "false")
+			<< "\"following\":" << (following_bool? "true": "false")
 			<< "}";
 		out += out_user.str ();
 	}

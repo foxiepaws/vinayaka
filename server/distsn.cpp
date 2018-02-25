@@ -1159,4 +1159,9 @@ set <string> get_friends (string host, string user)
 }
 
 
+bool following (string a_host, string a_user, set <string> a_friends)
+{
+	return a_friends.find (a_user + string {"@"} + a_host) != a_friends.end ()
+	|| a_friends.find (a_user) != a_friends.end ();
+}
 

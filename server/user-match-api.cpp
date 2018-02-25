@@ -161,8 +161,8 @@ static string format_result
 			}
 		}
 
-		bool following = (friends.find (speaker.user + string {"@"} + speaker.host) != friends.end ());
-		out << "\"following\":" << (following? "true": "false") << ",";
+		bool following_bool = following (speaker.host, speaker.user, friends);
+		out << "\"following\":" << (following_bool? "true": "false") << ",";
 
 		out << "\"intersection\":[";
 		for (unsigned int cn_intersection = 0; cn_intersection < intersection.size (); cn_intersection ++) {

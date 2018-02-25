@@ -47,7 +47,7 @@ static string get_lightweight_api (string in, string listener_host, string liste
 		string screen_name = user_object.at (string {"screen_name"}).get <string> ();
 		string bio = user_object.at (string {"bio"}).get <string> ();
 		string avatar = user_object.at (string {"avatar"}).get <string> ();
-		bool following = (friends.find (user + string {"@"} + host) != friends.end ());
+		bool following_bool = following (host, user, friends);
 		
 		stringstream out_user;
 		out_user
@@ -59,7 +59,7 @@ static string get_lightweight_api (string in, string listener_host, string liste
 			<< "\"screen_name\":\"" << escape_json (screen_name) << "\","
 			<< "\"bio\":\"" << escape_json (bio) << "\","
 			<< "\"avatar\":\"" << escape_json (avatar) << "\","
-			<< "\"following\":" << (following? "true": "false")
+			<< "\"following\":" << (following_bool? "true": "false")
 			<< "}";
 		out += out_user.str ();
 	}
