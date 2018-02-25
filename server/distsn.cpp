@@ -522,7 +522,7 @@ static bool all_hiragana (string word)
 
 static bool is_space (char c)
 {
-	return c == ' ';
+	return c == ' ' || c == '\n';
 }
 
 
@@ -538,10 +538,17 @@ static unsigned int number_of_spaces (string s)
 }
 
 
+static bool starts_with_whitespace (string word)
+{
+	return is_space (word.at (0));
+}
+
+
 static bool valid_word (string word)
 {
 	bool invalid
 		= (! starts_with_utf8_codepoint_boundary (word))
+		|| starts_with_whitespace (word)
 		|| (word.size () < 9 && all_kana (word))
 		|| (word.size () < 12 && all_hiragana (word))
 		|| (word.size () < 9 && 2 <= number_of_spaces (word))
@@ -564,6 +571,28 @@ static bool valid_toot (string toot)
 }
 
 
+static bool is_alphabet (char c)
+{
+	return ('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z');
+}
+
+
+static bool separate_at_alphabet (string toot, unsigned int offset)
+{
+	return
+		0 < offset
+		&& offset < toot.size ()
+		&& is_alphabet (toot.at (offset - 1))
+		&& is_alphabet (toot.at (offset));
+}
+
+
+static bool valid_position (string toot, unsigned int offset)
+{
+	return ! separate_at_alphabet (toot, offset);
+}
+
+
 vector <string> get_words_from_toots (vector <string> toots, unsigned int word_length, unsigned int vocabulary_size)
 {
 	map <string, unsigned int> occupancy_count_map;
@@ -574,7 +603,7 @@ vector <string> get_words_from_toots (vector <string> toots, unsigned int word_l
 		if (valid_toot (toot) && word_length <= toot.size ()) {
 			for (unsigned int offset = 0; offset <= toot.size () - word_length; offset ++) {
 				string word = toot.substr (offset, word_length);
-				if (valid_word (word)) {
+				if (valid_position (toot, offset) && valid_word (word)) {
 					if (occupancy_count_map.find (word) == occupancy_count_map.end ()) {
 						occupancy_count_map.insert (pair <string, unsigned int> {word, 1});
 					} else {
