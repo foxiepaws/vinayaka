@@ -450,6 +450,20 @@ static string remove_character_reference (string in)
 }
 
 
+static string small_letterize (string in)
+{
+	string out;
+	for (auto c: in) {
+		if ('A' <= c && c <= 'Z') {
+			out.push_back (c - 'A' + 'a');
+		} else {
+			out.push_back (c);
+		}
+	}
+	return out;
+}
+
+
 class OccupancyCount {
 public:
 	string word;
@@ -600,6 +614,7 @@ vector <string> get_words_from_toots (vector <string> toots, unsigned int word_l
 		string toot = remove_html (raw_toot);
 		toot = remove_url (toot);
 		toot = remove_character_reference (toot);
+		toot = small_letterize (toot);
 		if (valid_toot (toot) && word_length <= toot.size ()) {
 			for (unsigned int offset = 0; offset <= toot.size () - word_length; offset ++) {
 				string word = toot.substr (offset, word_length);
