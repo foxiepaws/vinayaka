@@ -39,7 +39,8 @@ cgi_binaries = \
 	vinayaka-user-speed-api.cgi
 cron_binaries = \
 	vinayaka-user-avatar-cron \
-	vinayaka-user-speed-cron
+	vinayaka-user-speed-cron \
+	vinayaka-store-raw-toots-cron
 impl_binaries = \
 	vinayaka-user-words-impl \
 	vinayaka-user-match-impl \
@@ -106,6 +107,9 @@ vinayaka-user-speed-api.cgi: tinyxml2.o distsn.o sort-user-speed.o user-speed-ap
 vinayaka-clear-cache-impl: tinyxml2.o distsn.o clear-cache-impl.o
 	$(CXX) tinyxml2.o distsn.o clear-cache-impl.o -lcurl $(CFLAGS) -o $@
 
+vinayaka-store-raw-toots-cron: tinyxml2.o distsn.o sort-user-speed.o store-raw-toots.o
+	$(CXX) tinyxml2.o distsn.o sort-user-speed.o store-raw-toots.o -lcurl $(CFLAGS) -o $@
+
 install: $(cgis)
 	$(INSTALL_PROGRAM) $(cgis) --target-directory=$(cgidir)
 	$(INSTALL_PROGRAM) $(crons) --target-directory=$(bindir)
@@ -123,11 +127,14 @@ uninstall:
 initialize:
 	$(MKDIR) -p /var/lib/vinayaka
 	$(MKDIR) -p /var/lib/vinayaka/user-speed
+	$(MKDIR) -p /var/lib/vinayaka/raw-toots
 	$(CHMOD) -R a+rwx /var/lib/vinayaka
 
 refresh:
 	-$(RM) /var/lib/vinayaka/*.json
 	-$(RM) /var/lib/vinayaka/*.csv
+	-$(RM) /var/lib/vinayaka/user-speed/*
+	-$(RM) /var/lib/vinayaka/raw-toots/*.csv
 
 clean:
 	-$(RM) $(objects) $(binaries)
