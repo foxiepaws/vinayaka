@@ -32,11 +32,12 @@ http://vinayaka.distsn.org/cgi-bin/vinayaka-user-speed-api.cgi (フル)
 
 Write following code in crontab:
 
-    10 */3 * * * /usr/local/bin/vinayaka-user-speed-cron
-    20 4   * * * /usr/local/bin/vinayaka-user-avatar-cron
-    30 5   * * * /usr/local/bin/vinayaka-user-words-meta-cron
-    40 */3 * * * /usr/local/bin/vinayaka-model-collector-cron
-    50 *   * * * /usr/local/bin/vinayaka-clear-cache-cron
+    10 */3  * * * /usr/local/bin/vinayaka-user-speed-cron
+    20 4    * * * /usr/local/bin/vinayaka-user-avatar-cron
+    30 5,17 * * * /usr/local/bin/vinayaka-user-words-meta-cron
+    40 */3  * * * /usr/local/bin/vinayaka-model-collector-cron
+    50 *    * * * /usr/local/bin/vinayaka-clear-cache-cron
+    5  */6  * * * /usr/local/bin/vinayaka-store-raw-toots-cron
 
 ## Update
 
