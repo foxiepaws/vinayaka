@@ -34,7 +34,9 @@ objects = \
 	user-match-api.o \
 	user-speed-api.o \
 	user-speed-cron.o \
-	user-words-cron.o
+	user-words-cron.o \
+	store-raw-toots.o \
+	collect-raw-toots.o
 cgi_binaries = \
 	vinayaka-user-speed-api.cgi
 cron_binaries = \
