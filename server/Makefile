@@ -40,7 +40,8 @@ cgi_binaries = \
 cron_binaries = \
 	vinayaka-user-avatar-cron \
 	vinayaka-user-speed-cron \
-	vinayaka-store-raw-toots-cron
+	vinayaka-store-raw-toots-cron \
+	vinayaka-collect-raw-toots-cron
 impl_binaries = \
 	vinayaka-user-words-impl \
 	vinayaka-user-match-impl \
@@ -109,6 +110,9 @@ vinayaka-clear-cache-impl: tinyxml2.o distsn.o clear-cache-impl.o
 
 vinayaka-store-raw-toots-cron: tinyxml2.o distsn.o sort-user-speed.o store-raw-toots.o
 	$(CXX) tinyxml2.o distsn.o sort-user-speed.o store-raw-toots.o -lcurl $(CFLAGS) -o $@
+
+vinayaka-collect-raw-toots-cron: tinyxml2.o distsn.o sort-user-speed.o collect-raw-toots.o
+	$(CXX) tinyxml2.o distsn.o sort-user-speed.o collect-raw-toots.o -lcurl $(CFLAGS) -o $@
 
 install: $(cgis)
 	$(INSTALL_PROGRAM) $(cgis) --target-directory=$(cgidir)
