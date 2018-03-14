@@ -44,5 +44,6 @@ vinayaka-model-abstracter-impl
 vinayaka-user-speed-cron
 vinayaka-user-speed-api.cgi
 vinayaka-clear-cache-impl
-
+vinayaka-collect-raw-toots-cron
+vinayaka-store-raw-toots-cron
 
