@@ -88,7 +88,9 @@ vector <UserAndSpeed> get_users_and_speed ()
 		for (auto i: speeds) {
 			string username = i.first;
 			double speed = i.second;
-			bool blacklisted = (blacklisted_users.find (User {host, username}) != blacklisted_users.end ());
+			bool blacklisted
+				= (blacklisted_users.find (User {host, username}) != blacklisted_users.end ())
+				|| (blacklisted_users.find (User {host, string {"*"}}) != blacklisted_users.end ());
 			UserAndSpeed user {host, username, speed, blacklisted};
 			users.push_back (user);
 		}
