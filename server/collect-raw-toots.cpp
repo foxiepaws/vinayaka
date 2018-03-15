@@ -21,6 +21,7 @@ using namespace std;
 static const unsigned int history_variations = 24;
 static const double diameter_tolerance = 0.5;
 static const unsigned int minimum_size_of_abstract_word = 2;
+static const unsigned int minimum_speakers_of_word = 5;
 
 
 class AbstractWord {
@@ -179,20 +180,28 @@ static void get_users_and_words (map <User, set <string>> a_users_to_words)
 
 static void get_words_to_speakers ()
 {
-	words_to_speakers.clear ();
+	map <string, vector <unsigned int>> words_to_speakers_raw;
 
 	for (unsigned int cn = 0; cn < users_and_words.size (); cn ++) {
 		const vector <string> &words = users_and_words.at (cn).words;
 		for (auto word: words) {
-			if (words_to_speakers.find (word) == words_to_speakers.end ()) {
+			if (words_to_speakers_raw.find (word) == words_to_speakers_raw.end ()) {
 				vector <unsigned int> speakers;
 				speakers.push_back (cn);
-				words_to_speakers.insert (pair <string, vector <unsigned int>> {word, speakers});
+				words_to_speakers_raw.insert (pair <string, vector <unsigned int>> {word, speakers});
 			} else {
-				words_to_speakers.at (word).push_back (cn);
+				words_to_speakers_raw.at (word).push_back (cn);
 			}
 		}
 	}
+
+	words_to_speakers.clear ();
+	for (auto word_to_speakers: words_to_speakers_raw) {
+		if (minimum_speakers_of_word <= word_to_speakers.second.size ()) {
+			words_to_speakers.insert (word_to_speakers);
+		}
+	}
+
 }
 
 
