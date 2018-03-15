@@ -62,11 +62,15 @@ public:
 };
 
 
-static set <string> get_words_of_listener (vector <string> toots, vector <ModelTopology> models)
+static set <string> get_words_of_listener
+	(vector <string> toots,
+	vector <ModelTopology> models,
+	map <string, string> concrete_to_abstract_words)
 {
 	set <string> words;
 	for (auto model: models) {
-		vector <string> words_in_a_model = get_words_from_toots (toots, model.word_length, model.vocabulary_size);
+		vector <string> words_in_a_model
+			= get_words_from_toots (toots, model.word_length, model.vocabulary_size, concrete_to_abstract_words);
 		words.insert (words_in_a_model.begin (), words_in_a_model.end ());
 	}
 	return words;
@@ -102,12 +106,9 @@ static map <User, set <string>> get_words_of_speakers (string filename, unsigned
 			for (auto row: table) {
 				if (2 < row.size ()) {
 					User user {row.at (0), row.at (1)};
-					set <string> words;
-					for (unsigned int cn = 2; cn < row.size (); cn ++) {
-						words.insert (row.at (cn));
-					}
+					string word {row.at (2)};
 					if (users_to_words.find (user) != users_to_words.end ()) {
-						users_to_words.at (user).insert (words.begin (), words.end ());
+						users_to_words.at (user).insert (word);
 					}
 				}
 			}
@@ -194,7 +195,7 @@ static void add_to_cache (string host, string user, string result)
 static map <string, string> get_concrete_to_abstract_words ()
 {
 	map <string, string> concrete_to_abstract_words;
-	string filename = string {"/var/lib/vinayaka/concrete-to-abstract-words.csv"};
+	string filename = string {"/var/lib/vinayaka/model/concrete-to-abstract-words.csv"};
 	FILE * in = fopen (filename.c_str (), "r");
 	if (in == nullptr) {
 		cerr << "File not found: " << filename << endl;
@@ -245,21 +246,12 @@ int main (int argc, char **argv)
 		ModelTopology {12, 400},
 	};
 	
-	set <string> concrete_words_of_listener = get_words_of_listener (toots, models);
 	map <string, string> concrete_to_abstract_words = get_concrete_to_abstract_words ();
 	cerr << "concrete_to_abstract_words.size () = " << concrete_to_abstract_words.size () << endl;
-	set<string> words_of_listener;
-	for (auto concrete_word: concrete_words_of_listener) {
-		if (concrete_to_abstract_words.find (concrete_word) == concrete_to_abstract_words.end ()) {
-			words_of_listener.insert (concrete_word);
-		} else {
-			string abstract_word = concrete_to_abstract_words.at (concrete_word);
-			words_of_listener.insert (abstract_word);
-		}
-	}
+	set <string> words_of_listener = get_words_of_listener (toots, models, concrete_to_abstract_words);
 	
 	map <User, set <string>> speaker_to_words
-		= get_words_of_speakers (string {"/var/lib/vinayaka/abstract-user-words.csv"}, sampling);
+		= get_words_of_speakers (string {"/var/lib/vinayaka/model/abstract-user-words.csv"}, sampling);
 		
 	vector <UserAndSimilarity> speakers_and_similarity;
 	map <User, set <string>> speaker_to_intersection;
