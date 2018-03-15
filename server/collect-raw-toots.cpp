@@ -46,11 +46,11 @@ static map <string, vector <unsigned int>> words_to_speakers;
 static map <string, string> concrete_to_abstract_words;
 
 	
-static vector <User> get_users ()
+static vector <User> get_users (unsigned int size)
 {
 	vector <UserAndSpeed> users_and_speed = get_users_and_speed ();
 	vector <User> users;
-	for (unsigned int cn = 0; cn < users_and_speed.size () && cn < 5000; cn ++) {
+	for (unsigned int cn = 0; cn < users_and_speed.size () && cn < size; cn ++) {
 		UserAndSpeed user_and_speed = users_and_speed.at (cn);
 		User user {user_and_speed.host, user_and_speed.username};
 		users.push_back (user);
@@ -87,11 +87,11 @@ static map <User, set <string>> read_users_to_toots (string filename)
 }
 
 
-static map <User, set <string>> get_union_of_history ()
+static map <User, set <string>> get_union_of_history (unsigned int size)
 {
 	map <User, set <string>> users_to_toots;
 
-	auto users = get_users ();
+	auto users = get_users (size);
 	for (auto user: users) {
 		users_to_toots.insert (pair <User, set <string>> {user, set <string> {}});
 	}
@@ -317,7 +317,7 @@ static void write_abstract_user_words (map <User, set <string>> users_to_toots)
 
 int main (int argc, char **argv)
 {
-	map <User, set <string>> users_to_toots = get_union_of_history ();
+	map <User, set <string>> users_to_toots = get_union_of_history (5000);
 	save_users_to_toots (users_to_toots);
 	map <User, set <string>> full_words = get_full_words (users_to_toots);
 	get_users_and_words (full_words);
