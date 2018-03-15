@@ -609,6 +609,16 @@ static bool valid_position (string toot, unsigned int offset)
 
 vector <string> get_words_from_toots (vector <string> toots, unsigned int word_length, unsigned int vocabulary_size)
 {
+	return get_words_from_toots (toots, word_length, vocabulary_size, map <string, string> {});
+}
+
+
+vector <string> get_words_from_toots
+	(vector <string> toots,
+	unsigned int word_length,
+	unsigned int vocabulary_size,
+	map <string, string> concrete_to_abstract_words)
+{
 	map <string, unsigned int> occupancy_count_map;
 	for (auto raw_toot: toots) {
 		string toot = remove_html (raw_toot);
@@ -617,12 +627,17 @@ vector <string> get_words_from_toots (vector <string> toots, unsigned int word_l
 		toot = small_letterize (toot);
 		if (valid_toot (toot) && word_length <= toot.size ()) {
 			for (unsigned int offset = 0; offset <= toot.size () - word_length; offset ++) {
-				string word = toot.substr (offset, word_length);
-				if (valid_position (toot, offset) && valid_word (word)) {
-					if (occupancy_count_map.find (word) == occupancy_count_map.end ()) {
-						occupancy_count_map.insert (pair <string, unsigned int> {word, 1});
+				string concrete_word = toot.substr (offset, word_length);
+				if (valid_position (toot, offset) && valid_word (concrete_word)) {
+					string abstract_word
+						= (concrete_to_abstract_words.find (concrete_word)
+							== concrete_to_abstract_words.end ()?
+						concrete_word:
+						concrete_to_abstract_words.at (concrete_word));
+					if (occupancy_count_map.find (abstract_word) == occupancy_count_map.end ()) {
+						occupancy_count_map.insert (pair <string, unsigned int> {abstract_word, 1});
 					} else {
-						occupancy_count_map.at (word) ++;
+						occupancy_count_map.at (abstract_word) ++;
 					}
 				}
 			}

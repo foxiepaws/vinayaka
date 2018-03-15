@@ -134,6 +134,7 @@ initialize:
 	$(MKDIR) -p /var/lib/vinayaka
 	$(MKDIR) -p /var/lib/vinayaka/user-speed
 	$(MKDIR) -p /var/lib/vinayaka/raw-toots
+	$(MKDIR) -p /var/lib/vinayaka/model
 	$(CHMOD) -R a+rwx /var/lib/vinayaka
 
 refresh:
@@ -141,6 +142,7 @@ refresh:
 	-$(RM) /var/lib/vinayaka/*.csv
 	-$(RM) /var/lib/vinayaka/user-speed/*
 	-$(RM) /var/lib/vinayaka/raw-toots/*.csv
+	-$(RM) /var/lib/vinayaka/model/*.csv
 
 clean:
 	-$(RM) $(objects) $(binaries)
