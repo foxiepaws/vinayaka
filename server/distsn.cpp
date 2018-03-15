@@ -558,11 +558,18 @@ static bool starts_with_whitespace (string word)
 }
 
 
+static bool is_hashtag (string word)
+{
+	return word.at (0) == '#';
+}
+
+
 static bool valid_word (string word)
 {
 	bool invalid
 		= (! starts_with_utf8_codepoint_boundary (word))
 		|| starts_with_whitespace (word)
+		|| is_hashtag (word)
 		|| (word.size () < 9 && all_kana (word))
 		|| (word.size () < 12 && all_hiragana (word))
 		|| (word.size () < 9 && 2 <= number_of_spaces (word))

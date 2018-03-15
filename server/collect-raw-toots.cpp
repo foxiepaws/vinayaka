@@ -267,8 +267,7 @@ static void get_abstract_words ()
 	for (auto abstract_word: abstract_words) {
 		for (auto word: abstract_word.words) {
 			out << "\"" << escape_csv (escape_utf8_fragment (abstract_word.label)) << "\",";
-			out << "\"" << escape_csv (escape_utf8_fragment (word));
-			out << endl;
+			out << "\"" << escape_csv (escape_utf8_fragment (word)) << "\"" << endl;
 		}
 	}
 	
@@ -288,8 +287,7 @@ static void write_concrete_to_abstract_words ()
 	
 	for (auto concrete_and_abstract_word: concrete_to_abstract_words) {
 		out << "\"" << escape_csv (concrete_and_abstract_word.first) << "\",";
-		out << "\"" << escape_csv (concrete_and_abstract_word.second) << "\",";
-		out << endl;
+		out << "\"" << escape_csv (concrete_and_abstract_word.second) << "\"" << endl;
 	}
 }
 
@@ -311,8 +309,7 @@ static void write_abstract_user_words (map <User, set <string>> users_to_toots)
 		for (auto abstract_word: all) {
 			out << "\"" << escape_csv (user.host) << "\",";
 			out << "\"" << escape_csv (user.user) << "\",";
-			out << "\"" << escape_csv (abstract_word) << "\",";
-			out << endl;
+			out << "\"" << escape_csv (abstract_word) << "\"" << endl;
 		}
 	}
 }
