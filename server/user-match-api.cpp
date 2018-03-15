@@ -142,7 +142,9 @@ static string format_result
 			<< "\"host\":\"" << escape_json (speaker.host) << "\","
 			<< "\"user\":\"" << escape_json (speaker.user) << "\","
 			<< "\"similarity\":" << speaker.similarity << ",";
-		bool blacklisted = (blacklisted_users.find (User {speaker.host, speaker.user}) != blacklisted_users.end ());
+		bool blacklisted
+			= (blacklisted_users.find (User {speaker.host, speaker.user}) != blacklisted_users.end ())
+			|| (blacklisted_users.find (User {speaker.host, string {"*"}}) != blacklisted_users.end ());
 		out << "\"blacklisted\":" << (blacklisted? "true": "false") << ",";
 
 		if (users_to_profile.find (User {speaker.host, speaker.user}) == users_to_profile.end ()) {
