@@ -21,7 +21,7 @@ using namespace std;
 static const unsigned int history_variations = 24;
 static const double diameter_tolerance = 0.5;
 static const unsigned int minimum_size_of_abstract_word = 2;
-static const unsigned int minimum_speakers_of_word = 5;
+static const unsigned int minimum_speakers_of_word = 3;
 
 
 class AbstractWord {
@@ -137,10 +137,14 @@ static set <string> get_full_words (set <string> toots)
 {
 	vector <string> toots_vector {toots.begin (), toots.end ()};
 	vector <string> model_6 = get_words_from_toots (toots_vector, 6, numeric_limits <unsigned int>::max ());
+	vector <string> model_7 = get_words_from_toots (toots_vector, 7, numeric_limits <unsigned int>::max ());
+	vector <string> model_8 = get_words_from_toots (toots_vector, 8, numeric_limits <unsigned int>::max ());
 	vector <string> model_9 = get_words_from_toots (toots_vector, 9, numeric_limits <unsigned int>::max ());
 	vector <string> model_12 = get_words_from_toots (toots_vector, 12, numeric_limits <unsigned int>::max ());
 	set <string> all;
 	all.insert (model_6.begin (), model_6.end ());
+	all.insert (model_7.begin (), model_7.end ());
+	all.insert (model_8.begin (), model_8.end ());
 	all.insert (model_9.begin (), model_9.end ());
 	all.insert (model_12.begin (), model_12.end ());
 	return all;
@@ -300,10 +304,14 @@ static void write_abstract_user_words (map <User, set <string>> users_to_toots)
 		set <string> toots = user_to_toots.second;
 		vector <string> toots_vector {toots.begin (), toots.end ()};
 		vector <string> model_6 = get_words_from_toots (toots_vector, 6, 800, concrete_to_abstract_words);
+		vector <string> model_7 = get_words_from_toots (toots_vector, 7, 800, concrete_to_abstract_words);
+		vector <string> model_8 = get_words_from_toots (toots_vector, 8, 800, concrete_to_abstract_words);
 		vector <string> model_9 = get_words_from_toots (toots_vector, 9, 800, concrete_to_abstract_words);
 		vector <string> model_12 = get_words_from_toots (toots_vector, 12, 800, concrete_to_abstract_words);
 		set <string> all;
 		all.insert (model_6.begin (), model_6.end ());
+		all.insert (model_7.begin (), model_7.end ());
+		all.insert (model_8.begin (), model_8.end ());
 		all.insert (model_9.begin (), model_9.end ());
 		all.insert (model_12.begin (), model_12.end ());
 		for (auto abstract_word: all) {

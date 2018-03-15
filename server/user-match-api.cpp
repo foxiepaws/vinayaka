@@ -242,8 +242,10 @@ int main (int argc, char **argv)
 
 	vector <ModelTopology> models = {
 		ModelTopology {6, 800},
-		ModelTopology {9, 600},
-		ModelTopology {12, 400},
+		ModelTopology {7, 800},
+		ModelTopology {8, 800},
+		ModelTopology {9, 800},
+		ModelTopology {12, 800},
 	};
 	
 	map <string, string> concrete_to_abstract_words = get_concrete_to_abstract_words ();
