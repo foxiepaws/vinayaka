@@ -450,6 +450,43 @@ static string remove_character_reference (string in)
 }
 
 
+static bool character_for_username (char c)
+{
+	return ('a' <= c && c <= 'z')
+	|| ('A' <= c && c <= 'Z')
+	|| ('0' <= c && c <= '9')
+	|| c == '_'
+	|| c == '-';
+}
+
+
+static string remove_mention (string in)
+{
+	string out;
+	unsigned int state = 0;
+	for (auto c: in) {
+		switch (state) {
+		case 0:
+			if (c == '@') {
+				state = 1;
+			} else {
+				out.push_back (c);
+			}
+			break;
+		case 1:
+			if (! character_for_username (c)) {
+				out.push_back (c);
+				state = 0;
+			}
+			break;
+		default:
+			assert (false);
+		}
+	}
+	return out;
+}
+
+
 static string small_letterize (string in)
 {
 	string out;
@@ -630,6 +667,7 @@ vector <string> get_words_from_toots
 	for (auto raw_toot: toots) {
 		string toot = remove_html (raw_toot);
 		toot = remove_url (toot);
+		toot = remove_mention (toot);
 		toot = remove_character_reference (toot);
 		toot = small_letterize (toot);
 		if (valid_toot (toot) && word_length <= toot.size ()) {
