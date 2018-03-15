@@ -455,8 +455,10 @@ static bool character_for_username (char c)
 	return ('a' <= c && c <= 'z')
 	|| ('A' <= c && c <= 'Z')
 	|| ('0' <= c && c <= '9')
+	|| c == '@'
 	|| c == '_'
-	|| c == '-';
+	|| c == '-'
+	|| c == '.';
 }
 
 
