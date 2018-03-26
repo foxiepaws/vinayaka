@@ -1236,7 +1236,7 @@ string fetch_cache (string a_host, string a_user, bool & a_hit)
 }
 
 
-set <string> get_friends (string host, string user)
+static set <string> get_friends_pleroma (string host, string user)
 {
 	string url = string {"https://"} + host + string {"/api/statuses/friends.json?user_id="} + user;
 	string reply_string = http_get_quick (url);
@@ -1262,6 +1262,202 @@ set <string> get_friends (string host, string user)
 		}
 	}
 	return friends_string;
+}
+
+
+static void parse_literal (string a_code, unsigned int a_offset, unsigned int & a_eaten, bool & a_ok, string a_literal)
+{
+	if (a_code.size () < a_offset + a_literal.size ()) {
+		a_eaten = 0;
+		a_ok = false;
+		return;
+	}
+	for (unsigned int cn = 0; cn < a_literal.size (); cn ++) {
+		if (a_code.at (a_offset + cn) != a_literal.at (cn)) {
+			a_eaten = 0;
+			a_ok = false;
+			return;
+		}
+	}
+	a_eaten = a_literal.size ();
+	a_ok = true;
+}
+
+static bool character_for_name (char c)
+{
+	return
+		('a' <= c && c <= 'z')
+		|| ('A' <= c && c <= 'Z')
+		|| ('0' <= c && c <= '9')
+		|| c == '.'
+		|| c == '-'
+		|| c == '_';
+}
+
+
+static string parse_name (string a_code, unsigned int a_offset, unsigned int & a_eaten, bool & a_ok)
+{
+	string name;
+	unsigned int cn;
+	for (cn = 0; cn + a_offset < a_code.size (); cn ++) {
+		char c = a_code.at (cn + a_offset);
+		if (! character_for_name (c)) {
+			break;
+		}
+		name.push_back (c);
+	}
+	a_eaten = cn;
+	a_ok = true;
+	return name;
+}
+
+
+static void parse_friend_impl
+	(string a_code, unsigned int a_offset, unsigned int & a_eaten, bool & a_ok,
+	string & a_host, string & a_user)
+{
+	unsigned int accumulator = 0;
+	{
+		unsigned int eaten;
+		bool ok;
+		parse_literal (a_code, a_offset + accumulator, eaten, ok, string {"https://"});
+		if (! ok) {
+			a_ok = false;
+			return;
+		}
+		accumulator += eaten;
+	}
+	{
+		unsigned int eaten;
+		bool ok;
+		a_host = parse_name (a_code, a_offset + accumulator, eaten, ok);
+		if (! ok) {
+			a_ok = false;
+			return;
+		}
+		accumulator += eaten;
+	}
+	{
+		unsigned int eaten;
+		bool ok;
+		parse_literal (a_code, a_offset + accumulator, eaten, ok, string {"/"});
+		if (! ok) {
+			a_ok = false;
+			return;
+		}
+		accumulator += eaten;
+	}
+	{
+		unsigned int eaten;
+		bool ok;
+		parse_name (a_code, a_offset + accumulator, eaten, ok); /* user or account */
+		if (! ok) {
+			a_ok = false;
+			return;
+		}
+		accumulator += eaten;
+	}
+	{
+		unsigned int eaten;
+		bool ok;
+		parse_literal (a_code, a_offset + accumulator, eaten, ok, string {"/"});
+		if (! ok) {
+			a_ok = false;
+			return;
+		}
+		accumulator += eaten;
+	}
+	{
+		unsigned int eaten;
+		bool ok;
+		a_user = parse_name (a_code, a_offset + accumulator, eaten, ok);
+		if (! ok) {
+			a_ok = false;
+			return;
+		}
+		accumulator += eaten;
+	}
+	a_eaten = accumulator;
+	a_ok = true;
+}
+
+
+static void parse_friend (string a_code, bool & a_ok, string & a_host, string & a_user)
+{
+	unsigned int offset = 0;
+	unsigned int eaten = 0;
+	bool ok = false;
+	string host;
+	string user;
+	parse_friend_impl (a_code, offset, eaten, ok, host, user);
+	if (ok && eaten == a_code.size ()) {
+		a_ok = true;
+		a_host = host;
+		a_user = user;
+	}
+}
+
+
+static set <string> get_friends_mastodon (string host, string user)
+{
+	set <string> friends;
+	for (unsigned int page = 1; page < 1000; page ++) {
+		stringstream url;
+		url << string {"https://"} << host << string {"/users/"} << user << string {"/following.json?page="} << page;
+		string reply_string = http_get_quick (url.str ());
+		picojson::value reply_value;
+		string error = picojson::parse (reply_value, reply_string);
+		if (! error.empty ()) {
+			cerr << error << endl;
+			throw (UserException {__LINE__});
+		}
+		if (! reply_value.is <picojson::object> ()) {
+			throw (UserException {__LINE__});
+		}
+		auto reply_object = reply_value.get <picojson::object> ();
+		if (reply_object.find (string {"orderedItems"}) == reply_object.end ()) {
+			throw (UserException {__LINE__});
+		}
+		auto orderd_items_value = reply_object.at (string {"orderedItems"});
+		if (! orderd_items_value.is <picojson::array> ()) {
+			throw (UserException {__LINE__});
+		}
+		auto orderd_items_array = orderd_items_value.get <picojson::array> ();
+		for (auto item_value: orderd_items_array) {
+			if (item_value.is <string> ()) {
+				string item_string = item_value.get <string> ();
+				string friend_host;
+				string friend_user;
+				bool ok = false;
+				parse_friend (item_string, ok, friend_host, friend_user);
+				if (ok) {
+					friends.insert (friend_user + string {"@"} + friend_host);
+				}
+			}
+		}
+		if (reply_object.find (string {"next"}) == reply_object.end ()) {
+			break;
+		}
+	}
+	return friends;
+}
+
+
+set <string> get_friends (string host, string user)
+{
+	set <string> friends;
+	try {
+		friends = get_friends_pleroma (host, user);
+		return friends;
+	} catch (ExceptionWithLineNumber e) {
+		cerr << "get_friends_pleroma failed: " << e.line << endl;
+	}
+	try {
+		friends = get_friends_mastodon (host, user);
+	} catch (ExceptionWithLineNumber e) {
+		cerr << "get_friends_mastodon failed: " << e.line << endl;
+	}
+	return friends;
 }
 
 
