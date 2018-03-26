@@ -1239,6 +1239,7 @@ string fetch_cache (string a_host, string a_user, bool & a_hit)
 static set <string> get_friends_pleroma (string host, string user)
 {
 	string url = string {"https://"} + host + string {"/api/statuses/friends.json?user_id="} + user;
+	cerr << url << endl;
 	string reply_string = http_get_quick (url);
 	picojson::value reply_value;
 	string error = picojson::parse (reply_value, reply_string);
@@ -1404,6 +1405,7 @@ static set <string> get_friends_mastodon (string host, string user)
 	for (unsigned int page = 1; page < 1000; page ++) {
 		stringstream url;
 		url << string {"https://"} << host << string {"/users/"} << user << string {"/following.json?page="} << page;
+		cerr << url.str () << endl;
 		string reply_string = http_get_quick (url.str ());
 		picojson::value reply_value;
 		string error = picojson::parse (reply_value, reply_string);

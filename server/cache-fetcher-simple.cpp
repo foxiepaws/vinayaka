@@ -11,7 +11,7 @@
 using namespace std;
 
 
-static string get_lightweight_api (string in, string listener_host, string listener_user)
+static string get_lightweight_api (string in, set <string> friends)
 {
 	string out;
 
@@ -24,13 +24,6 @@ static string get_lightweight_api (string in, string listener_host, string liste
 
 	auto users_array = json_value.get <picojson::array> ();
 	
-	set <string> friends;
-	try {
-		friends = get_friends (listener_host, listener_user);
-	} catch (ExceptionWithLineNumber e) {
-		cerr << "Not expose friends: " << e.line << endl;
-	}
-
 	out += string {"["};
 
 	for (unsigned int cn = 0; cn < 100 && cn < users_array.size (); cn ++) {
@@ -80,18 +73,19 @@ int main (int argc, char *argv [])
 	if (hit) {
 		cout << "Access-Control-Allow-Origin: *" << endl;
 		cout << "Content-Type: application/json" << endl << endl;
-		cout << get_lightweight_api (result, host, user);
+		cout << get_lightweight_api (result, get_friends (host, user));
 	} else {
 		pid_t pid = fork ();
 		if (pid == 0) {
 			execv ("/usr/local/bin/vinayaka-user-match-impl", argv);
 		} else {
+			set <string> friends = get_friends (host, user);
 			int status;
 			waitpid (pid, &status, 0);
 			string result_2 = fetch_cache (host, user, hit);
 			cout << "Access-Control-Allow-Origin: *" << endl;
 			cout << "Content-Type: application/json" << endl << endl;
-			cout << get_lightweight_api (result_2, host, user);
+			cout << get_lightweight_api (result_2, friends);
 		}
 	}
 }
