@@ -284,7 +284,7 @@ function activate_share_button (users, current_host, current_user) {
 		}
 		intent += "\n";
 		intent += 'マストドンユーザーマッチング' + "\n";
-		intent += 'http://vinayaka.distsn.org/ja.html' + "\n";
+		intent += 'http://vinayaka.distsn.org' + "\n";
 		intent += '#マストドンユーザーマッチング' + "\n";
 	} else {
 		intent += '@' + current_user + '@' + current_host + ' ' +
