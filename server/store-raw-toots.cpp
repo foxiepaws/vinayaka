@@ -62,7 +62,11 @@ static void get_and_save_toots (vector <User> users)
 			get_profile (pagenation, user.host, user.user, screen_name, bio, toots);
 			toots.push_back (screen_name);
 			toots.push_back (bio);
-			users_and_toots.push_back (pair <User, vector <string>> {user, toots});
+			vector <string> short_toots;
+			for (auto toot: toots) {
+				short_toots.push_back (toot.substr (0, 5000));
+			}
+			users_and_toots.push_back (pair <User, vector <string>> {user, short_toots});
 		} catch (UserException e) {
 			cerr << "Error " << user.user << "@" << user.host << " " << e.line << endl;
 		}
