@@ -337,8 +337,7 @@ static void cache_sorted_result (set <string> hosts)
 int main (int argc, char **argv)
 {
 
-	//set <string> hosts = get_international_hosts ();
-	set <string> hosts = {"3.distsn.org", "theboss.tech"};
+	set <string> hosts = get_international_hosts ();
 
 	for (auto host: hosts) {
 		cerr << host << endl;
