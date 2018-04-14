@@ -144,6 +144,23 @@ static string get_url (const picojson::value &toot)
 }
 
 
+static string get_uri (const picojson::value &toot)
+{
+	if (! toot.is <picojson::object> ()) {
+		throw (TootException {__LINE__});
+	}
+	auto properties = toot.get <picojson::object> ();
+	if (properties.find (string {"uri"}) == properties.end ()) {
+		throw (TootException {__LINE__});
+	}
+	auto uri_object = properties.at (string {"uri"});
+	if (! uri_object.is <string> ()) {
+		throw (TootException {__LINE__});
+	}
+	return uri_object.get <string> ();
+}
+
+
 static void get_host_and_user_from_acct (string a_acct, string &a_host, string &a_user)
 {
 	string host;
@@ -182,17 +199,20 @@ static void for_host (string host, map <User, UserAndFirstToot> & users_to_first
 			get_host_and_user_from_acct (acct, user_in_acct, host_in_acct);
 			if (valid_username (user_in_acct)) {
 				User user {host_in_acct.empty ()? host: host_in_acct, user_in_acct};
+				time_t timestamp = get_time (toot);
+				string url;
+				try {
+					url = get_url (toot);
+				} catch (TootException) {
+					url = get_uri (toot);
+				}
+				UserAndFirstToot user_and_first_toot {user.host, user.user, timestamp, url};
 
 				if (users_to_first_toot.find (user) == users_to_first_toot.end ()) {
-					time_t timestamp = get_time (toot);
-					string url = get_url (toot);
-					UserAndFirstToot user_and_first_toot {user.host, user.user, timestamp, url};
 					users_to_first_toot.insert (pair <User, UserAndFirstToot> {user, user_and_first_toot});
 				} else {
-					time_t timestamp = get_time (toot);
 					if (timestamp < users_to_first_toot.at (user).first_toot_timestamp) {
-						users_to_first_toot.at (user).first_toot_timestamp = timestamp;
-						users_to_first_toot.at (user).first_toot_url = get_url (toot);
+						users_to_first_toot.at (user) = user_and_first_toot;
 					}
 				}
 			}
