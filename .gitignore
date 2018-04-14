@@ -43,5 +43,4 @@ vinayaka-clear-cache-impl
 vinayaka-collect-raw-toots-cron
 vinayaka-store-raw-toots-cron
 vinayaka-user-new-cron
-vinayaka-user-new-api.cgi
 
