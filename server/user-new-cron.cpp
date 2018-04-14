@@ -194,9 +194,9 @@ static void for_host (string host, map <User, UserAndFirstToot> & users_to_first
 	for (auto toot: toots) {
 		try {
 			string acct = get_acct (toot);
-			string user_in_acct;
 			string host_in_acct;
-			get_host_and_user_from_acct (acct, user_in_acct, host_in_acct);
+			string user_in_acct;
+			get_host_and_user_from_acct (acct, host_in_acct, user_in_acct);
 			if (valid_username (user_in_acct)) {
 				User user {host_in_acct.empty ()? host: host_in_acct, user_in_acct};
 				time_t timestamp = get_time (toot);
