@@ -1,8 +1,0 @@
-#!/bin/bash
-
-nice /usr/local/bin/vinayaka-model-collector-impl 6 400
-nice /usr/local/bin/vinayaka-model-collector-impl 9 400
-nice /usr/local/bin/vinayaka-model-collector-impl 12 400
-nice /usr/local/bin/vinayaka-super-model-collector-impl
-nice /usr/local/bin/vinayaka-model-abstracter-impl
-

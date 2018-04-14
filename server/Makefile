@@ -24,17 +24,13 @@ objects = \
 	cache-fetcher-simple.o \
 	clear-cache-impl.o \
 	distsn.o \
-	model-abstracter.o \
-	model-collector.o \
 	report-cache.o \
 	sort-user-speed.o \
-	sper-model-collector.o \
 	tinyxml2.o \
 	user-avatar-cron.o \
 	user-match-api.o \
 	user-speed-api.o \
 	user-speed-cron.o \
-	user-words-cron.o \
 	store-raw-toots.o \
 	collect-raw-toots.o
 cgi_binaries = \
@@ -45,13 +41,9 @@ cron_binaries = \
 	vinayaka-store-raw-toots-cron \
 	vinayaka-collect-raw-toots-cron
 impl_binaries = \
-	vinayaka-user-words-impl \
 	vinayaka-user-match-impl \
 	vinayaka-user-match-cache-fetcher \
 	vinayaka-user-match-cache-fetcher-simple \
-	vinayaka-model-collector-impl \
-	vinayaka-super-model-collector-impl \
-	vinayaka-model-abstracter-impl \
 	vinayaka-clear-cache-impl
 impl_scripts = \
 	vinayaka-user-match-resource-guard
@@ -62,9 +54,7 @@ cgi_scripts = \
 	vinayaka-user-match-sampling-api.cgi \
 	vinayaka-user-profiles-api.cgi
 cron_scripts = \
-	vinayaka-user-words-meta-cron \
-	vinayaka-clear-cache-cron \
-	vinayaka-model-collector-cron
+	vinayaka-clear-cache-cron
 cgis = $(cgi_binaries) $(cgi_scripts)
 crons = $(cron_binaries) $(cron_scripts)
 impls = $(impl_binaries) $(impl_scripts)
@@ -77,9 +67,6 @@ etcs = blacklisted_users.csv
 
 all: $(binaries)
 
-vinayaka-user-words-impl: tinyxml2.o distsn.o user-words-cron.o sort-user-speed.o
-	$(CXX) tinyxml2.o distsn.o user-words-cron.o sort-user-speed.o -lcurl $(CFLAGS) -o $@
-
 vinayaka-user-match-impl: tinyxml2.o distsn.o user-match-api.o sort-user-speed.o
 	$(CXX) tinyxml2.o distsn.o user-match-api.o  sort-user-speed.o -lcurl $(CFLAGS) -o $@
 
@@ -91,15 +78,6 @@ vinayaka-user-match-cache-fetcher: tinyxml2.o distsn.o cache-fetcher.o
 
 vinayaka-user-match-cache-fetcher-simple: tinyxml2.o distsn.o cache-fetcher-simple.o
 	$(CXX) tinyxml2.o distsn.o cache-fetcher-simple.o -lcurl $(CFLAGS) -o $@
-
-vinayaka-model-collector-impl: tinyxml2.o distsn.o model-collector.o sort-user-speed.o
-	$(CXX) tinyxml2.o distsn.o model-collector.o sort-user-speed.o -lcurl $(CFLAGS) -o $@
-
-vinayaka-super-model-collector-impl: tinyxml2.o distsn.o super-model-collector.o
-	$(CXX) tinyxml2.o distsn.o super-model-collector.o -lcurl $(CFLAGS) -o $@
-
-vinayaka-model-abstracter-impl: tinyxml2.o distsn.o model-abstracter.o
-	$(CXX) tinyxml2.o distsn.o model-abstracter.o -lcurl $(CFLAGS) -o $@
 
 vinayaka-user-speed-cron: tinyxml2.o distsn.o user-speed-cron.o
 	$(CXX) tinyxml2.o distsn.o user-speed-cron.o -lcurl $(CFLAGS) -o $@

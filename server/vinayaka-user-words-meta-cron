@@ -1,6 +1,0 @@
-#!/bin/bash
-
-nice /usr/local/bin/vinayaka-user-words-impl 6 400
-nice /usr/local/bin/vinayaka-user-words-impl 9 400
-nice /usr/local/bin/vinayaka-user-words-impl 12 400
-
