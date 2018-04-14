@@ -20,6 +20,7 @@ public:
 	string user;
 	time_t first_toot_timestamp;
 	string first_toot_url;
+	bool blacklisted;
 public:
 	UserAndFirstToot () {};
 	UserAndFirstToot
@@ -27,7 +28,8 @@ public:
 		host (a_host),
 		user (a_user),
 		first_toot_timestamp (a_first_toot_timestamp),
-		first_toot_url (a_first_toot_url)
+		first_toot_url (a_first_toot_url),
+		blacklisted (false)
 		{};
 };
 
@@ -197,11 +199,11 @@ static void for_host (string host)
 		FILE *in = fopen (filename.c_str (), "r");
 		if (in != nullptr) {
 			vector <UserAndFirstToot> users_and_first_toots = read_storage (in);
+			fclose (in);
 			for (auto user_and_first_toot: users_and_first_toots) {
 				User user {user_and_first_toot.host, user_and_first_toot.user};
 				users_to_first_toot.insert (pair <User, UserAndFirstToot> {user, user_and_first_toot});
 			}
-			fclose (in);
 		}
 	}
 
@@ -250,10 +252,93 @@ static void for_host (string host)
 }
 
 
+static bool by_timestamp (const UserAndFirstToot &a, const UserAndFirstToot &b)
+{
+	return b.first_toot_timestamp < a.first_toot_timestamp;
+}
+
+
+static vector <UserAndFirstToot> get_users_in_all_hosts (unsigned int limit, set <string> hosts)
+{
+	vector <UserAndFirstToot> users_in_all_hosts;
+	time_t now = time (nullptr);
+	for (auto host: hosts) {
+		cerr << host << endl;
+		const string filename = string {"/var/lib/vinayaka/user-first-toot/"} + host + string {".json"};
+
+		FILE *in = fopen (filename.c_str (), "r");
+		if (in != nullptr) {
+			vector <UserAndFirstToot> users_and_first_toots = read_storage (in);
+			fclose (in);
+			for (auto user_and_first_toot: users_and_first_toots) {
+				if (static_cast <time_t> (now - limit) <= user_and_first_toot.first_toot_timestamp) {
+					users_in_all_hosts.push_back (user_and_first_toot);
+				}
+			}
+		}
+	}
+
+	sort (users_in_all_hosts.begin (), users_in_all_hosts.end (), by_timestamp);
+
+	set <User> blacklisted_users = get_blacklisted_users ();
+	for (auto & users_and_first_toot: users_in_all_hosts) {
+		if (blacklisted_users.find
+			(User {users_and_first_toot.host, users_and_first_toot.user}) != blacklisted_users.end ())
+		{
+			users_and_first_toot.blacklisted = true;
+		}
+	}
+
+	return users_in_all_hosts;
+}
+
+
+static void cache_sorted_result (set <string> hosts)
+{
+	unsigned int limit = 7 * 24 * 60 * 60;
+	vector <UserAndFirstToot> users_and_first_toots = get_users_in_all_hosts (limit, hosts);
+	map <User, Profile> users_to_profile = read_profiles ();
+
+	const string filename {"/var/lib/vinayaka/users-new-cache.json"};
+	ofstream out {filename};
+
+	for (unsigned int cn = 0; cn < users_and_first_toots.size (); cn ++) {
+		if (0 < cn) {
+			out << "," << endl;
+		}
+		auto user = users_and_first_toots.at (cn);
+		out
+			<< "{"
+			<< "\"host\":\"" << escape_json (user.host) << "\","
+			<< "\"user\":\"" << escape_json (user.user) << "\","
+			<< "\"first_toot_timestamp\":\"" << user.first_toot_timestamp << "\","
+			<< "\"first_toot_url\":\"" << user.first_toot_url << "\","
+			<< "\"blacklisted\":" << (user.blacklisted? "true": "false") << ",";
+			if (users_to_profile.find (User {user.host, user.user}) == users_to_profile.end ()) {
+				out
+					<< "\"screen_name\":\"\","
+					<< "\"avatar\":\"\"";
+			} else {
+				Profile profile = users_to_profile.at (User {user.host, user.user});
+				out << "\"screen_name\":\"" << escape_json (profile.screen_name) << "\",";
+				if (safe_url (profile.avatar)) {
+					out << "\"avatar\":\"" << escape_json (profile.avatar) << "\"";
+				} else {
+					out << "\"avatar\":\"\"";
+				}
+			}
+		out
+			<< "}";
+	}
+	out << "]";
+}
+
+
 int main (int argc, char **argv)
 {
 
-	set <string> hosts = get_international_hosts ();
+	//set <string> hosts = get_international_hosts ();
+	set <string> hosts = {"3.distsn.org", "theboss.tech"};
 
 	for (auto host: hosts) {
 		cerr << host << endl;
@@ -265,6 +350,8 @@ int main (int argc, char **argv)
 			cerr << "Error " << e.line << endl;
 		}
 	}
+	
+	cache_sorted_result (hosts);
 
 	return 0;
 }
