@@ -187,8 +187,23 @@ static void get_host_and_user_from_acct (string a_acct, string &a_host, string &
 }
 
 
-static void for_host (string host, map <User, UserAndFirstToot> & users_to_first_toot)
+static void for_host (string host)
 {
+	map <User, UserAndFirstToot> users_to_first_toot;
+
+	const string filename = string {"/var/lib/vinayaka/user-first-toot/"} + host + string {".json"};
+
+	{
+		FILE *in = fopen (filename.c_str (), "r");
+		if (in != nullptr) {
+			vector <UserAndFirstToot> users_and_first_toots = read_storage (in);
+			for (auto user_and_first_toot: users_and_first_toots) {
+				User user {user_and_first_toot.host, user_and_first_toot.user};
+				users_to_first_toot.insert (pair <User, UserAndFirstToot> {user, user_and_first_toot});
+			}
+		}
+	}
+
 	vector <picojson::value> toots = get_timeline (host);
 
 	for (auto toot: toots) {
@@ -197,7 +212,9 @@ static void for_host (string host, map <User, UserAndFirstToot> & users_to_first
 			string host_in_acct;
 			string user_in_acct;
 			get_host_and_user_from_acct (acct, host_in_acct, user_in_acct);
-			if (valid_username (user_in_acct)) {
+			if ((host_in_acct.empty () || host_in_acct == host)
+				&& valid_username (user_in_acct))
+			{
 				User user {host_in_acct.empty ()? host: host_in_acct, user_in_acct};
 				time_t timestamp = get_time (toot);
 				string url;
@@ -220,38 +237,6 @@ static void for_host (string host, map <User, UserAndFirstToot> & users_to_first
 			cerr << "TootException " << e.line << endl;
 		}
 	}
-}
-
-
-int main (int argc, char **argv)
-{
-	map <User, UserAndFirstToot> users_to_first_toot;
-
-	const string filename = string {"/var/lib/vinayaka/user-first-toot.json"};
-
-	{
-		FILE *in = fopen (filename.c_str (), "r");
-		if (in != nullptr) {
-			vector <UserAndFirstToot> users_and_first_toots = read_storage (in);
-			for (auto user_and_first_toot: users_and_first_toots) {
-				User user {user_and_first_toot.host, user_and_first_toot.user};
-				users_to_first_toot.insert (pair <User, UserAndFirstToot> {user, user_and_first_toot});
-			}
-		}
-	}
-
-	set <string> hosts = get_international_hosts ();
-
-	for (auto host: hosts) {
-		cerr << host << endl;
-		try {
-			for_host (host, users_to_first_toot);
-		} catch (HttpException e) {
-			cerr << "Error " << e.line << endl;
-		} catch (HostException e) {
-			cerr << "Error " << e.line << endl;
-		}
-	}
 
 	{
 		vector <UserAndFirstToot> users_and_first_toots;
@@ -260,6 +245,24 @@ int main (int argc, char **argv)
 		}
 		ofstream out {filename};
 		write_storage (out, users_and_first_toots);
+	}
+}
+
+
+int main (int argc, char **argv)
+{
+
+	set <string> hosts = get_international_hosts ();
+
+	for (auto host: hosts) {
+		cerr << host << endl;
+		try {
+			for_host (host);
+		} catch (HttpException e) {
+			cerr << "Error " << e.line << endl;
+		} catch (HostException e) {
+			cerr << "Error " << e.line << endl;
+		}
 	}
 
 	return 0;
