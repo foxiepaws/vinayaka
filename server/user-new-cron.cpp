@@ -117,10 +117,10 @@ static void write_storage (ofstream &out, vector <UserAndFirstToot> users_and_fi
 		}
 		auto user_and_first_toot = users_and_first_toots.at (cn);
 		out << "{";
-		out << "\"host\":\"" << user_and_first_toot.host << "\",";
-		out << "\"user\":\"" << user_and_first_toot.user << "\",";
+		out << "\"host\":\"" << escape_json (user_and_first_toot.host) << "\",";
+		out << "\"user\":\"" << escape_json (user_and_first_toot.user) << "\",";
 		out << "\"first_toot_timestamp\":\"" << user_and_first_toot.first_toot_timestamp << "\",";
-		out << "\"first_toot_url\":\"" << user_and_first_toot.first_toot_url << "\"";
+		out << "\"first_toot_url\":\"" << escape_json (user_and_first_toot.first_toot_url) << "\"";
 		out << "}";
 	}
 	out << "]" << endl;
@@ -201,6 +201,7 @@ static void for_host (string host)
 				User user {user_and_first_toot.host, user_and_first_toot.user};
 				users_to_first_toot.insert (pair <User, UserAndFirstToot> {user, user_and_first_toot});
 			}
+			fclose (in);
 		}
 	}
 
