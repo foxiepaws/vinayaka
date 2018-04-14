@@ -32,15 +32,11 @@
 *.app
 
 # Binaries
-vinayaka-user-words-impl
 vinayaka-user-match-impl
 vinayaka-user-avatar-cron
 vinayaka-user-match-cache-fetcher
 vinayaka-user-match-cache-fetcher-simple
 vinayaka-report-cache-api.cgi
-vinayaka-model-collector-impl
-vinayaka-super-model-collector-impl
-vinayaka-model-abstracter-impl
 vinayaka-user-speed-cron
 vinayaka-user-speed-api.cgi
 vinayaka-clear-cache-impl
