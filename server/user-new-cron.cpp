@@ -21,6 +21,9 @@ public:
 	time_t first_toot_timestamp;
 	string first_toot_url;
 	bool blacklisted;
+	string screen_name;
+	string bio;
+	string avatar;
 public:
 	UserAndFirstToot () {};
 	UserAndFirstToot
@@ -293,11 +296,28 @@ static vector <UserAndFirstToot> get_users_in_all_hosts (unsigned int limit, set
 }
 
 
+static void get_profile_for_all_users (vector <UserAndFirstToot> &users_and_first_toots)
+{
+	for (auto &user_and_first_toot: users_and_first_toots) {
+		string host = user_and_first_toot.host;
+		string user = user_and_first_toot.user;
+		string screen_name;
+		string bio;
+		string avatar;
+		cerr << user << "@" << host << endl;
+		get_profile (host, user, screen_name, bio, avatar);
+		user_and_first_toot.screen_name = screen_name;
+		user_and_first_toot.bio = bio;
+		user_and_first_toot.avatar = avatar;
+	}
+}
+
+
 static void cache_sorted_result (set <string> hosts)
 {
-	unsigned int limit = 7 * 24 * 60 * 60;
+	unsigned int limit = 1 * 24 * 60 * 60;
 	vector <UserAndFirstToot> users_and_first_toots = get_users_in_all_hosts (limit, hosts);
-	map <User, Profile> users_to_profile = read_profiles ();
+	get_profile_for_all_users (users_and_first_toots);
 
 	const string filename {"/var/lib/vinayaka/users-new-cache.json"};
 	ofstream out {filename};
@@ -313,19 +333,13 @@ static void cache_sorted_result (set <string> hosts)
 			<< "\"user\":\"" << escape_json (user.user) << "\","
 			<< "\"first_toot_timestamp\":\"" << user.first_toot_timestamp << "\","
 			<< "\"first_toot_url\":\"" << user.first_toot_url << "\","
-			<< "\"blacklisted\":" << (user.blacklisted? "true": "false") << ",";
-			if (users_to_profile.find (User {user.host, user.user}) == users_to_profile.end ()) {
-				out
-					<< "\"screen_name\":\"\","
-					<< "\"avatar\":\"\"";
+			<< "\"blacklisted\":" << (user.blacklisted? "true": "false") << ","
+			<< "\"screen_name\":\"" << escape_json (user.screen_name) << "\","
+			<< "\"bio\":\"" << escape_json (user.bio) << "\",";
+			if (safe_url (user.avatar)) {
+				out << "\"avatar\":\"" << escape_json (user.avatar) << "\"";
 			} else {
-				Profile profile = users_to_profile.at (User {user.host, user.user});
-				out << "\"screen_name\":\"" << escape_json (profile.screen_name) << "\",";
-				if (safe_url (profile.avatar)) {
-					out << "\"avatar\":\"" << escape_json (profile.avatar) << "\"";
-				} else {
-					out << "\"avatar\":\"\"";
-				}
+				out << "\"avatar\":\"\"";
 			}
 		out
 			<< "}";
