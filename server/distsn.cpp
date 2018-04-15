@@ -1188,7 +1188,8 @@ static bool charactor_for_url (char c)
 		|| c == '.'
 		|| c == '-'
 		|| c == '_'
-		|| c == '%';
+		|| c == '%'
+		|| c == '@';
 }
 
 

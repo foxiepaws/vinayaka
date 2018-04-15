@@ -326,6 +326,7 @@ static void cache_sorted_result (set <string> hosts)
 	const string filename {"/var/lib/vinayaka/users-new-cache.json"};
 	ofstream out {filename};
 
+	out << "[";
 	for (unsigned int cn = 0; cn < users_and_first_toots.size (); cn ++) {
 		if (0 < cn) {
 			out << "," << endl;
@@ -361,6 +362,7 @@ int main (int argc, char **argv)
 {
 
 	set <string> hosts = get_international_hosts ();
+	// set <string> hosts = {"3.distsn.org", "theboss.tech"};
 
 	for (auto host: hosts) {
 		cerr << host << endl;
