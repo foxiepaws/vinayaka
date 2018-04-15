@@ -305,7 +305,11 @@ static void get_profile_for_all_users (vector <UserAndFirstToot> &users_and_firs
 		string bio;
 		string avatar;
 		cerr << user << "@" << host << endl;
-		get_profile (host, user, screen_name, bio, avatar);
+		try {
+			get_profile (host, user, screen_name, bio, avatar);
+		} catch (ExceptionWithLineNumber e) {
+			cerr << e.line << endl;
+		}
 		user_and_first_toot.screen_name = screen_name;
 		user_and_first_toot.bio = bio;
 		user_and_first_toot.avatar = avatar;
