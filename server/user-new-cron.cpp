@@ -331,16 +331,21 @@ static void cache_sorted_result (set <string> hosts)
 			<< "{"
 			<< "\"host\":\"" << escape_json (user.host) << "\","
 			<< "\"user\":\"" << escape_json (user.user) << "\","
-			<< "\"first_toot_timestamp\":\"" << user.first_toot_timestamp << "\","
-			<< "\"first_toot_url\":\"" << user.first_toot_url << "\","
+			<< "\"first_toot_timestamp\":\"" << user.first_toot_timestamp << "\",";
+		if (safe_url (user.first_toot_url)) {
+			out << "\"first_toot_url\":\"" << user.first_toot_url << "\",";
+		} else {
+			out << "\"first_toot_url\":\"\",";
+		}
+		out
 			<< "\"blacklisted\":" << (user.blacklisted? "true": "false") << ","
 			<< "\"screen_name\":\"" << escape_json (user.screen_name) << "\","
 			<< "\"bio\":\"" << escape_json (user.bio) << "\",";
-			if (safe_url (user.avatar)) {
-				out << "\"avatar\":\"" << escape_json (user.avatar) << "\"";
-			} else {
-				out << "\"avatar\":\"\"";
-			}
+		if (safe_url (user.avatar)) {
+			out << "\"avatar\":\"" << escape_json (user.avatar) << "\"";
+		} else {
+			out << "\"avatar\":\"\"";
+		}
 		out
 			<< "}";
 	}
