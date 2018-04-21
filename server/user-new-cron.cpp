@@ -317,21 +317,40 @@ static void get_profile_for_all_users (vector <UserAndFirstToot> &users_and_firs
 }
 
 
+static vector <UserAndFirstToot> get_newcomers (vector <UserAndFirstToot> users_and_first_toots)
+{
+	vector <UserAndFirstToot> newcomers;
+	for (auto user: users_and_first_toots) {
+		bool elder_bool = false;
+		try {
+			elder_bool = elder (user.host, user.user);
+		} catch (ExceptionWithLineNumber e) {
+			cerr << "elder (" << user.host << ", " << user.user << ") " << e.line << endl;
+		}
+		if (! elder_bool) {
+			newcomers.push_back (user);
+		}
+	}
+	return newcomers;
+}
+
+
 static void cache_sorted_result (set <string> hosts)
 {
 	unsigned int limit = 1 * 24 * 60 * 60;
 	vector <UserAndFirstToot> users_and_first_toots = get_users_in_all_hosts (limit, hosts);
-	get_profile_for_all_users (users_and_first_toots);
+	vector <UserAndFirstToot> newcomers = get_newcomers (users_and_first_toots);
+	get_profile_for_all_users (newcomers);
 
 	const string filename {"/var/lib/vinayaka/users-new-cache.json"};
 	ofstream out {filename};
 
 	out << "[";
-	for (unsigned int cn = 0; cn < users_and_first_toots.size (); cn ++) {
+	for (unsigned int cn = 0; cn < newcomers.size (); cn ++) {
 		if (0 < cn) {
 			out << "," << endl;
 		}
-		auto user = users_and_first_toots.at (cn);
+		auto user = newcomers.at (cn);
 		out
 			<< "{"
 			<< "\"host\":\"" << escape_json (user.host) << "\","

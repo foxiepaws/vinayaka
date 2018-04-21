@@ -924,6 +924,74 @@ void get_profile (string host, string user, string &a_screen_name, string &a_bio
 }
 
 
+static bool elder_impl (string atom_query)
+{
+	time_t first_toot_timestamp = numeric_limits <time_t>::max ();
+
+	try {
+		vector <string> timeline;
+
+		cerr << atom_query << endl;
+		string atom_reply = http_get_quick (atom_query);
+		
+		XMLDocument atom_document;
+		XMLError atom_parse_error = atom_document.Parse (atom_reply.c_str ());
+		if (atom_parse_error != XML_SUCCESS) {
+			throw (UserException {__LINE__});
+		}
+		XMLElement * root_element = atom_document.RootElement ();
+		if (root_element == nullptr) {
+			throw (UserException {__LINE__});
+		}
+		XMLElement * feed_element = root_element;
+
+		for (XMLElement * entry_element = feed_element->FirstChildElement ("entry");
+			entry_element != nullptr;
+			entry_element = entry_element->NextSiblingElement ("entry"))
+		{
+			XMLElement * verb_element = entry_element->FirstChildElement ("activity:verb");
+			if (verb_element == nullptr) {
+				throw (UserException {__LINE__});
+			}
+			const char * verb_text = verb_element->GetText ();
+			if (verb_text == nullptr) {
+				throw (UserException {__LINE__});
+			}
+			if (string {verb_text} == string {"http://activitystrea.ms/schema/1.0/post"}) {
+				XMLElement * published_element = entry_element->FirstChildElement ("published");
+				if (published_element != nullptr) {
+					const char * published_text = published_element->GetText ();
+					if (published_text != nullptr) {
+						time_t timestamp = str2time (string {published_text});
+						if (timestamp < first_toot_timestamp) {
+							first_toot_timestamp = timestamp;
+						}
+					}
+				}
+			}
+		}
+	} catch (HttpException e) {
+		throw (UserException {__LINE__});
+	}
+
+	return first_toot_timestamp <= time (nullptr) - (1 * 24 * 60 * 60);
+}
+
+
+bool elder (string host, string user)
+{
+	bool elder_bool = false;
+	try {
+		string query = string {"https://"} + host + string {"/users/"} + user + string {".atom"};
+		elder_bool = elder_impl (query);
+	} catch (UserException e) {
+		string query = string {"https://"} + host + string {"/users/"} + user + string {"/feed.atom"};
+		elder_bool = elder_impl (query);
+	}
+	return elder_bool;
+}
+
+
 vector <string> get_words (bool pagenation, string host, string user, unsigned int word_length, unsigned int vocabulary_size)
 {
 	cerr << user << "@" << host << endl;

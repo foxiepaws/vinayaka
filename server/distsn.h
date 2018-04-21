@@ -127,6 +127,7 @@ std::vector <std::string> get_words_from_toots (std::vector <std::string> toots,
 std::vector <std::string> get_words_from_toots (std::vector <std::string> toots, unsigned int word_length, unsigned int vocabulary_size, std::map <std::string, std::string> concrete_to_abstract_words);
 void get_profile (bool pagenation, std::string host, std::string user, std::string &a_screen_name, std::string &a_bio, std::vector <std::string> &a_toots);
 void get_profile (std::string host, std::string user, std::string &a_screen_name, std::string &a_bio, std::string &a_avatar);
+bool elder (std::string host, std::string user);
 std::vector <std::string> get_words (bool pagenation, std::string host, std::string user, unsigned int word_length, unsigned int vocabulary_size);
 
 std::vector <UserAndWords> read_storage (std::string filename);
