@@ -15,6 +15,10 @@ http://vinayaka.distsn.org/cgi-bin/vinayaka-user-match-simple-api.cgi?mstdn.jp+n
 
 http://vinayaka.distsn.org/cgi-bin/vinayaka-user-match-api.cgi?mstdn.jp+nullkal (フル)
 
+### 新規ユーザーリスト
+
+http://vinayaka.distsn.org/cgi-bin/vinayaka-user-new-api.cgi
+
 ### 流速順ユーザーリスト
 
 http://vinayaka.distsn.org/cgi-bin/vinayaka-user-speed-api.cgi?100 (上位n人)
