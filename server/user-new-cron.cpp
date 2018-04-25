@@ -192,6 +192,32 @@ static void get_host_and_user_from_acct (string a_acct, string &a_host, string &
 }
 
 
+time_t get_user_registration_time (const picojson::value &toot_value)
+{
+	if (! toot_value.is <picojson::object> ()) {
+		throw (TootException {});
+	}
+	auto toot_object = toot_value.get <picojson::object> ();
+	if (toot_object.find (string {"account"}) == toot_object.end ()) {
+		throw (TootException {});
+	}
+	auto account_value = toot_object.at (string {"account"});
+	if (! account_value.is <picojson::object> ()) {
+		throw (TootException {});
+	}
+	auto account_object = account_value.get <picojson::object> ();
+	if (account_object.find (string {"created_at"}) == account_object.end ()) {
+		throw (TootException {});
+	}
+	auto created_at_value = account_object.at (string {"created_at"});
+	if (! created_at_value.is <string> ()) {
+		throw (TootException {});
+	}
+	auto created_at_value_string = created_at_value.get <string> ();
+	return str2time (created_at_value_string);
+}
+
+
 static void for_host (string host)
 {
 	map <User, UserAndFirstToot> users_to_first_toot;
@@ -222,7 +248,7 @@ static void for_host (string host)
 				&& valid_username (user_in_acct))
 			{
 				User user {host_in_acct.empty ()? host: host_in_acct, user_in_acct};
-				time_t timestamp = get_time (toot);
+				time_t timestamp = get_user_registration_time (toot);
 				string url;
 				try {
 					url = get_url (toot);
