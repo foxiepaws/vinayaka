@@ -24,7 +24,6 @@ www_files = \
 	user-speed.html \
 	user-speed.js \
 	ja.html \
-	ja.js \
 	missing.png \
 	blacklisted.png \
 	user-speed-ja.html \
