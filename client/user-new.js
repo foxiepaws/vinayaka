@@ -96,9 +96,9 @@ for (cn = 0; cn < users.length; cn ++) {
 			escapeHtml (user.user) + '@<wbr>' + escapeHtml (user.host) +
 			'</a>' +
 			'<br>' +
-			'<a href="' + encodeURI (user.first_toot_url) + '" target="distsn-preview">' +
+			escapeHtml (user.screen_name) +
+			'<br>' +
 			'<small>' + (new Date (1000 * user.first_toot_timestamp)) + '</small>' +
-			'</a>' +
 			'</p>';
 	}
 	html += user_html;
