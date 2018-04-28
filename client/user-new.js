@@ -18,6 +18,7 @@ function setJapaneseMessages () {
 		'm-instances': 'インスタンス',
 		'm-mystery': 'ミステリーポスト',
 		'm-code': 'コード',
+		'm-donation': '寄付',
 		'm-newcomers': 'マストドン/Pleromaの新しいユーザー',
 		'm-new': '新規',
 		'm-active': '流速',

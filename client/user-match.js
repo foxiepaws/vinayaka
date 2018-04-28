@@ -19,7 +19,10 @@ function setJapaneseMessages () {
 		'm-instances': 'インスタンス',
 		'm-mystery': 'ミステリーポスト',
 		'm-code': 'コード',
+		'm-donation': '寄付',
 		'm-mastodon-user-matching': 'マストドンユーザーマッチング',
+		'm-new': '新規',
+		'm-active': '流速',
 		'm-description': 'あなたに似ているマストドンユーザーを探します。',
 		'm-user-input': 'あなたのユーザー名とインスタンスのホスト名 (例: nullkal@mstdn.jp)',
 		'anti-harassment-message': 'ボット、スパム、ハラスメントを通報するには <a href="https://github.com/distsn/vinayaka/blob/master/server/blacklisted_users.csv" target="_blank">blacklisted_users.csv</a> にプルリクエストを送ってください。'
