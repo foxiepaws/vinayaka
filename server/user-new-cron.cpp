@@ -311,8 +311,8 @@ static vector <UserAndFirstToot> get_users_in_all_hosts (unsigned int limit, set
 
 	set <User> blacklisted_users = get_blacklisted_users ();
 	for (auto & users_and_first_toot: users_in_all_hosts) {
-		if (blacklisted_users.find
-			(User {users_and_first_toot.host, users_and_first_toot.user}) != blacklisted_users.end ())
+		if (blacklisted_users.find (User {users_and_first_toot.host, users_and_first_toot.user}) != blacklisted_users.end ()
+			|| blacklisted_users.find (User {users_and_first_toot.host, string {"*"}}) != blacklisted_users.end ())
 		{
 			users_and_first_toot.blacklisted = true;
 		}
