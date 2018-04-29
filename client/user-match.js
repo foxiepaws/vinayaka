@@ -21,6 +21,7 @@ function setJapaneseMessages () {
 		'm-code': 'コード',
 		'm-donation': '寄付',
 		'm-mastodon-user-matching': 'マストドンユーザーマッチング',
+		'm-search': '検索',
 		'm-new': '新規',
 		'm-active': '流速',
 		'm-description': 'あなたに似ているマストドンユーザーを探します。',

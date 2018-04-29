@@ -20,6 +20,7 @@ function setJapaneseMessages () {
 		'm-code': 'コード',
 		'm-donation': '寄付',
 		'm-newcomers': 'マストドン/Pleromaの新しいユーザー',
+		'm-search': '検索',
 		'm-new': '新規',
 		'm-active': '流速',
 		'anti-harassment-message': 'ボット、スパム、ハラスメントを通報するには <a href="https://github.com/distsn/vinayaka/blob/master/server/blacklisted_users.csv" target="_blank">blacklisted_users.csv</a> にプルリクエストを送ってください。'

@@ -28,7 +28,9 @@ www_files = \
 	blacklisted.png \
 	user-speed-ja.html \
 	user-new.html \
-	user-new.js
+	user-new.js \
+	user-search.html \
+	user-search.js
 
 
 install: $(www_files)

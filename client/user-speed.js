@@ -20,6 +20,7 @@ function setJapaneseMessages () {
 		'm-code': 'コード',
 		'm-donation': '寄付',
 		'm-powerful-users': 'マストドン/Pleromaのヤベーやつら',
+		'm-search': '検索',
 		'm-new': '新規',
 		'm-active': '流速',
 		'a-full': 'すべて',

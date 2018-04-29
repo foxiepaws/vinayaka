@@ -6,52 +6,47 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta property="og:title" content="Mastodon User Matching" />
+<meta property="og:title" content="Mastodon/Pleroma User Search" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="http://vinayaka.distsn.org" />
 <meta property="og:image" content="http://vinayaka.distsn.org/kasaikuminkan.jpg" />
 
-<meta property="og:description" content="Find users similar to you in Mastodon/Pleroma fediverse." />
+<meta property="og:description" content="Search users in Mastodon/Pleroma fediverse by user name, screen name and bio." />
 <meta property="og:site_name" content="Mastodon User Matching" />
 
-<title>Mastodon User Matching</title>
+<title>Mastodon/Pleroma User Search</title>
 
 <link rel="stylesheet" type="text/css" href="fake-mastodon.css">
 
 </head>
 
-<script type="text/javascript" src="user-match.js"></script>
+<script type="text/javascript" src="user-search.js"></script>
 
 <p><span id="m-users">Users</span>&emsp;<a href="http://distsn.org" id="m-instances">Instances</a>&emsp;<a href="http://mystery.distsn.org" id="m-mystery">Mystery</a>&emsp;<a href="https://github.com/distsn/" target="_blank" id="m-code">Code</a>&emsp;<a href="https://www.pixiv.net/fanbox/creator/6595116" target="_blank" id="m-donation">Donation</a></p>
 
 <hr />
 
-<h1 id="m-mastodon-user-matching">Mastodon User Matching</h1>
+<h1 id="m-mastodon-pleroma-user-search">Mastodon/Pleroma User Search</h1>
 
-<p><span id="m-matching">Matching</span>&emsp;<a id="m-search" href="user-search.html">Search</a>&emsp;<a id="m-new" href="user-new.html">New</a>&emsp;<a id="m-active" href="user-speed.html">Active</a></p>
+<p><a href="." id="m-matching">Matching</a>&emsp;<span id="m-search">Search</span>&emsp;<a id="m-new" href="user-new.html">New</a>&emsp;<a id="m-active" href="user-speed.html">Active</a></p>
 
-<p id="m-description">Find users similar to you in Mastodon/Pleroma fediverse.</p>
+<p id="m-description">Search users in Mastodon/Pleroma fediverse by user name, screen name and bio.</p>
 
 <div class="inputs">
 
 <p>
-<label><span id="m-user-input">Your name and instance (e.g. Gargron@mastodon.social)</span><br>
-<input type="text" id="user-input" autocomplete="on" imputmode="verbatim" list="completes" required="true" spellcheck="false"></input></label>
+<label><input type="text" id="keyword-input" required="true"></input></label>
 </p>
 
 <p>
-<input type="button" id="search-button" value="Search"></input><wbr><input type="button" id="detail-button" value="Advanced"><wbr><input type="button" id="share-button" value="Share" style="display: none"></input>
+<input type="button" id="search-button" value="Search"></input></input>
 </p>
 
 </div> <!-- class="inputs" -->
 
 <p id="anti-harassment-message" style="display:none;">To report bots, spams or harassments, send pull-requets to <a href="https://github.com/distsn/vinayaka/blob/master/server/blacklisted_users.csv" target="_blank">blacklisted_users.csv</a>.</p>
 
-<div id="explanation-detail" style="display: none"></div>
-
 <div id="placeholder"></div>
-
-<datalist id="completes"></datalist>
 
 </html>
 
