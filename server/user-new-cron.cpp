@@ -345,7 +345,7 @@ static void get_profile_for_all_users (vector <UserAndFirstToot> &users_and_firs
 
 static void cache_sorted_result (set <string> hosts)
 {
-	unsigned int limit = 1 * 24 * 60 * 60;
+	unsigned int limit = 3 * 24 * 60 * 60;
 	vector <UserAndFirstToot> newcomers = get_users_in_all_hosts (limit, hosts);
 	get_profile_for_all_users (newcomers);
 
