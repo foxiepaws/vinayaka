@@ -67,7 +67,7 @@ static vector <User> get_users_in_all_hosts (set <string> hosts)
 }
 
 
-static void get_profile_for_all_users (vector <User> users)
+static void get_profile_for_all_users (set <User> users)
 {
 	for (auto user: users) {
 		string screen_name;
@@ -118,6 +118,20 @@ static map <User, set <string>> read_user_profile_record (FILE *in)
 }
 
 
+static set <User> read_user_record (FILE *in)
+{
+	set <User> users;
+	auto table = parse_csv (in);
+	for (auto row: table) {
+		if (1 < row.size ()) {
+			User user {row.at (0), row.at (1)};
+			users.insert (user);
+		}
+	}
+	return users;
+}
+
+
 static void write_user_profile_record (ofstream &out, map <User, set <string>> users_to_profiles)
 {
 	for (auto user_to_profiles: users_to_profiles) {
@@ -144,12 +158,39 @@ static void write_user_profile_record (ofstream &out, map <User, string> users_t
 }
 
 
+static void write_user_record (ofstream &out, set <User> users)
+{
+	for (auto user: users) {
+		out << "\"" << escape_csv (user.host) << "\",";
+		out << "\"" << escape_csv (user.user) << "\"," << endl;
+	}
+}
+
+
 int main (int argc, char **argv)
 {
 
 	set <string> hosts = get_international_hosts ();
-	// set <string> hosts = {"3.distsn.org", "theboss.tech"};
-	vector <User> users = get_users_in_all_hosts (hosts);
+	// set <string> hosts = {"3.distsn.org"};
+
+	vector <User> users_vector = get_users_in_all_hosts (hosts);
+
+	set <User> users;
+	{
+		FILE *in = fopen ("/var/lib/vinayaka/user-record.csv", "r");
+		if (in != nullptr) {
+			users = read_user_record (in);
+			fclose (in);
+		}
+	}
+
+	users.insert (users_vector.begin (), users_vector.end ());
+
+	{
+		ofstream out {"/var/lib/vinayaka/user-record.csv"};
+		write_user_record (out, users);
+	}
+
 
 	{
 		FILE *in = fopen ("/var/lib/vinayaka/user-profile-record-screen-name.csv", "r");
