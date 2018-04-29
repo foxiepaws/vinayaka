@@ -15,6 +15,12 @@ http://vinayaka.distsn.org/cgi-bin/vinayaka-user-match-simple-api.cgi?mstdn.jp+n
 
 http://vinayaka.distsn.org/cgi-bin/vinayaka-user-match-api.cgi?mstdn.jp+nullkal (フル)
 
+### ユーザーを検索
+
+ユーザー名、スクリーンネーム、bioを検索します。
+
+http://vinayaka.distsn.org/cgi-bin/vinayaka-user-search-api.cgi?nagiept
+
 ### 新規ユーザーリスト
 
 http://vinayaka.distsn.org/cgi-bin/vinayaka-user-new-api.cgi
