@@ -7,6 +7,8 @@
 #include <sstream>
 #include <fstream>
 #include <set>
+#include <functional>
+#include <tuple>
 #include "picojson.h"
 #include "distsn.h"
 
@@ -29,6 +31,9 @@ public:
 		at (a_at),
 		text (a_text)
 		{};
+	bool operator < (const SearchResult &r) const {
+		return make_tuple (host, user, at, text) < make_tuple (r.host, r.user, r.at, r.text);
+	};
 	string encode_to_json () const {
 		string json;
 		json += string {"{"};
@@ -131,6 +136,8 @@ int main (int argc, char **argv)
 			search_results.push_back (SearchResult {search_target.host, search_target.user, search_target.at, search_target.text});
 		}
 	}
+
+	sort (search_results.begin (), search_results.end ());
 
 	{
 		vector <vector <string>> table;

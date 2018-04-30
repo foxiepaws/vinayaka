@@ -139,12 +139,6 @@ function show_users_impl (users) {
 var placeholder = document.getElementById ('placeholder');
 var html = '';
 
-html +=
-	'<p>' +
-	(g_language === 'ja'? users.length + ' ユーザー':
-		users.length + ' users:') +
-	'</p>'
-
 for (cn = 0; cn < users.length; cn ++) {
 	var user;
 	user = users [cn];
