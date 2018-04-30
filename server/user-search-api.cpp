@@ -23,13 +23,17 @@ public:
 	string at;
 	string text;
 	string avatar;
+	bool blacklisted;
 public:
-	SearchResult () {};
+	SearchResult ():
+		blacklisted (false)
+		{};
 	SearchResult (string a_host, string a_user, string a_at, string a_text):
 		host (a_host),
 		user (a_user),
 		at (a_at),
-		text (a_text)
+		text (a_text),
+		blacklisted (false)
 		{};
 	bool operator < (const SearchResult &r) const {
 		return make_tuple (host, user, at, text) < make_tuple (r.host, r.user, r.at, r.text);
@@ -41,7 +45,8 @@ public:
 		json += string {"\"user\":\""} + escape_json (user) + string {"\","};
 		json += string {"\"at\":\""} + escape_json (at) + string {"\","};
 		json += string {"\"text\":\""} + escape_json (text) + string {"\","};
-		json += string {"\"avatar\":\""} + escape_json (avatar) + string {"\""};
+		json += string {"\"avatar\":\""} + escape_json (avatar) + string {"\","};
+		json += string {"\"blacklisted\":"} + (blacklisted? string {"true"}: string {"false"});
 		json += string {"}"};
 		return json;
 	};
@@ -158,6 +163,14 @@ int main (int argc, char **argv)
 				result.avatar = users_to_avatar.at (user);
 			}
 		}
+	}
+
+	set <User> blacklisted_users = get_blacklisted_users ();
+	for (auto &search_result: search_results) {
+		bool blacklisted =
+			(blacklisted_users.find (User {search_result.host, search_result.user}) != blacklisted_users.end ())
+			|| (blacklisted_users.find (User {search_result.host, string {"*"}}) != blacklisted_users.end ());
+		search_result.blacklisted = blacklisted;
 	}
 
 	cout << "Access-Control-Allow-Origin: *" << endl;

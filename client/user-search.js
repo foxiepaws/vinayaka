@@ -147,7 +147,12 @@ for (cn = 0; cn < users.length; cn ++) {
 	if (user.blacklisted) {
 		user_html +=
 			'<img class="avatar" src="blacklisted.png">' +
-			'<span class="headline">' + escapeHtml (user.user) + '@<wbr>' + escapeHtml (user.host) + ' ' +
+			'<span class="headline">' +
+			'<a href="' +
+			'https://' + encodeURIComponent (user.host) + '/users/' + encodeURIComponent (user.user) +
+			'" target="vinayaka-external-user-profile">' +
+			escapeHtml (user.user) + '@<wbr>' + escapeHtml (user.host) +
+			'</a>' + ' ' +
 			'<a class="icon" href="javascript:openBlacklistExplanation()">?</a>' +
 			'</span>'
 	} else {
