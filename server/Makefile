@@ -57,7 +57,6 @@ binaries = $(cgi_binaries) $(cron_binaries) $(impl_binaries)
 cgi_scripts = \
 	vinayaka-user-match-api.cgi \
 	vinayaka-user-match-simple-api.cgi \
-	vinayaka-user-match-sampling-api.cgi \
 	vinayaka-user-profiles-api.cgi \
 	vinayaka-user-new-api.cgi
 cron_scripts = \

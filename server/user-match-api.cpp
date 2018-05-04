@@ -77,12 +77,8 @@ static set <string> get_words_of_listener
 };
 
 
-static map <User, set <string>> get_words_of_speakers (string filename, unsigned int sampling)
+static map <User, set <string>> get_words_of_speakers (string filename)
 {
-	random_device device;
-	auto random_engine = default_random_engine (device ());
-	unsigned int index = uniform_int_distribution <unsigned int> {0, sampling - 1} (random_engine);
-
 	map <User, set <string>> users_to_words;
 	FILE *in = fopen (filename.c_str (), "r");
 	if (in == nullptr) {
@@ -99,9 +95,7 @@ static map <User, set <string>> get_words_of_speakers (string filename, unsigned
 			}
 			vector <User> users_vector {users_set.begin (), users_set.end ()};
 			for (unsigned int cn = 0; cn < users_vector.size (); cn ++) {
-				if (cn % sampling == index) {
-					users_to_words.insert (pair <User, set <string>> {users_vector.at (cn), set <string> {}});
-				}
+				users_to_words.insert (pair <User, set <string>> {users_vector.at (cn), set <string> {}});
 			}
 			for (auto row: table) {
 				if (2 < row.size ()) {
@@ -124,13 +118,11 @@ static string format_result
 	(vector <UserAndSimilarity> speakers_and_similarity,
 	map <User, set <string>> speaker_to_intersection,
 	map <User, Profile> users_to_profile,
-	set <User> blacklisted_users,
-	set <string> friends,
-	unsigned int sampling)
+	set <User> blacklisted_users)
 {
 	stringstream out;
 	out << "[";
-	for (unsigned int cn = 0; cn < speakers_and_similarity.size () && cn < 400 / sampling; cn ++) {
+	for (unsigned int cn = 0; cn < speakers_and_similarity.size () && cn < 400; cn ++) {
 		if (0 < cn) {
 			out << ",";
 		}
@@ -163,9 +155,6 @@ static string format_result
 				out << "\"avatar\":\"\",";
 			}
 		}
-
-		bool following_bool = following (speaker.host, speaker.user, friends);
-		out << "\"following\":" << (following_bool? "true": "false") << ",";
 
 		out << "\"intersection\":[";
 		for (unsigned int cn_intersection = 0; cn_intersection < intersection.size (); cn_intersection ++) {
@@ -229,11 +218,8 @@ int main (int argc, char **argv)
 	}
 	string host {argv [1]};
 	string user {argv [2]};
-	unsigned int sampling = 1;
-	if (3 < argc) {
-		stringstream {argv [3]} >> sampling;
-	}
-	cerr << user << "@" << host << " " << sampling << endl;
+
+	cerr << user << "@" << host << endl;
 	
 	string screen_name;
 	string bio;
@@ -255,7 +241,7 @@ int main (int argc, char **argv)
 	set <string> words_of_listener = get_words_of_listener (toots, models, concrete_to_abstract_words);
 	
 	map <User, set <string>> speaker_to_words
-		= get_words_of_speakers (string {"/var/lib/vinayaka/model/abstract-user-words.csv"}, sampling);
+		= get_words_of_speakers (string {"/var/lib/vinayaka/model/abstract-user-words.csv"});
 		
 	vector <UserAndSimilarity> speakers_and_similarity;
 	map <User, set <string>> speaker_to_intersection;
@@ -278,28 +264,13 @@ int main (int argc, char **argv)
 	map <User, Profile> users_to_profile = read_profiles ();
 	set <User> blacklisted_users = get_blacklisted_users ();
 
-	set <string> friends;
-	if (1 < sampling) {
-		try {
-			friends = get_friends (host, user);
-		} catch (ExceptionWithLineNumber e) {
-			cerr << "Not expose friends: " << e.line << endl;
-		}
-	}
-	
 	string result = format_result
 		(speakers_and_similarity,
 		speaker_to_intersection,
 		users_to_profile,
-		blacklisted_users,
-		friends,
-		sampling);
+		blacklisted_users);
 	
-	if (1 < sampling) {
-		cout << result;
-	} else {
-		add_to_cache (host, user, result);
-	}
+	add_to_cache (host, user, result);
 }
 
 
