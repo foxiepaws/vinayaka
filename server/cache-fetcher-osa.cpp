@@ -11,7 +11,7 @@
 using namespace std;
 
 
-static string get_lightweight_api (string in, set <string> friends)
+static string get_lightweight_api (string in, set <string> friends, string listener_host, string listener_user)
 {
 	picojson::value json_value;
 	string json_parse_error = picojson::parse (json_value, in);
@@ -34,8 +34,9 @@ static string get_lightweight_api (string in, set <string> friends)
 		string bio = user_object.at (string {"bio"}).get <string> ();
 		string avatar = user_object.at (string {"avatar"}).get <string> ();
 		bool following_bool = following (host, user, friends);
-		
-		if ((! following_bool) && (! blacklisted)) {
+		bool self = (host == listener_host && user == listener_user);
+
+		if ((! self) && (! following_bool) && (! blacklisted)) {
 			stringstream out;
 			out
 				<< "{"
@@ -51,7 +52,7 @@ static string get_lightweight_api (string in, set <string> friends)
 		}
 	}
 
-	unsigned int size = min (static_cast <unsigned int> (200), static_cast <unsigned int> (osa_format_for_users.size ()));
+	unsigned int size = min (static_cast <unsigned int> (400), static_cast <unsigned int> (osa_format_for_users.size ()));
 	
 	stringstream out;
 
@@ -87,7 +88,7 @@ int main (int argc, char *argv [])
 	if (hit) {
 		cout << "Access-Control-Allow-Origin: *" << endl;
 		cout << "Content-Type: application/json" << endl << endl;
-		cout << get_lightweight_api (result, get_friends (host, user));
+		cout << get_lightweight_api (result, get_friends (host, user), host, user);
 	} else {
 		pid_t pid = fork ();
 		if (pid == 0) {
@@ -99,7 +100,7 @@ int main (int argc, char *argv [])
 			string result_2 = fetch_cache (host, user, hit);
 			cout << "Access-Control-Allow-Origin: *" << endl;
 			cout << "Content-Type: application/json" << endl << endl;
-			cout << get_lightweight_api (result_2, friends);
+			cout << get_lightweight_api (result_2, friends, host, user);
 		}
 	}
 }
