@@ -13,8 +13,6 @@ using namespace std;
 
 static string get_lightweight_api (string in, set <string> friends)
 {
-	stringstream out;
-
 	picojson::value json_value;
 	string json_parse_error = picojson::parse (json_value, in);
 	if (! json_parse_error.empty ()) {
@@ -24,8 +22,39 @@ static string get_lightweight_api (string in, set <string> friends)
 
 	auto users_array = json_value.get <picojson::array> ();
 	
-	unsigned int size = min (static_cast <unsigned int> (200), static_cast <unsigned int> (users_array.size ()));
+	vector <string> osa_format_for_users;
 	
+	for (auto user_value: users_array) {
+		auto user_object = user_value.get <picojson::object> ();
+		string host = user_object.at (string {"host"}).get <string> ();
+		string user = user_object.at (string {"user"}).get <string> ();
+		double similarity = user_object.at (string {"similarity"}).get <double> ();
+		bool blacklisted = user_object.at (string {"blacklisted"}).get <bool> ();
+		string screen_name = user_object.at (string {"screen_name"}).get <string> ();
+		string bio = user_object.at (string {"bio"}).get <string> ();
+		string avatar = user_object.at (string {"avatar"}).get <string> ();
+		bool following_bool = following (host, user, friends);
+		
+		if ((! following_bool) && (! blacklisted)) {
+			stringstream out;
+			out
+				<< "{"
+				<< "\"to_id\":\"" << escape_json (user + string {"@"} + host) << "\","
+				<< "\"cnt\":\"" << similarity << "\","
+				<< "\"from_id\":[],"
+				<< "\"from_cnt\":" << similarity << ","
+				<< "\"name\":\"" << escape_json (screen_name) << "\","
+				<< "\"icon\":\"" << escape_json (avatar) << "\","
+				<< "\"url\":\"" << escape_json (string {"https://"} + host + string {"/users/"} + user) << "\""
+				<< "}";
+			osa_format_for_users.push_back (out.str ());
+		}
+	}
+
+	unsigned int size = min (static_cast <unsigned int> (200), static_cast <unsigned int> (osa_format_for_users.size ()));
+	
+	stringstream out;
+
 	out << "{";
 
 	out << "\"status\":200,";
@@ -38,30 +67,7 @@ static string get_lightweight_api (string in, set <string> friends)
 		if (0 < cn) {
 			out << string {","};
 		}
-	
-		auto user_value = users_array.at (cn);
-		auto user_object = user_value.get <picojson::object> ();
-		string host = user_object.at (string {"host"}).get <string> ();
-		string user = user_object.at (string {"user"}).get <string> ();
-		double similarity = user_object.at (string {"similarity"}).get <double> ();
-		bool blacklisted = user_object.at (string {"blacklisted"}).get <bool> ();
-		string screen_name = user_object.at (string {"screen_name"}).get <string> ();
-		string bio = user_object.at (string {"bio"}).get <string> ();
-		string avatar = user_object.at (string {"avatar"}).get <string> ();
-		bool following_bool = following (host, user, friends);
-		
-		if ((! following_bool) && (! blacklisted)) {
-			out
-				<< "{"
-				<< "\"to_id\":\"" << escape_json (user + string {"@"} + host) << "\","
-				<< "\"cnt\":\"" << similarity << "\","
-				<< "\"from_id\":[],"
-				<< "\"from_cnt\":" << similarity << ","
-				<< "\"name\":\"" << escape_json (screen_name) << "\","
-				<< "\"icon\":\"" << escape_json (avatar) << "\","
-				<< "\"url\":\"" << escape_json (string {"https://"} + host + string {"/users/"} + user) << "\""
-				<< "}";
-		}
+		out << osa_format_for_users.at (cn);
 	}
 
 	out << string {"]"};
