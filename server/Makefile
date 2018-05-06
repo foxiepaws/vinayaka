@@ -21,7 +21,6 @@ etcdir = /etc/vinayaka
 
 objects = \
 	cache-fetcher.o \
-	cache-fetcher-simple.o \
 	cache-fetcher-osa.o \
 	clear-cache-impl.o \
 	distsn.o \
@@ -50,7 +49,6 @@ cron_binaries = \
 impl_binaries = \
 	vinayaka-user-match-impl \
 	vinayaka-user-match-cache-fetcher \
-	vinayaka-user-match-cache-fetcher-simple \
 	vinayaka-user-match-cache-fetcher-osa \
 	vinayaka-clear-cache-impl
 impl_scripts = \
@@ -58,7 +56,6 @@ impl_scripts = \
 binaries = $(cgi_binaries) $(cron_binaries) $(impl_binaries)
 cgi_scripts = \
 	vinayaka-user-match-api.cgi \
-	vinayaka-user-match-simple-api.cgi \
 	vinayaka-user-match-osa-api.cgi \
 	vinayaka-user-profiles-api.cgi \
 	vinayaka-user-new-api.cgi
@@ -84,9 +81,6 @@ vinayaka-user-avatar-cron: tinyxml2.o distsn.o user-avatar-cron.o sort-user-spee
 
 vinayaka-user-match-cache-fetcher: tinyxml2.o distsn.o cache-fetcher.o
 	$(CXX) tinyxml2.o distsn.o cache-fetcher.o -lcurl $(CFLAGS) -o $@
-
-vinayaka-user-match-cache-fetcher-simple: tinyxml2.o distsn.o cache-fetcher-simple.o
-	$(CXX) tinyxml2.o distsn.o cache-fetcher-simple.o -lcurl $(CFLAGS) -o $@
 
 vinayaka-user-match-cache-fetcher-osa: tinyxml2.o distsn.o cache-fetcher-osa.o
 	$(CXX) tinyxml2.o distsn.o cache-fetcher-osa.o -lcurl $(CFLAGS) -o $@

@@ -68,7 +68,7 @@ function search (detail) {
 function search_impl (host, user, detail) {
 	save_inputs (host, user);
 	var url =
-		(detail? '/cgi-bin/vinayaka-user-match-api.cgi?': '/cgi-bin/vinayaka-user-match-simple-api.cgi?') +
+		'/cgi-bin/vinayaka-user-match-api.cgi?' +
 		encodeURIComponent (host) + '+' +
 		encodeURIComponent (user);
 	var request = new XMLHttpRequest;
