@@ -136,6 +136,7 @@ function show_users (users) {
 
 
 function show_users_impl (users) {
+var m_bot = 'Bot'
 var placeholder = document.getElementById ('placeholder');
 var html = '';
 
@@ -175,7 +176,10 @@ for (cn = 0; cn < users.length; cn ++) {
 			escapeHtml (user.user) + '@<wbr>' + escapeHtml (user.host) +
 			'</a>'
 	}
-	user_html += '<br>' + escapeHtml (user.text) + '</p>'
+	user_html +=
+		(user.type === 'Service'? '<br>' + m_bot: '') +
+		'<br>' + escapeHtml (user.text) +
+		'</p>'
 	html += user_html;
 }
 placeholder.innerHTML = html;

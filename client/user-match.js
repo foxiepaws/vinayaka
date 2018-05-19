@@ -190,6 +190,7 @@ for (cn = 0; cn < users.length && cn < limit + number_of_blacklisted_users; cn +
 		var m_similarity =
 			(g_language === 'ja'? '類似度':
 			'Similarity')
+		var m_bot = 'Bot'
 		if (user.blacklisted) {
 			number_of_blacklisted_users ++;
 			user_html +=
@@ -200,7 +201,8 @@ for (cn = 0; cn < users.length && cn < limit + number_of_blacklisted_users; cn +
 				'</span>' +
 				'<br>' +
 				m_similarity + ' ' + user.similarity.toFixed (0) +
-				(user.following? '<br>' + m_following: '');
+				(user.following? '<br>' + m_following: '') +
+				(user.type === 'Service'? '<br>' + m_bot: '')
 		} else {
 			user_html +=
 				'<p>' +
@@ -223,7 +225,8 @@ for (cn = 0; cn < users.length && cn < limit + number_of_blacklisted_users; cn +
 				'</a>' +
 				'<br>' +
 				m_similarity + ' ' + user.similarity.toFixed (0) +
-				(user.following? '<br>' + m_following: '');
+				(user.following? '<br>' + m_following: '') +
+				(user.type === 'Service'? '<br>' + m_bot: '')
 		}
 		if (detail) {
 			user_html += '</p><p>';

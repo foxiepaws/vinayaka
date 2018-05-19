@@ -99,6 +99,7 @@ function escapeHtml (text) {
 
 
 function show_users (users) {
+var m_bot = 'Bot'
 var boilerplate = (window.location.search === '?boilerplate');
 var placeholder = document.getElementById ('placeholder');
 var html = '';
@@ -118,6 +119,7 @@ for (cn = 0; cn < users.length; cn ++) {
 			'<br>' +
 			(user.speed * 60 * 60 * 24).toFixed (1) + ' TPD' + ' ' +
 			'(' + (cn + 1).toFixed (0) + ')' +
+			(user.type === 'Service'? '<br>' + m_bot: '') +
 			'</p>';
 	} else {
 		user_html +=
@@ -142,6 +144,7 @@ for (cn = 0; cn < users.length; cn ++) {
 			'<br>' +
 			(user.speed * 60 * 60 * 24).toFixed (1) + ' TPD' + ' ' +
 			'(' + (cn + 1).toFixed (0) + ')' +
+			(user.type === 'Service'? '<br>' + m_bot: '') +
 			'</p>';
 	}
 	html += user_html;
