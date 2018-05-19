@@ -220,6 +220,45 @@ string http_get (string url, vector <string> headers)
 }
 
 
+string http_get_quick (string url, vector <string> headers)
+{
+	CURL *curl;
+	CURLcode res;
+	curl_global_init (CURL_GLOBAL_ALL);
+
+	struct curl_slist * list = nullptr;
+	for (auto &header: headers) {
+		list = curl_slist_append (list, header.c_str ());
+	}
+
+	curl = curl_easy_init ();
+	if (! curl) {
+		throw (HttpException {__LINE__});
+	}
+	curl_easy_setopt (curl, CURLOPT_URL, url.c_str ());
+	curl_easy_setopt (curl, CURLOPT_HTTPHEADER, list);
+	string reply_1;
+	curl_easy_setopt (curl, CURLOPT_WRITEFUNCTION, writer);
+	curl_easy_setopt (curl, CURLOPT_WRITEDATA, & reply_1);
+	curl_easy_setopt (curl,  CURLOPT_CONNECTTIMEOUT, 60);
+	curl_easy_setopt (curl,  CURLOPT_TIMEOUT, 60);
+	res = curl_easy_perform (curl);
+	long response_code;
+	if (res == CURLE_OK) {
+		curl_easy_getinfo (curl, CURLINFO_RESPONSE_CODE, & response_code);
+		curl_easy_cleanup (curl);
+		if (response_code != 200) {
+			cerr << "HTTP response: " << response_code << endl;
+			throw (HttpException {__LINE__});
+		}
+	} else {
+		curl_easy_cleanup (curl);
+		throw (HttpException {__LINE__});
+	}
+	return reply_1;
+}
+
+
 time_t get_time (const picojson::value &toot)
 {
 	if (! toot.is <picojson::object> ()) {
