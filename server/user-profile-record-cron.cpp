@@ -17,6 +17,7 @@ using namespace std;
 static map <User, set <string>> users_to_screen_names;
 static map <User, set <string>> users_to_bios;
 static map <User, string> users_to_avatar;
+static map <User, string> users_to_type;
 
 
 static vector <User> read_storage (FILE *in)
@@ -73,9 +74,10 @@ static void get_profile_for_all_users (set <User> users)
 		string screen_name;
 		string bio;
 		string avatar;
+		string type;
 		cerr << user.user << "@" << user.host << endl;
 		try {
-			get_profile (user.host, user.user, screen_name, bio, avatar);
+			get_profile (user.host, user.user, screen_name, bio, avatar, type);
 		} catch (ExceptionWithLineNumber e) {
 			cerr << e.line << endl;
 		}
@@ -94,6 +96,10 @@ static void get_profile_for_all_users (set <User> users)
 
 		if (users_to_avatar.find (user) == users_to_avatar.end ()) {
 			users_to_avatar.insert (pair <User, string> {user, avatar});
+		}
+
+		if (users_to_type.find (user) == users_to_type.end ()) {
+			users_to_type.insert (pair <User, string> {user, type});
 		}
 	}
 }
@@ -223,6 +229,11 @@ int main (int argc, char **argv)
 	{
 		ofstream out {"/var/lib/vinayaka/user-profile-record-avatar.csv"};
 		write_user_profile_record (out, users_to_avatar);
+	}
+
+	{
+		ofstream out {"/var/lib/vinayaka/user-profile-record-type.csv"};
+		write_user_profile_record (out, users_to_type);
 	}
 
 	return 0;

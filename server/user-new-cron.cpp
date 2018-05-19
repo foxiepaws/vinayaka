@@ -24,6 +24,7 @@ public:
 	string screen_name;
 	string bio;
 	string avatar;
+	string type;
 public:
 	UserAndFirstToot () {};
 	UserAndFirstToot
@@ -330,15 +331,17 @@ static void get_profile_for_all_users (vector <UserAndFirstToot> &users_and_firs
 		string screen_name;
 		string bio;
 		string avatar;
+		string type;
 		cerr << user << "@" << host << endl;
 		try {
-			get_profile (host, user, screen_name, bio, avatar);
+			get_profile (host, user, screen_name, bio, avatar, type);
 		} catch (ExceptionWithLineNumber e) {
 			cerr << e.line << endl;
 		}
 		user_and_first_toot.screen_name = screen_name;
 		user_and_first_toot.bio = bio;
 		user_and_first_toot.avatar = avatar;
+		user_and_first_toot.type = type;
 	}
 }
 
@@ -373,10 +376,11 @@ static void cache_sorted_result (set <string> hosts)
 			<< "\"screen_name\":\"" << escape_json (user.screen_name) << "\","
 			<< "\"bio\":\"" << escape_json (user.bio) << "\",";
 		if (safe_url (user.avatar)) {
-			out << "\"avatar\":\"" << escape_json (user.avatar) << "\"";
+			out << "\"avatar\":\"" << escape_json (user.avatar) << "\",";
 		} else {
-			out << "\"avatar\":\"\"";
+			out << "\"avatar\":\"\",";
 		}
+		out << "\"type\":\"" << escape_json (user.type) << "\"";
 		out
 			<< "}";
 	}

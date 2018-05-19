@@ -46,7 +46,8 @@ static void write_to_storage (vector <pair <User, Profile>> users_and_profiles, 
 			<< "\"user\":\"" << escape_json (user.user) << "\","
 			<< "\"screen_name\":\"" << escape_json (profile.screen_name) << "\","
 			<< "\"bio\":\"" << escape_json (profile.bio) << "\","
-			<< "\"avatar\":\"" << escape_json (profile.avatar) << "\""
+			<< "\"avatar\":\"" << escape_json (profile.avatar) << "\","
+			<< "\"type\":\"" << escape_json (profile.type) << "\""
 			<< "}";
 	}
 	out << "]";
@@ -63,11 +64,13 @@ int main (int argc, char **argv)
 			string screen_name;
 			string bio;
 			string avatar;
-			get_profile (user.host, user.user, screen_name, bio, avatar);
+			string type;
+			get_profile (user.host, user.user, screen_name, bio, avatar, type);
 			Profile profile;
 			profile.screen_name = screen_name;
 			profile.bio = bio;
 			profile.avatar = avatar;
+			profile.type = type;
 			users_and_profiles.push_back (pair <User, Profile> {user, profile});
 		} catch (ExceptionWithLineNumber e) {
 			cerr << "Error " << e.line << endl;
