@@ -202,7 +202,7 @@ for (cn = 0; cn < users.length && cn < limit + number_of_blacklisted_users; cn +
 				'<br>' +
 				m_similarity + ' ' + user.similarity.toFixed (0) +
 				(user.following? '<br>' + m_following: '') +
-				(user.type === 'Service'? '<br><strong>' + m_bot + '</strong>': '') +
+				(user.type === 'Service'? '<br><strong>' + m_bot + '</strong>': '')
 		} else {
 			user_html +=
 				'<p>' +
@@ -226,7 +226,7 @@ for (cn = 0; cn < users.length && cn < limit + number_of_blacklisted_users; cn +
 				'<br>' +
 				m_similarity + ' ' + user.similarity.toFixed (0) +
 				(user.following? '<br>' + m_following: '') +
-				(user.type === 'Service'? '<br><strong>' + m_bot + '</strong>': '') +
+				(user.type === 'Service'? '<br><strong>' + m_bot + '</strong>': '')
 		}
 		if (detail) {
 			user_html += '</p><p>';
