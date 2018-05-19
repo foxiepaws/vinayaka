@@ -143,7 +143,8 @@ static string format_result
 			out
 				<< "\"screen_name\":\"\","
 				<< "\"bio\":\"\","
-				<< "\"avatar\":\"\",";
+				<< "\"avatar\":\"\","
+				<< "\"type\":\"\",";
 		} else {
 			Profile profile = users_to_profile.at (User {speaker.host, speaker.user});
 			out
@@ -154,6 +155,7 @@ static string format_result
 			} else {
 				out << "\"avatar\":\"\",";
 			}
+			out << "\"type\":\"" << escape_json (profile.type) << "\",";
 		}
 
 		out << "\"intersection\":[";

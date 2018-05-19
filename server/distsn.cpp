@@ -1212,10 +1212,15 @@ map <User, Profile> read_profiles ()
 		if (user_object.find (string {"avatar"}) != user_object.end ()) {
 			avatar = user_object.at (string {"avatar"}).get <string> ();
 		}
+		string type;
+		if (user_object.find (string {"type"}) != user_object.end ()) {
+			type = user_object.at (string {"type"}).get <string> ();
+		}
 		Profile profile;
 		profile.screen_name = screen_name;
 		profile.bio = bio;
 		profile.avatar = avatar;
+		profile.type = type;
 		users_to_profile.insert (pair <User, Profile> {User {host, user}, profile});
 	}
 	return users_to_profile;

@@ -40,15 +40,17 @@ int main (int argc, char **argv)
 			if (users_to_profile.find (User {user.host, user.username}) == users_to_profile.end ()) {
 				cout
 					<< "\"screen_name\":\"\","
-					<< "\"avatar\":\"\"";
+					<< "\"avatar\":\"\","
+					<< "\"type\":\"\"";
 			} else {
 				Profile profile = users_to_profile.at (User {user.host, user.username});
 				cout << "\"screen_name\":\"" << escape_json (profile.screen_name) << "\",";
 				if (safe_url (profile.avatar)) {
-					cout << "\"avatar\":\"" << escape_json (profile.avatar) << "\"";
+					cout << "\"avatar\":\"" << escape_json (profile.avatar) << "\",";
 				} else {
-					cout << "\"avatar\":\"\"";
+					cout << "\"avatar\":\"\",";
 				}
+				cout << "\"type\":\"" << escape_json (profile.type) << "\"";
 			}
 		cout
 			<< "}";

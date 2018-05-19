@@ -41,6 +41,7 @@ static string get_advanced_api (string in, set <string> friends)
 		string bio = user_object.at (string {"bio"}).get <string> ();
 		string avatar = user_object.at (string {"avatar"}).get <string> ();
 		bool following_bool = following (host, user, friends);
+		string type = user_object.at (string {"type"}).get <string> ();
 
 		vector <string> intersection;
 		auto intersection_array = user_object.at (string {"intersection"}).get <picojson::array> ();
@@ -58,7 +59,8 @@ static string get_advanced_api (string in, set <string> friends)
 			<< "\"blacklisted\":" << (blacklisted? "true": "false") << ","
 			<< "\"screen_name\":\"" << escape_json (screen_name) << "\","
 			<< "\"bio\":\"" << escape_json (bio) << "\","
-			<< "\"avatar\":\"" << escape_json (avatar) << "\",";
+			<< "\"avatar\":\"" << escape_json (avatar) << "\","
+			<< "\"type\":\"" << escape_json (type) << "\",";
 		out_user
 			<< "\"intersection\":[";
 		for (unsigned int cn = 0; cn < intersection.size (); cn ++) {

@@ -23,6 +23,7 @@ public:
 	string at;
 	string text;
 	string avatar;
+	string type;
 	bool blacklisted;
 public:
 	SearchResult ():
@@ -46,6 +47,7 @@ public:
 		json += string {"\"at\":\""} + escape_json (at) + string {"\","};
 		json += string {"\"text\":\""} + escape_json (text) + string {"\","};
 		json += string {"\"avatar\":\""} + escape_json (avatar) + string {"\","};
+		json += string {"\"type\":\""} + escape_json (type) + string {"\","};
 		json += string {"\"blacklisted\":"} + (blacklisted? string {"true"}: string {"false"});
 		json += string {"}"};
 		return json;
@@ -161,6 +163,27 @@ int main (int argc, char **argv)
 			User user {result.host, result.user};
 			if (users_to_avatar.find (user) != users_to_avatar.end ()) {
 				result.avatar = users_to_avatar.at (user);
+			}
+		}
+	}
+
+	{
+		vector <vector <string>> table;
+		FILE *in = fopen ("/var/lib/vinayaka/user-profile-record-type.csv", "r");
+		if (in != nullptr) {
+			table = parse_csv (in);
+			fclose (in);
+		}
+		map <User, string> users_to_type;
+		for (auto row: table) {
+			if (2 < row.size ()) {
+				users_to_type.insert (pair <User, string> {User {row.at (0), row.at (1)}, row.at (2)});
+			}
+		}
+		for (auto & result: search_results) {
+			User user {result.host, result.user};
+			if (users_to_type.find (user) != users_to_type.end ()) {
+				result.type = users_to_type.at (user);
 			}
 		}
 	}
