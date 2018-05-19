@@ -11,9 +11,10 @@ http://vinayaka.distsn.org
 
 ### 似ているユーザーを検索
 
-http://vinayaka.distsn.org/cgi-bin/vinayaka-user-match-simple-api.cgi?mstdn.jp+nullkal (軽量)
-
 http://vinayaka.distsn.org/cgi-bin/vinayaka-user-match-api.cgi?mstdn.jp+nullkal (フル)
+
+http://vinayaka.distsn.org/cgi-bin/vinayaka-user-match-osa-api.cgi?mstdn.jp+nullkal ([https://followlink.osa-p.net/recommend.html](おすすめフォロワー)互換形式)
+
 
 ### ユーザーを検索
 
