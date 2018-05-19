@@ -898,6 +898,53 @@ void get_profile (bool pagenation, string host, string user, string &a_screen_na
 
 void get_profile (string host, string user, string &a_screen_name, string &a_bio, string & a_avatar, string & a_type)
 {
+	string query = string {"https://"} + host + string {"/users/"} + user;
+	vector <string> headers {string {"Accept: application/activity+json"}};
+	cerr << query << endl;
+	string reply = http_get_quick (query, headers);
+        picojson::value reply_value;
+	string error = picojson::parse (reply_value, reply);
+	if (! error.empty ()) {
+		cerr << __LINE__ << " " << error << endl;
+		throw (UserException {__LINE__});
+	}
+	if (! reply_value.is <picojson::object> ()) {
+		throw (UserException {__LINE__});
+	}
+	auto reply_object = reply_value.get <picojson::object> ();
+
+	if (reply_object.find (string {"name"}) != reply_object.end ()
+		&& reply_object.at (string {"name"}).is <string> ())
+	{
+		string name_string = reply_object.at (string {"name"}).get <string> ();
+		a_screen_name = name_string;
+	}
+
+	if (reply_object.find (string {"summary"}) != reply_object.end ()
+		&& reply_object.at (string {"summary"}).is <string> ())
+	{
+		string summary_string = reply_object.at (string {"summary"}).get <string> ();
+		a_bio = summary_string;
+	}
+
+	if (reply_object.find (string {"type"}) != reply_object.end ()
+		&& reply_object.at (string {"type"}).is <string> ())
+	{
+		string type_string = reply_object.at (string {"type"}).get <string> ();
+		a_type = type_string;
+	}
+
+	if (reply_object.find (string {"icon"}) != reply_object.end ()
+		&& reply_object.at (string {"icon"}).is <picojson::object> ())
+	{
+		auto icon_object = reply_object.at (string {"icon"}).get <picojson::object> ();
+		if (icon_object.find (string {"url"}) != icon_object.end ()
+			&& icon_object.at (string {"url"}).is <string> ())
+		{
+			string url_string = icon_object.at (string {"url"}).get <string> ();
+			a_avatar = url_string;
+		}
+	}
 }
 
 

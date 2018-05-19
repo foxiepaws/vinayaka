@@ -54,6 +54,7 @@ static void write_to_storage (vector <pair <User, Profile>> users_and_profiles, 
 }
 
 
+#if 1
 int main (int argc, char **argv)
 {
 	auto users = get_users ();
@@ -80,5 +81,27 @@ int main (int argc, char **argv)
 	ofstream out {filename};
 	write_to_storage (users_and_profiles, out);
 }
+#endif
 
+
+#if 0
+int main (int argc, char **argv)
+{
+	string host {"mstdn.jp"};
+	string user {"nullkal"};
+	try {
+		string screen_name;
+		string bio;
+		string avatar;
+		string type;
+		get_profile (host, user, screen_name, bio, avatar, type);
+		cout << screen_name << endl;
+		cout << bio << endl;
+		cout << avatar << endl;
+		cout << type << endl;
+	} catch (ExceptionWithLineNumber e) {
+		cerr << "Error " << e.line << endl;
+	};
+}
+#endif
 
