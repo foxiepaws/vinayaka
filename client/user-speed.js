@@ -119,7 +119,7 @@ for (cn = 0; cn < users.length; cn ++) {
 			'<br>' +
 			(user.speed * 60 * 60 * 24).toFixed (1) + ' TPD' + ' ' +
 			'(' + (cn + 1).toFixed (0) + ')' +
-			(user.type === 'Service'? '<br>' + m_bot: '') +
+			(user.type === 'Service'? '<br><strong>' + m_bot + '</strong>': '') +
 			'</p>';
 	} else {
 		user_html +=
@@ -144,7 +144,7 @@ for (cn = 0; cn < users.length; cn ++) {
 			'<br>' +
 			(user.speed * 60 * 60 * 24).toFixed (1) + ' TPD' + ' ' +
 			'(' + (cn + 1).toFixed (0) + ')' +
-			(user.type === 'Service'? '<br>' + m_bot: '') +
+			(user.type === 'Service'? '<br><strong>' + m_bot + '</strong>': '') +
 			'</p>';
 	}
 	html += user_html;

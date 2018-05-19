@@ -77,7 +77,7 @@ for (cn = 0; cn < users.length; cn ++) {
 			'</span>' +
 			'<br>' +
 			'<small>' + (new Date (1000 * user.first_toot_timestamp)) + '</small>' +
-			(user.type === 'Service'? '<br>' + m_bot: '') +
+			(user.type === 'Service'? '<br><strong>' + m_bot + '</strong>': '') +
 			'</p>'
 	} else {
 		user_html +=
@@ -101,7 +101,7 @@ for (cn = 0; cn < users.length; cn ++) {
 			'</a>' +
 			'<br>' +
 			'<small>' + (new Date (1000 * user.first_toot_timestamp)) + '</small>' +
-			(user.type === 'Service'? '<br>' + m_bot: '') +
+			(user.type === 'Service'? '<br><strong>' + m_bot + '</strong>': '') +
 			'<br>' +
 			escapeHtml (user.screen_name) +
 			'</p>'

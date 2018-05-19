@@ -177,7 +177,7 @@ for (cn = 0; cn < users.length; cn ++) {
 			'</a>'
 	}
 	user_html +=
-		(user.type === 'Service'? '<br>' + m_bot: '') +
+		(user.type === 'Service'? '<br><strong>' + m_bot + '</strong>': '') +
 		'<br>' + escapeHtml (user.text) +
 		'</p>'
 	html += user_html;
