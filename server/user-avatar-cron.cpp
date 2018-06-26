@@ -19,9 +19,9 @@ using namespace std;
 
 static vector <User> get_users ()
 {
-	vector <UserAndSpeed> users_and_speed = get_users_and_speed ();
+	vector <UserAndSpeed> users_and_speed = get_users_and_speed (0.05 / (24.0 * 60.0 * 60.0));
 	vector <User> users;
-	for (unsigned int cn = 0; cn < users_and_speed.size () && cn < 30000; cn ++) {
+	for (unsigned int cn = 0; cn < users_and_speed.size (); cn ++) {
 		UserAndSpeed user_and_speed = users_and_speed.at (cn);
 		User user {user_and_speed.host, user_and_speed.username};
 		users.push_back (user);

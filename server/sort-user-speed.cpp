@@ -69,6 +69,12 @@ set <User> get_blacklisted_users ()
 
 vector <UserAndSpeed> get_users_and_speed ()
 {
+	return get_users_and_speed (0.1 / (24.0 * 60.0 * 60.0));
+}
+
+
+vector <UserAndSpeed> get_users_and_speed (double limit)
+{
 	set <User> blacklisted_users = get_blacklisted_users ();
 
 	set <string> hosts = get_international_hosts ();
@@ -98,7 +104,7 @@ vector <UserAndSpeed> get_users_and_speed ()
 	
 	vector <UserAndSpeed> active_users;
 	for (auto i: users) {
-		if (1.0 <= i.speed * 60 * 60 * 24 * 7) {
+		if (limit <= i.speed) {
 			active_users.push_back (i);
 		}
 	}
