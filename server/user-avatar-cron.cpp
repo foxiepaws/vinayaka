@@ -21,8 +21,11 @@ static vector <User> get_users ()
 {
 	vector <UserAndSpeed> users_and_speed = get_users_and_speed ();
 	vector <User> users;
-	for (unsigned int cn = 0; cn < users_and_speed.size () && cn < 30000; cn ++) {
+	for (unsigned int cn = 0; cn < users_and_speed.size (); cn ++) {
 		UserAndSpeed user_and_speed = users_and_speed.at (cn);
+		if (30000 <= cn && user_and_speed.speed * 24 * 60 * 60 < 0.05) {
+			break;
+		}
 		User user {user_and_speed.host, user_and_speed.username};
 		users.push_back (user);
 	}
