@@ -49,7 +49,6 @@ Write following code in crontab:
     40 *   * * * /usr/local/bin/vinayaka-clear-cache-cron
     20 */6 * * * /usr/local/bin/vinayaka-collect-raw-toots-cron
     50 */6 * * * /usr/local/bin/vinayaka-store-raw-toots-cron
-    30 16  * * * /usr/local/bin/vinayaka-user-profile-record-cron
 
 ## Update
 
