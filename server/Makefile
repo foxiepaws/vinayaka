@@ -34,7 +34,6 @@ objects = \
 	store-raw-toots.o \
 	collect-raw-toots.o \
 	user-new-cron.o \
-	user-profile-record-cron.o \
 	user-search-api.o \
 	instance-size-cron.o
 cgi_binaries = \
@@ -46,7 +45,6 @@ cron_binaries = \
 	vinayaka-store-raw-toots-cron \
 	vinayaka-collect-raw-toots-cron \
 	vinayaka-user-new-cron \
-	vinayaka-user-profile-record-cron \
 	vinayaka-instance-size-cron
 impl_binaries = \
 	vinayaka-user-match-impl \
@@ -104,9 +102,6 @@ vinayaka-collect-raw-toots-cron: tinyxml2.o distsn.o sort-user-speed.o collect-r
 
 vinayaka-user-new-cron: tinyxml2.o distsn.o sort-user-speed.o user-new-cron.o
 	$(CXX) tinyxml2.o distsn.o sort-user-speed.o user-new-cron.o -lcurl $(CFLAGS) -o $@
-
-vinayaka-user-profile-record-cron: tinyxml2.o distsn.o sort-user-speed.o user-profile-record-cron.o
-	$(CXX) tinyxml2.o distsn.o sort-user-speed.o user-profile-record-cron.o -lcurl $(CFLAGS) -o $@
 
 vinayaka-user-search-api.cgi: tinyxml2.o distsn.o sort-user-speed.o user-search-api.o
 	$(CXX) tinyxml2.o distsn.o sort-user-speed.o user-search-api.o -lcurl $(CFLAGS) -o $@
