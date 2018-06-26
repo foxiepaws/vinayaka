@@ -69,7 +69,19 @@ set <User> get_blacklisted_users ()
 
 vector <UserAndSpeed> get_users_and_speed ()
 {
-	return get_users_and_speed_impl (0.1 / (24.0 * 60.0 * 60.0));
+	vector <UserAndSpeed> users_and_speeds_raw = get_users_and_speed_impl (0.1 / (24.0 * 60.0 * 60.0));
+	
+	set <User> optouted_users = get_optouted_users ();
+	
+	vector <UserAndSpeed> users_and_speeds;
+	for (auto user_and_speed: users_and_speeds_raw) {
+		User user {user_and_speed.host, user_and_speed.username};
+		if (optouted_users.find (user) == optouted_users.end ()) {
+			users_and_speeds.push_back (user_and_speed);
+		}
+	}
+	
+	return users_and_speeds;
 }
 
 
