@@ -1570,7 +1570,20 @@ bool following (string a_host, string a_user, set <string> a_friends)
 
 set <User> get_optouted_users ()
 {
-	return set <User> {User {"3.distsn.org", "vaginaplant"}};
+	map <User, Profile> users_to_profile = read_profiles ();
+	
+	set <User> optouted_users;
+	for (auto user_to_profile: users_to_profile) {
+		User user = user_to_profile.first;
+		Profile profile = user_to_profile.second;
+		string bio = profile.bio;
+		bool optouted = (bio.find ("㊙️") != bio.npos);
+		if (optouted) {
+			optouted_users.insert (user);
+		}
+	}
+	
+	return optouted_users;
 }
 
 
