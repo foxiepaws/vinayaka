@@ -98,11 +98,6 @@ int main (int argc, char **argv)
 	vector <SearchTarget> search_targets;
 
 	for (auto user_and_speed: users_and_speed) {
-		double speed = user_and_speed.speed;
-		if (speed * 24.0 * 60.0 * 60.0 < 0.1) {
-			break;
-		}
-	
 		string host = user_and_speed.host;
 		string user = user_and_speed.username;
 		search_targets.push_back (SearchTarget {host, user, string {"user_name"}, user});
