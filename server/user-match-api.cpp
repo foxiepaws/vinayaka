@@ -236,10 +236,10 @@ int main (int argc, char **argv)
 	if (optouted_users.find (User {host, user}) != optouted_users.end ()) {
 		cerr << "optouted." << endl;
 
-		vector <UserAndSimilarity> dummy_speakers_and_similarity
-			{UserAndSimilarity {"example.com", "example", 0.0},
-			UserAndSimilarity {"example.com", "example", 0.0},
-			UserAndSimilarity {"example.com", "example", 0.0}};
+		vector <UserAndSimilarity> dummy_speakers_and_similarity;
+		for (unsigned int cn = 0; cn < 400; cn ++) {
+			dummy_speakers_and_similarity.push_back (UserAndSimilarity {"example.com", "example", 0.0});
+		}
 		map <User, set <string>> dummy_speaker_to_intersection;
 		map <User, Profile> dummy_users_to_profile;
 		set <User> dummy_blacklisted_users;
