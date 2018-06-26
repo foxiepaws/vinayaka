@@ -69,11 +69,11 @@ set <User> get_blacklisted_users ()
 
 vector <UserAndSpeed> get_users_and_speed ()
 {
-	return get_users_and_speed (0.1 / (24.0 * 60.0 * 60.0));
+	return get_users_and_speed_impl (0.1 / (24.0 * 60.0 * 60.0));
 }
 
 
-vector <UserAndSpeed> get_users_and_speed (double limit)
+vector <UserAndSpeed> get_users_and_speed_impl (double limit)
 {
 	set <User> blacklisted_users = get_blacklisted_users ();
 

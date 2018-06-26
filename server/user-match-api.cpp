@@ -20,9 +20,13 @@ using namespace std;
 
 class UserAndSimilarity {
 public:
-	string user;
 	string host;
+	string user;
 	double similarity;
+public:
+	UserAndSimilarity () { };
+	UserAndSimilarity (string a_host, string a_user, double a_similarity):
+		host (a_host), user (a_user), similarity (a_similarity) { };
 };
 
 
@@ -127,8 +131,13 @@ static string format_result
 			out << ",";
 		}
 		auto speaker = speakers_and_similarity.at (cn);
-		set <string> intersection_set = speaker_to_intersection.at (User {speaker.host, speaker.user});
+
+		set <string> intersection_set;
+		if (speaker_to_intersection.find (User {speaker.host, speaker.user}) != speaker_to_intersection.end ()) {
+			speaker_to_intersection.at (User {speaker.host, speaker.user});
+		}
 		vector <string> intersection {intersection_set.begin (), intersection_set.end ()};
+
 		out
 			<< "{"
 			<< "\"host\":\"" << escape_json (speaker.host) << "\","
@@ -222,6 +231,28 @@ int main (int argc, char **argv)
 	string user {argv [2]};
 
 	cerr << user << "@" << host << endl;
+
+	set <User> optouted_users = get_optouted_users ();
+	if (optouted_users.find (User {host, user}) != optouted_users.end ()) {
+		cerr << "optouted." << endl;
+
+		vector <UserAndSimilarity> dummy_speakers_and_similarity
+			{UserAndSimilarity {"example.com", "example", 0.0},
+			UserAndSimilarity {"example.com", "example", 0.0},
+			UserAndSimilarity {"example.com", "example", 0.0}};
+		map <User, set <string>> dummy_speaker_to_intersection;
+		map <User, Profile> dummy_users_to_profile;
+		set <User> dummy_blacklisted_users;
+
+		string result = format_result
+			(dummy_speakers_and_similarity,
+			dummy_speaker_to_intersection,
+			dummy_users_to_profile,
+			dummy_blacklisted_users);
+	
+		add_to_cache (host, user, result);
+		return 0;
+	}
 	
 	string screen_name;
 	string bio;

@@ -349,7 +349,16 @@ static void get_profile_for_all_users (vector <UserAndFirstToot> &users_and_firs
 static void cache_sorted_result (set <string> hosts)
 {
 	unsigned int limit = 3 * 24 * 60 * 60;
-	vector <UserAndFirstToot> newcomers = get_users_in_all_hosts (limit, hosts);
+	vector <UserAndFirstToot> newcomers_raw = get_users_in_all_hosts (limit, hosts);
+
+	set <User> optouted_users = get_optouted_users ();
+	vector <UserAndFirstToot> newcomers;
+	for (auto newcomer: newcomers_raw) {
+		if (optouted_users.find (User {newcomer.host, newcomer.user}) == optouted_users.end ()) {
+			newcomers.push_back (newcomer);
+		}
+	}
+
 	get_profile_for_all_users (newcomers);
 
 	const string filename {"/var/lib/vinayaka/users-new-cache.json"};

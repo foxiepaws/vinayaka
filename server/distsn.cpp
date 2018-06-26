@@ -1567,3 +1567,10 @@ bool following (string a_host, string a_user, set <string> a_friends)
 	|| a_friends.find (a_user) != a_friends.end ();
 }
 
+
+set <User> get_optouted_users ()
+{
+	return set <User> {User {"3.distsn.org", "vaginaplant"}};
+}
+
+
