@@ -92,46 +92,24 @@ int main (int argc, char **argv)
 	}
 	string keyword = get_case_insensitive_string (string {argv [1]});
 
+	vector <UserAndSpeed> users_and_speed = get_users_and_speed ();
+	map <User, Profile> users_to_profile = read_profiles ();
+
 	vector <SearchTarget> search_targets;
 
-	{
-		vector <vector <string>> table;
-		FILE *in = fopen ("/var/lib/vinayaka/user-record.csv", "r");
-		if (in != nullptr) {
-			table = parse_csv (in);
-			fclose (in);
-		}
-		for (auto row: table) {
-			if (1 < row.size ()) {
-				search_targets.push_back (SearchTarget {row.at (0), row.at (1), string {"user_name"}, row.at (1)});
+	for (auto user_and_speed: users_and_speed) {
+		string host = user_and_speed.host;
+		string user = user_and_speed.username;
+		search_targets.push_back (SearchTarget {host, user, string {"user_name"}, user});
+		
+		if (users_to_profile.find (User {host, user}) != users_to_profile.end ()) {
+			string screen_name = users_to_profile.at (User {host, user}).screen_name;
+			if (0 < screen_name.size ()) {
+				search_targets.push_back (SearchTarget {host, user, string {"screen_name"}, screen_name});
 			}
-		}
-	}
-
-	{
-		vector <vector <string>> table;
-		FILE *in = fopen ("/var/lib/vinayaka/user-profile-record-screen-name.csv", "r");
-		if (in != nullptr) {
-			table = parse_csv (in);
-			fclose (in);
-		}
-		for (auto row: table) {
-			if (2 < row.size ()) {
-				search_targets.push_back (SearchTarget {row.at (0), row.at (1), string {"screen_name"}, row.at (2)});
-			}
-		}
-	}
-
-	{
-		vector <vector <string>> table;
-		FILE *in = fopen ("/var/lib/vinayaka/user-profile-record-bio.csv", "r");
-		if (in != nullptr) {
-			table = parse_csv (in);
-			fclose (in);
-		}
-		for (auto row: table) {
-			if (2 < row.size ()) {
-				search_targets.push_back (SearchTarget {row.at (0), row.at (1), string {"bio"}, row.at (2)});
+			string bio = users_to_profile.at (User {host, user}).bio;
+			if (0 < bio.size ()) {
+				search_targets.push_back (SearchTarget {host, user, string {"bio"}, bio});
 			}
 		}
 	}
@@ -146,45 +124,11 @@ int main (int argc, char **argv)
 
 	sort (search_results.begin (), search_results.end ());
 
-	{
-		vector <vector <string>> table;
-		FILE *in = fopen ("/var/lib/vinayaka/user-profile-record-avatar.csv", "r");
-		if (in != nullptr) {
-			table = parse_csv (in);
-			fclose (in);
-		}
-		map <User, string> users_to_avatar;
-		for (auto row: table) {
-			if (2 < row.size ()) {
-				users_to_avatar.insert (pair <User, string> {User {row.at (0), row.at (1)}, row.at (2)});
-			}
-		}
-		for (auto & result: search_results) {
-			User user {result.host, result.user};
-			if (users_to_avatar.find (user) != users_to_avatar.end ()) {
-				result.avatar = users_to_avatar.at (user);
-			}
-		}
-	}
-
-	{
-		vector <vector <string>> table;
-		FILE *in = fopen ("/var/lib/vinayaka/user-profile-record-type.csv", "r");
-		if (in != nullptr) {
-			table = parse_csv (in);
-			fclose (in);
-		}
-		map <User, string> users_to_type;
-		for (auto row: table) {
-			if (2 < row.size ()) {
-				users_to_type.insert (pair <User, string> {User {row.at (0), row.at (1)}, row.at (2)});
-			}
-		}
-		for (auto & result: search_results) {
-			User user {result.host, result.user};
-			if (users_to_type.find (user) != users_to_type.end ()) {
-				result.type = users_to_type.at (user);
-			}
+	for (auto & result: search_results) {
+		User user {result.host, result.user};
+		if (users_to_profile.find (user) != users_to_profile.end ()) {
+			result.avatar = users_to_profile.at (user).avatar;
+			result.type = users_to_profile.at (user).type;
 		}
 	}
 
