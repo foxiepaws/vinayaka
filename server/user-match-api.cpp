@@ -134,7 +134,7 @@ static string format_result
 
 		set <string> intersection_set;
 		if (speaker_to_intersection.find (User {speaker.host, speaker.user}) != speaker_to_intersection.end ()) {
-			speaker_to_intersection.at (User {speaker.host, speaker.user});
+			intersection_set = speaker_to_intersection.at (User {speaker.host, speaker.user});
 		}
 		vector <string> intersection {intersection_set.begin (), intersection_set.end ()};
 
