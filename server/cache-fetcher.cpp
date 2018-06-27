@@ -50,7 +50,7 @@ static string get_advanced_api (string in, set <string> friends)
 			auto word_and_score_object = word_and_score_value.get <picojson::object> ();
 			auto word_value = word_and_score_object.at (string {"word"});
 			auto word_string = word_value.get <string> ();
-			auto score_value = word_and_score_object.at (string {"score"});
+			auto score_value = word_and_score_object.at (string {"rarity"});
 			auto score_double = word_value.get <double> ();
 			intersection_map.insert (pair <string, double> {word_string, score_double});
 		}
@@ -75,8 +75,8 @@ static string get_advanced_api (string in, set <string> friends)
 			string word = intersection_vector.at (cn_intersection);
 			double score = intersection_map.at (word);
 			out_user << "{";
-			out_user << "\"\":\"" << escape_json (escape_utf8_fragment (word)) << "\",";
-			out_user << "\"\":" << scientific << score << "\"";
+			out_user << "\"word\":\"" << escape_json (escape_utf8_fragment (word)) << "\",";
+			out_user << "\"rarity\":" << scientific << score << "\"";
 			out_user << "}";
 		}
 		out_user

@@ -233,8 +233,8 @@ static string format_result
 			string word = intersection_vector.at (cn_intersection);
 			double score = intersection_map.at (word);
 			out << "{";
-			out << "\"\":\"" << escape_json (escape_utf8_fragment (word)) << "\",";
-			out << "\"\":" << scientific << score << "\"";
+			out << "\"word\":\"" << escape_json (escape_utf8_fragment (word)) << "\",";
+			out << "\"rarity\":" << scientific << score << "\"";
 			out << "}";
 		}
 		out << "]";
