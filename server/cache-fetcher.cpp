@@ -52,6 +52,7 @@ static string get_advanced_api (string in, set <string> friends)
 			auto word_string = word_value.get <string> ();
 			auto score_value = word_and_score_object.at (string {"rarity"});
 			auto score_double = score_value.get <double> ();
+			intersection_vector.push_back (word_string);
 			intersection_map.insert (pair <string, double> {word_string, score_double});
 		}
 		
