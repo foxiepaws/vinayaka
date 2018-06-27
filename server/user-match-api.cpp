@@ -57,7 +57,7 @@ static double get_similarity
 	a_intersection.clear ();
 
 	for (string word: intersection) {
-		unsigned int occupancy = 1;
+		unsigned int occupancy = 4;
 		if (words_to_occupancy.find (word) != words_to_occupancy.end ()) {
 			occupancy = words_to_occupancy.at (word);
 		}
@@ -155,7 +155,9 @@ static map <string, unsigned int> get_words_to_occupancy (string filename)
 					stringstream occupancy_stream {row.at (1)};
 					unsigned int occupancy;
 					occupancy_stream >> occupancy;
-					if (words_to_occupancy.find (word) == words_to_occupancy.end ()) {
+					if (4 < occupancy
+						&& words_to_occupancy.find (word) == words_to_occupancy.end ())
+					{
 						words_to_occupancy.insert (pair <string, unsigned int> {word, occupancy});
 					}
 				}
