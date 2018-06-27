@@ -318,7 +318,11 @@ int main (int argc, char **argv)
 	map <User, map <string, double>> speaker_to_intersection;
 	
 	cerr << "get_similarity" << endl;
+	unsigned int cn = 0;
 	for (auto speaker_and_words: speaker_to_words) {
+		cerr << cn << " ";
+		cn ++;
+
 		User speaker = speaker_and_words.first;
 		set <string> words_of_speaker = speaker_and_words.second;
 		map <string, double> intersection;
@@ -330,6 +334,7 @@ int main (int argc, char **argv)
 		speakers_and_similarity.push_back (speaker_and_similarity);
 		speaker_to_intersection.insert (pair <User, map <string, double>> {speaker, intersection});
 	}
+	cerr << endl;
 
 	cerr << "stable_sort" << endl;
 	stable_sort (speakers_and_similarity.begin (), speakers_and_similarity.end (), by_similarity_desc);
