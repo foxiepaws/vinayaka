@@ -114,11 +114,11 @@ static void save_users_to_toots (map <User, set <string>> users_to_toots)
 static set <string> get_full_words (set <string> toots)
 {
 	vector <string> toots_vector {toots.begin (), toots.end ()};
-	vector <string> model_6 = get_words_from_toots (toots_vector, 6, numeric_limits <unsigned int>::max ());
-	vector <string> model_7 = get_words_from_toots (toots_vector, 7, numeric_limits <unsigned int>::max ());
-	vector <string> model_8 = get_words_from_toots (toots_vector, 8, numeric_limits <unsigned int>::max ());
-	vector <string> model_9 = get_words_from_toots (toots_vector, 9, numeric_limits <unsigned int>::max ());
-	vector <string> model_12 = get_words_from_toots (toots_vector, 12, numeric_limits <unsigned int>::max ());
+	vector <string> model_6 = get_words_from_toots (toots_vector, 6, 800);
+	vector <string> model_7 = get_words_from_toots (toots_vector, 7, 800);
+	vector <string> model_8 = get_words_from_toots (toots_vector, 8, 800);
+	vector <string> model_9 = get_words_from_toots (toots_vector, 9, 800);
+	vector <string> model_12 = get_words_from_toots (toots_vector, 12, 800);
 	set <string> all;
 	all.insert (model_6.begin (), model_6.end ());
 	all.insert (model_7.begin (), model_7.end ());
