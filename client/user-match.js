@@ -232,7 +232,9 @@ for (cn = 0; cn < users.length && cn < limit + number_of_blacklisted_users; cn +
 			user_html += '</p><p>';
 			user_html += '<small>';
 			for (cn_intersection = 0; cn_intersection < user.intersection.length; cn_intersection ++) {
-				user_html += escapeHtml (user.intersection[cn_intersection]);
+				user_html += escapeHtml (user.intersection[cn_intersection].word);
+				user_html += " ";
+				user_html += (user.intersection[cn_intersection].rarity).toFixed (2);
 				user_html += " ";
 			}
 			user_html += '</small>';
