@@ -68,13 +68,12 @@ public:
 
 static set <string> get_words_of_listener
 	(vector <string> toots,
-	vector <ModelTopology> models,
-	map <string, string> concrete_to_abstract_words)
+	vector <ModelTopology> models)
 {
 	set <string> words;
 	for (auto model: models) {
 		vector <string> words_in_a_model
-			= get_words_from_toots (toots, model.word_length, model.vocabulary_size, concrete_to_abstract_words);
+			= get_words_from_toots (toots, model.word_length, model.vocabulary_size);
 		words.insert (words_in_a_model.begin (), words_in_a_model.end ());
 	}
 	return words;
@@ -194,34 +193,6 @@ static void add_to_cache (string host, string user, string result)
 }
 
 
-static map <string, string> get_concrete_to_abstract_words ()
-{
-	map <string, string> concrete_to_abstract_words;
-	string filename = string {"/var/lib/vinayaka/model/concrete-to-abstract-words.csv"};
-	FILE * in = fopen (filename.c_str (), "r");
-	if (in == nullptr) {
-		cerr << "File not found: " << filename << endl;
-	} else {
-		try {
-			vector <vector <string>> table = parse_csv (in);
-			for (auto row: table) {
-				if (2 <= row.size ()) {
-					string concrete_word = row.at (0);
-					string abstract_word = row.at (1);
-					if (concrete_to_abstract_words.find (concrete_word) == concrete_to_abstract_words.end ()) {
-						concrete_to_abstract_words.insert (pair <string, string> {concrete_word, abstract_word});
-					}
-				}
-			}
-		} catch (ParseException e) {
-			/* Just expose an error. */
-			cerr << "ParseException: " << e.line << endl;
-		}
-	}
-	return concrete_to_abstract_words;
-}
-
-
 int main (int argc, char **argv)
 {
 	if (argc < 3) {
@@ -269,12 +240,10 @@ int main (int argc, char **argv)
 		ModelTopology {12, 800},
 	};
 	
-	map <string, string> concrete_to_abstract_words = get_concrete_to_abstract_words ();
-	cerr << "concrete_to_abstract_words.size () = " << concrete_to_abstract_words.size () << endl;
-	set <string> words_of_listener = get_words_of_listener (toots, models, concrete_to_abstract_words);
+	set <string> words_of_listener = get_words_of_listener (toots, models);
 	
 	map <User, set <string>> speaker_to_words
-		= get_words_of_speakers (string {"/var/lib/vinayaka/model/abstract-user-words.csv"});
+		= get_words_of_speakers (string {"/var/lib/vinayaka/model/concrete-user-words.csv"});
 		
 	vector <UserAndSimilarity> speakers_and_similarity;
 	map <User, set <string>> speaker_to_intersection;
