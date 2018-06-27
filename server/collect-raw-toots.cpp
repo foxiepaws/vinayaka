@@ -21,8 +21,7 @@ using namespace std;
 static const unsigned int history_variations = 24;
 
 
-static vector <UserAndWords> users_and_words;
-static map <string, vector <unsigned int>> words_to_speakers;
+static map <string, unsigned int> words_to_speakers;
 
 	
 static vector <User> get_users (unsigned int size)
@@ -143,42 +142,20 @@ static map <User, set <string>> get_full_words (map <User, set <string>> users_t
 }
 
 
-static void get_users_and_words (map <User, set <string>> a_users_to_words)
+static void get_words_to_speakers (map <User, set <string>> a_users_to_words)
 {
-	users_and_words.clear ();
+	words_to_speakers.clear ();
 
 	for (auto user_to_words: a_users_to_words) {
-		User user = user_to_words.first;
-		set <string> words = user_to_words.second;
-		UserAndWords user_and_words;
-		user_and_words.host = user.host;
-		user_and_words.user = user.user;
+		auto words = user_to_words.second;
 		for (auto word: words) {
-			user_and_words.words.push_back (word);
-		}
-		users_and_words.push_back (user_and_words);
-	}
-}
-
-
-static void get_words_to_speakers ()
-{
-	map <string, vector <unsigned int>> words_to_speakers_raw;
-
-	for (unsigned int cn = 0; cn < users_and_words.size (); cn ++) {
-		const vector <string> &words = users_and_words.at (cn).words;
-		for (auto word: words) {
-			if (words_to_speakers_raw.find (word) == words_to_speakers_raw.end ()) {
-				vector <unsigned int> speakers;
-				speakers.push_back (cn);
-				words_to_speakers_raw.insert (pair <string, vector <unsigned int>> {word, speakers});
+			if (words_to_speakers.find (word) == words_to_speakers.end ()) {
+				words_to_speakers.insert (pair <string, unsigned int> {word, 1});
 			} else {
-				words_to_speakers_raw.at (word).push_back (cn);
+				words_to_speakers.at (word) ++;
 			}
 		}
 	}
-
-	words_to_speakers = words_to_speakers_raw;
 }
 
 
@@ -223,12 +200,8 @@ int main (int argc, char **argv)
 	cerr << "get_full_words" << endl;
 	map <User, set <string>> full_words = get_full_words (users_to_toots);
 
-	cerr << "get_users_and_words" << endl;
-	get_users_and_words (full_words);
-
 	cerr << "get_words_to_speakers" << endl;
-	get_words_to_speakers ();
-
+	get_words_to_speakers (full_words);
 }
 
 
