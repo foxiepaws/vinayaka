@@ -43,11 +43,16 @@ static string get_advanced_api (string in, set <string> friends)
 		bool following_bool = following (host, user, friends);
 		string type = user_object.at (string {"type"}).get <string> ();
 
-		vector <string> intersection;
+		vector <string> intersection_vector;
+		map <string, double> intersection_map;
 		auto intersection_array = user_object.at (string {"intersection"}).get <picojson::array> ();
-		for (auto word_value: intersection_array) {
-			string word_string = word_value.get <string> ();
-			intersection.push_back (word_string);
+		for (auto word_and_score_value: intersection_array) {
+			auto word_and_score_object = word_and_score_value.get <picojson::object> ();
+			auto word_value = word_and_score_object.at (string {"word"});
+			auto word_string = word_value.get <string> ();
+			auto score_value = word_and_score_object.at (string {"score"});
+			auto score_double = word_value.get <double> ();
+			intersection_map.insert (pair <string, double> {word_string, score_double});
 		}
 		
 		stringstream out_user;
@@ -63,11 +68,16 @@ static string get_advanced_api (string in, set <string> friends)
 			<< "\"type\":\"" << escape_json (type) << "\",";
 		out_user
 			<< "\"intersection\":[";
-		for (unsigned int cn = 0; cn < intersection.size (); cn ++) {
-			if (0 < cn) {
+		for (unsigned int cn_intersection = 0; cn_intersection < intersection_vector.size (); cn_intersection ++) {
+			if (0 < cn_intersection) {
 				out_user << ",";
 			}
-			out_user << "\"" << escape_json (intersection.at (cn)) << "\"";
+			string word = intersection_vector.at (cn_intersection);
+			double score = intersection_map.at (word);
+			out_user << "{";
+			out_user << "\"\":\"" << escape_json (escape_utf8_fragment (word)) << "\",";
+			out_user << "\"\":" << scientific << score << "\"";
+			out_user << "}";
 		}
 		out_user
 			<< "],";

@@ -36,14 +36,36 @@ static bool by_similarity_desc (const UserAndSimilarity &a, const UserAndSimilar
 }
 
 
-static double get_similarity (set <string> listener_set, set <string> speaker_set, set <string> & a_intersection)
+static double get_rarity (unsigned int occupancy)
+{
+	return 4.0 * pow (static_cast <double> (occupancy), - 0.25);
+}
+
+
+static double get_similarity
+	(set <string> listener_set,
+	set <string> speaker_set,
+	map <string, double> & a_intersection,
+	map <string, unsigned int> words_to_occupancy)
 {
 	set <string> intersection;
 	set_intersection (listener_set.begin (), listener_set.end (),
 		speaker_set.begin (), speaker_set.end (),
 		inserter (intersection, intersection.begin ()));
-	double similarity = static_cast <double> (intersection.size ());
-	a_intersection = intersection;
+
+	double similarity = 0;
+	a_intersection.clear ();
+
+	for (string word: intersection) {
+		unsigned int occupancy = 1;
+		if (words_to_occupancy.find (word) != words_to_occupancy.end ()) {
+			occupancy = words_to_occupancy.at (word);
+		}
+		double rarity = get_rarity (occupancy);
+		similarity += rarity;
+		a_intersection.insert (pair <string, double> {word, rarity});
+	}
+
 	return similarity;
 }
 
@@ -117,9 +139,38 @@ static map <User, set <string>> get_words_of_speakers (string filename)
 }
 
 
+static map <string, unsigned int> get_words_to_occupancy (string filename)
+{
+	map <string, unsigned int> words_to_occupancy;
+	FILE *in = fopen (filename.c_str (), "r");
+	if (in == nullptr) {
+		cerr << "File not found: " << filename << endl;
+	} else {
+		try {
+			vector <vector <string>> table = parse_csv (in);
+			fclose (in);
+			for (auto row: table) {
+				if (1 < row.size ()) {
+					string word = row.at (0);
+					stringstream occupancy_stream {row.at (1)};
+					unsigned int occupancy;
+					occupancy_stream >> occupancy;
+					if (words_to_occupancy.find (word) == words_to_occupancy.end ()) {
+						words_to_occupancy.insert (pair <string, unsigned int> {word, occupancy});
+					}
+				}
+			}
+		} catch (ParseException e) {
+			cerr << "ParseException " << e.line << " " << filename << endl;
+		}
+	}
+	return words_to_occupancy;
+}
+
+
 static string format_result
 	(vector <UserAndSimilarity> speakers_and_similarity,
-	map <User, set <string>> speaker_to_intersection,
+	map <User, map <string, double>> speaker_to_intersection,
 	map <User, Profile> users_to_profile,
 	set <User> blacklisted_users)
 {
@@ -131,11 +182,14 @@ static string format_result
 		}
 		auto speaker = speakers_and_similarity.at (cn);
 
-		set <string> intersection_set;
+		map <string, double> intersection_map;
 		if (speaker_to_intersection.find (User {speaker.host, speaker.user}) != speaker_to_intersection.end ()) {
-			intersection_set = speaker_to_intersection.at (User {speaker.host, speaker.user});
+			intersection_map = speaker_to_intersection.at (User {speaker.host, speaker.user});
 		}
-		vector <string> intersection {intersection_set.begin (), intersection_set.end ()};
+		vector <string> intersection_vector;
+		for (auto word_to_score: intersection_map) {
+			intersection_vector.push_back (word_to_score.first);
+		}
 
 		out
 			<< "{"
@@ -167,11 +221,16 @@ static string format_result
 		}
 
 		out << "\"intersection\":[";
-		for (unsigned int cn_intersection = 0; cn_intersection < intersection.size (); cn_intersection ++) {
+		for (unsigned int cn_intersection = 0; cn_intersection < intersection_vector.size (); cn_intersection ++) {
 			if (0 < cn_intersection) {
 				out << ",";
 			}
-			out << "\"" << escape_json (escape_utf8_fragment (intersection [cn_intersection])) << "\"";
+			string word = intersection_vector.at (cn_intersection);
+			double score = intersection_map.at (word);
+			out << "{";
+			out << "\"\":\"" << escape_json (escape_utf8_fragment (word)) << "\",";
+			out << "\"\":" << scientific << score << "\"";
+			out << "}";
 		}
 		out << "]";
 
@@ -211,7 +270,7 @@ int main (int argc, char **argv)
 		for (unsigned int cn = 0; cn < 400; cn ++) {
 			dummy_speakers_and_similarity.push_back (UserAndSimilarity {"example.com", "example", 0.0});
 		}
-		map <User, set <string>> dummy_speaker_to_intersection;
+		map <User, map <string, double>> dummy_speaker_to_intersection;
 		map <User, Profile> dummy_users_to_profile;
 		set <User> dummy_blacklisted_users;
 
@@ -244,21 +303,24 @@ int main (int argc, char **argv)
 	
 	map <User, set <string>> speaker_to_words
 		= get_words_of_speakers (string {"/var/lib/vinayaka/model/concrete-user-words.csv"});
+	
+	map <string, unsigned int> words_to_occupancy
+		= get_words_to_occupancy (string {"/var/lib/vinayaka/model/occupancy.csv"});
 		
 	vector <UserAndSimilarity> speakers_and_similarity;
-	map <User, set <string>> speaker_to_intersection;
+	map <User, map <string, double>> speaker_to_intersection;
 	
 	for (auto speaker_and_words: speaker_to_words) {
 		User speaker = speaker_and_words.first;
 		set <string> words_of_speaker = speaker_and_words.second;
-		set <string> intersection;
-		double similarity = get_similarity (words_of_listener, words_of_speaker, intersection);
+		map <string, double> intersection;
+		double similarity = get_similarity (words_of_listener, words_of_speaker, intersection, words_to_occupancy);
 		UserAndSimilarity speaker_and_similarity;
 		speaker_and_similarity.user = speaker.user;
 		speaker_and_similarity.host = speaker.host;
 		speaker_and_similarity.similarity = similarity;
 		speakers_and_similarity.push_back (speaker_and_similarity);
-		speaker_to_intersection.insert (pair <User, set <string>> {speaker, intersection});
+		speaker_to_intersection.insert (pair <User, map <string, double>> {speaker, intersection});
 	}
 
 	stable_sort (speakers_and_similarity.begin (), speakers_and_similarity.end (), by_similarity_desc);
