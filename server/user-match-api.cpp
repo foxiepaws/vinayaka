@@ -200,7 +200,7 @@ static string format_result
 			<< "{"
 			<< "\"host\":\"" << escape_json (speaker.host) << "\","
 			<< "\"user\":\"" << escape_json (speaker.user) << "\","
-			<< "\"similarity\":" << speaker.similarity << ",";
+			<< "\"similarity\":" << scientific << speaker.similarity << ",";
 		bool blacklisted
 			= (blacklisted_users.find (User {speaker.host, speaker.user}) != blacklisted_users.end ())
 			|| (blacklisted_users.find (User {speaker.host, string {"*"}}) != blacklisted_users.end ());
@@ -234,7 +234,7 @@ static string format_result
 			double score = intersection_map.at (word);
 			out << "{";
 			out << "\"word\":\"" << escape_json (escape_utf8_fragment (word)) << "\",";
-			out << "\"rarity\":" << scientific << score << "\"";
+			out << "\"rarity\":" << scientific << score;
 			out << "}";
 		}
 		out << "]";

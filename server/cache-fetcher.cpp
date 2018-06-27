@@ -51,7 +51,7 @@ static string get_advanced_api (string in, set <string> friends)
 			auto word_value = word_and_score_object.at (string {"word"});
 			auto word_string = word_value.get <string> ();
 			auto score_value = word_and_score_object.at (string {"rarity"});
-			auto score_double = word_value.get <double> ();
+			auto score_double = score_value.get <double> ();
 			intersection_map.insert (pair <string, double> {word_string, score_double});
 		}
 		
@@ -60,7 +60,7 @@ static string get_advanced_api (string in, set <string> friends)
 			<< "{"
 			<< "\"host\":\"" << escape_json (host) << "\","
 			<< "\"user\":\"" << escape_json (user) << "\","
-			<< "\"similarity\":" << similarity << ","
+			<< "\"similarity\":" << scientific << similarity << ","
 			<< "\"blacklisted\":" << (blacklisted? "true": "false") << ","
 			<< "\"screen_name\":\"" << escape_json (screen_name) << "\","
 			<< "\"bio\":\"" << escape_json (bio) << "\","
@@ -76,7 +76,7 @@ static string get_advanced_api (string in, set <string> friends)
 			double score = intersection_map.at (word);
 			out_user << "{";
 			out_user << "\"word\":\"" << escape_json (escape_utf8_fragment (word)) << "\",";
-			out_user << "\"rarity\":" << scientific << score << "\"";
+			out_user << "\"rarity\":" << scientific << score;
 			out_user << "}";
 		}
 		out_user
