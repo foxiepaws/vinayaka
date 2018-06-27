@@ -211,12 +211,24 @@ static void write_concrete_user_words (map <User, set <string>> users_to_toots)
 
 int main (int argc, char **argv)
 {
+	cerr << "get_union_of_history" << endl;
 	map <User, set <string>> users_to_toots = get_union_of_history (5000);
+
+	cerr << "save_users_to_toots" << endl;
 	save_users_to_toots (users_to_toots);
-	map <User, set <string>> full_words = get_full_words (users_to_toots);
-	get_users_and_words (full_words);
-	get_words_to_speakers ();
+
+	cerr << "write_concrete_user_words" << endl;
 	write_concrete_user_words (users_to_toots);
+
+	cerr << "get_full_words" << endl;
+	map <User, set <string>> full_words = get_full_words (users_to_toots);
+
+	cerr << "get_users_and_words" << endl;
+	get_users_and_words (full_words);
+
+	cerr << "get_words_to_speakers" << endl;
+	get_words_to_speakers ();
+
 }
 
 
