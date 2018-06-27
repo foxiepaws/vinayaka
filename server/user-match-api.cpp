@@ -41,7 +41,8 @@ static bool by_similarity_desc (const UserAndSimilarity &a, const UserAndSimilar
 
 static double get_rarity (unsigned int occupancy)
 {
-	return 160.0 * pow (static_cast <double> (occupancy), - 1.0);
+	return (static_cast <double> (minimum_occupancy) * 10.0)
+		/ static_cast <double> (occupancy);
 }
 
 
