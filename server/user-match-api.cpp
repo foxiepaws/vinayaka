@@ -262,6 +262,7 @@ int main (int argc, char **argv)
 
 	cerr << user << "@" << host << endl;
 
+	cerr << "get_optouted_users" << endl;
 	set <User> optouted_users = get_optouted_users ();
 	if (optouted_users.find (User {host, user}) != optouted_users.end ()) {
 		cerr << "optouted." << endl;
@@ -287,6 +288,7 @@ int main (int argc, char **argv)
 	string screen_name;
 	string bio;
 	vector <string> toots;
+	cerr << "get_profile" << endl;
 	get_profile (true /* pagenation */, host, user, screen_name, bio, toots);
 	toots.push_back (screen_name);
 	toots.push_back (bio);
@@ -299,17 +301,21 @@ int main (int argc, char **argv)
 		ModelTopology {12, 800},
 	};
 	
+	cerr << "get_words_of_listener" << endl;
 	set <string> words_of_listener = get_words_of_listener (toots, models);
 	
+	cerr << "get_words_of_speakers" << endl;
 	map <User, set <string>> speaker_to_words
 		= get_words_of_speakers (string {"/var/lib/vinayaka/model/concrete-user-words.csv"});
 	
+	cerr << "get_words_to_occupancy" << endl;
 	map <string, unsigned int> words_to_occupancy
 		= get_words_to_occupancy (string {"/var/lib/vinayaka/model/occupancy.csv"});
 		
 	vector <UserAndSimilarity> speakers_and_similarity;
 	map <User, map <string, double>> speaker_to_intersection;
 	
+	cerr << "get_similarity" << endl;
 	for (auto speaker_and_words: speaker_to_words) {
 		User speaker = speaker_and_words.first;
 		set <string> words_of_speaker = speaker_and_words.second;
@@ -323,17 +329,22 @@ int main (int argc, char **argv)
 		speaker_to_intersection.insert (pair <User, map <string, double>> {speaker, intersection});
 	}
 
+	cerr << "stable_sort" << endl;
 	stable_sort (speakers_and_similarity.begin (), speakers_and_similarity.end (), by_similarity_desc);
 
+	cerr << "read_profiles" << endl;
 	map <User, Profile> users_to_profile = read_profiles ();
+	cerr << "get_blacklisted_users" << endl;
 	set <User> blacklisted_users = get_blacklisted_users ();
 
+	cerr << "format_result" << endl;
 	string result = format_result
 		(speakers_and_similarity,
 		speaker_to_intersection,
 		users_to_profile,
 		blacklisted_users);
 	
+	cerr << "add_to_cache" << endl;
 	add_to_cache (host, user, result);
 }
 
