@@ -18,6 +18,9 @@ using namespace tinyxml2;
 using namespace std;
 
 
+const unsigned int minimum_occupancy = 64;
+
+
 class UserAndSimilarity {
 public:
 	string host;
@@ -57,7 +60,7 @@ static double get_similarity
 	a_intersection.clear ();
 
 	for (string word: intersection) {
-		unsigned int occupancy = 4;
+		unsigned int occupancy = minimum_occupancy;
 		if (words_to_occupancy.find (word) != words_to_occupancy.end ()) {
 			occupancy = words_to_occupancy.at (word);
 		}
@@ -155,7 +158,7 @@ static map <string, unsigned int> get_words_to_occupancy (string filename)
 					stringstream occupancy_stream {row.at (1)};
 					unsigned int occupancy;
 					occupancy_stream >> occupancy;
-					if (4 < occupancy
+					if (minimum_occupancy < occupancy
 						&& words_to_occupancy.find (word) == words_to_occupancy.end ())
 					{
 						words_to_occupancy.insert (pair <string, unsigned int> {word, occupancy});
@@ -320,7 +323,9 @@ int main (int argc, char **argv)
 	cerr << "get_similarity" << endl;
 	unsigned int cn = 0;
 	for (auto speaker_and_words: speaker_to_words) {
-		cerr << cn << " ";
+		if (cn % 100 == 0) {
+			cerr << cn << " ";
+		}
 		cn ++;
 
 		User speaker = speaker_and_words.first;
