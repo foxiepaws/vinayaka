@@ -186,6 +186,19 @@ static void write_concrete_user_words (map <User, set <string>> users_to_toots)
 }
 
 
+static void write_occupancy ()
+{
+	ofstream out {"/var/lib/vinayaka/model/occupancy.csv"};
+	for (auto word_to_speakers: words_to_speakers) {
+		string word = word_to_speakers.first;
+		unsigned int speakers = word_to_speakers.second;
+		out << "\"" << escape_csv (word) << "\",";
+		out << "\"" << speakers << "\"" << endl;
+	}
+}
+
+
+
 int main (int argc, char **argv)
 {
 	cerr << "get_union_of_history" << endl;
@@ -194,14 +207,17 @@ int main (int argc, char **argv)
 	cerr << "save_users_to_toots" << endl;
 	save_users_to_toots (users_to_toots);
 
-	cerr << "write_concrete_user_words" << endl;
-	write_concrete_user_words (users_to_toots);
-
 	cerr << "get_full_words" << endl;
 	map <User, set <string>> full_words = get_full_words (users_to_toots);
 
 	cerr << "get_words_to_speakers" << endl;
 	get_words_to_speakers (full_words);
+
+	cerr << "write_concrete_user_words" << endl;
+	write_concrete_user_words (users_to_toots);
+
+	cerr << "write_occupancy" << endl;
+	write_occupancy ();
 }
 
 
