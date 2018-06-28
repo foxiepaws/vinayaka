@@ -30,7 +30,8 @@ www_files = \
 	user-new.html \
 	user-new.js \
 	user-search.html \
-	user-search.js
+	user-search.js \
+	optout.html
 
 
 install: $(www_files)
