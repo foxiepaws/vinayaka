@@ -471,6 +471,8 @@ static string remove_character_reference (string in)
 					out += string {"\""};
 				} else if (code == string {"&apos;"}) {
 					out += string {"'"};
+				} else if (code == string {"&#39;"}) {
+					out += string {"'"};
 				} else {
 					out += code;
 				}
