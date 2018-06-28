@@ -174,6 +174,22 @@ static map <string, unsigned int> get_words_to_occupancy (string filename)
 }
 
 
+class WordAndRarity {
+public:
+	string word;
+	double rarity;
+public:
+	WordAndRarity () { };
+	WordAndRarity (string a_word, double a_rarity): word (a_word), rarity (a_rarity) { };
+};
+
+
+bool by_rarity_desc (const WordAndRarity &a, const WordAndRarity &b)
+{
+	return b.rarity < a.rarity;
+};
+
+
 static string format_result
 	(vector <UserAndSimilarity> speakers_and_similarity,
 	map <User, map <string, double>> speaker_to_intersection,
@@ -192,10 +208,11 @@ static string format_result
 		if (speaker_to_intersection.find (User {speaker.host, speaker.user}) != speaker_to_intersection.end ()) {
 			intersection_map = speaker_to_intersection.at (User {speaker.host, speaker.user});
 		}
-		vector <string> intersection_vector;
-		for (auto word_to_score: intersection_map) {
-			intersection_vector.push_back (word_to_score.first);
+		vector <WordAndRarity> intersection_vector;
+		for (auto word_to_rarity: intersection_map) {
+			intersection_vector.push_back (WordAndRarity {word_to_rarity.first, word_to_rarity.second});
 		}
+		stable_sort (intersection_vector.begin (), intersection_vector.end (), by_rarity_desc);
 
 		out
 			<< "{"
@@ -231,11 +248,11 @@ static string format_result
 			if (0 < cn_intersection) {
 				out << ",";
 			}
-			string word = intersection_vector.at (cn_intersection);
-			double score = intersection_map.at (word);
+			string word = intersection_vector.at (cn_intersection).word;
+			double rarity = intersection_vector.at (cn_intersection).rarity;
 			out << "{";
 			out << "\"word\":\"" << escape_json (escape_utf8_fragment (word)) << "\",";
-			out << "\"rarity\":" << scientific << score;
+			out << "\"rarity\":" << scientific << rarity;
 			out << "}";
 		}
 		out << "]";
