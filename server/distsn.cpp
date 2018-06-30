@@ -808,10 +808,11 @@ vector <string> get_words_from_toots
 static void get_profile_impl (bool pagenation, string atom_query, string &a_screen_name, string &a_bio, vector <string> &a_toots)
 {
 	try {
+		Http http;
 		vector <string> timeline;
 
 		cerr << atom_query << endl;
-		string atom_reply = http_get_quick (atom_query);
+		string atom_reply = http.perform (atom_query);
 		
 		XMLDocument atom_document;
 		XMLError atom_parse_error = atom_document.Parse (atom_reply.c_str ());
@@ -888,7 +889,7 @@ static void get_profile_impl (bool pagenation, string atom_query, string &a_scre
 				break;
 			}
 			cerr << next_url << endl;
-			string atom_reply = http_get_quick (next_url);
+			string atom_reply = http.perform (next_url);
 		
 			XMLDocument atom_document;
 			XMLError atom_parse_error = atom_document.Parse (atom_reply.c_str ());
