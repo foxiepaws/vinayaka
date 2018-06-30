@@ -129,16 +129,13 @@ public:
 	Http ();
 	std::string perform (std::string url, std::vector <std::string> header);
 	std::string perform (std::string url);
+	std::string endure (std::string url);
 	~Http ();
 };
 
 
 std::string get_id (const picojson::value &toot);
 std::vector <picojson::value> get_timeline (std::string host);
-std::string http_get (std::string url);
-std::string http_get_quick (std::string url);
-std::string http_get (std::string url, std::vector <std::string> headers);
-std::string http_get_quick (std::string url, std::vector <std::string> headers);
 time_t get_time (const picojson::value &toot);
 time_t str2time (std::string s);
 

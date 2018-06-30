@@ -36,10 +36,11 @@ string get_id (const picojson::value &toot)
 
 vector <picojson::value> get_timeline (string host)
 {
+	Http http;
 	vector <picojson::value> timeline;
 
 	{
-		string reply = http_get_quick (string {"https://"} + host + string {"/api/v1/timelines/public?local=true&limit=40"});
+		string reply = http.perform (string {"https://"} + host + string {"/api/v1/timelines/public?local=true&limit=40"});
 
 		picojson::value json_value;
 		string error = picojson::parse (json_value, reply);
@@ -86,7 +87,7 @@ vector <picojson::value> get_timeline (string host)
 			+ host
 			+ string {"/api/v1/timelines/public?local=true&limit=40&max_id="}
 			+ bottom_id;
-		string reply = http_get_quick (query);
+		string reply = http.perform (query);
 
 		picojson::value json_value;
 		string error = picojson::parse (json_value, reply);
@@ -115,147 +116,6 @@ static int writer (char * data, size_t size, size_t nmemb, std::string * writerD
 	}
 	writerData->append (data, size * nmemb);
 	return size * nmemb;
-}
-
-
-string http_get (string url)
-{
-	CURL *curl;
-	CURLcode res;
-	curl_global_init (CURL_GLOBAL_ALL);
-
-	curl = curl_easy_init ();
-	if (! curl) {
-		throw (HttpException {});
-	}
-	curl_easy_setopt (curl, CURLOPT_URL, url.c_str ());
-	string reply_1;
-	curl_easy_setopt (curl, CURLOPT_WRITEFUNCTION, writer);
-	curl_easy_setopt (curl, CURLOPT_WRITEDATA, & reply_1);
-	res = curl_easy_perform (curl);
-	long response_code;
-	if (res == CURLE_OK) {
-		curl_easy_getinfo (curl, CURLINFO_RESPONSE_CODE, & response_code);
-		curl_easy_cleanup (curl);
-		if (response_code != 200) {
-			cerr << "HTTP response: " << response_code << endl;
-			throw (HttpException {__LINE__});
-		}
-	} else {
-		curl_easy_cleanup (curl);
-		throw (HttpException {__LINE__});
-	}
-	return reply_1;
-}
-
-
-string http_get_quick (string url)
-{
-	CURL *curl;
-	CURLcode res;
-	curl_global_init (CURL_GLOBAL_ALL);
-
-	curl = curl_easy_init ();
-	if (! curl) {
-		throw (HttpException {__LINE__});
-	}
-	curl_easy_setopt (curl, CURLOPT_URL, url.c_str ());
-	string reply_1;
-	curl_easy_setopt (curl, CURLOPT_WRITEFUNCTION, writer);
-	curl_easy_setopt (curl, CURLOPT_WRITEDATA, & reply_1);
-	curl_easy_setopt (curl,  CURLOPT_CONNECTTIMEOUT, 60);
-	curl_easy_setopt (curl,  CURLOPT_TIMEOUT, 60);
-	res = curl_easy_perform (curl);
-	long response_code;
-	if (res == CURLE_OK) {
-		curl_easy_getinfo (curl, CURLINFO_RESPONSE_CODE, & response_code);
-		curl_easy_cleanup (curl);
-		if (response_code != 200) {
-			cerr << "HTTP response: " << response_code << endl;
-			throw (HttpException {__LINE__});
-		}
-	} else {
-		curl_easy_cleanup (curl);
-		throw (HttpException {__LINE__});
-	}
-	return reply_1;
-}
-
-
-string http_get (string url, vector <string> headers)
-{
-	CURL *curl;
-	CURLcode res;
-	curl_global_init (CURL_GLOBAL_ALL);
-
-	curl = curl_easy_init ();
-	if (! curl) {
-		throw (HttpException {});
-	}
-	
-	struct curl_slist * list = nullptr;
-	for (auto &header: headers) {
-		list = curl_slist_append (list, header.c_str ());
-	}
-	
-	curl_easy_setopt (curl, CURLOPT_URL, url.c_str ());
-	curl_easy_setopt (curl, CURLOPT_HTTPHEADER, list);
-	string reply_1;
-	curl_easy_setopt (curl, CURLOPT_WRITEFUNCTION, writer);
-	curl_easy_setopt (curl, CURLOPT_WRITEDATA, & reply_1);
-	res = curl_easy_perform (curl);
-	long response_code;
-	if (res == CURLE_OK) {
-		curl_easy_getinfo (curl, CURLINFO_RESPONSE_CODE, & response_code);
-		curl_easy_cleanup (curl);
-		if (response_code != 200) {
-			cerr << "HTTP response: " << response_code << endl;
-			throw (HttpException {__LINE__});
-		}
-	} else {
-		curl_easy_cleanup (curl);
-		throw (HttpException {__LINE__});
-	}
-	return reply_1;
-}
-
-
-string http_get_quick (string url, vector <string> headers)
-{
-	CURL *curl;
-	CURLcode res;
-	curl_global_init (CURL_GLOBAL_ALL);
-
-	struct curl_slist * list = nullptr;
-	for (auto &header: headers) {
-		list = curl_slist_append (list, header.c_str ());
-	}
-
-	curl = curl_easy_init ();
-	if (! curl) {
-		throw (HttpException {__LINE__});
-	}
-	curl_easy_setopt (curl, CURLOPT_URL, url.c_str ());
-	curl_easy_setopt (curl, CURLOPT_HTTPHEADER, list);
-	string reply_1;
-	curl_easy_setopt (curl, CURLOPT_WRITEFUNCTION, writer);
-	curl_easy_setopt (curl, CURLOPT_WRITEDATA, & reply_1);
-	curl_easy_setopt (curl,  CURLOPT_CONNECTTIMEOUT, 60);
-	curl_easy_setopt (curl,  CURLOPT_TIMEOUT, 60);
-	res = curl_easy_perform (curl);
-	long response_code;
-	if (res == CURLE_OK) {
-		curl_easy_getinfo (curl, CURLINFO_RESPONSE_CODE, & response_code);
-		curl_easy_cleanup (curl);
-		if (response_code != 200) {
-			cerr << "HTTP response: " << response_code << endl;
-			throw (HttpException {__LINE__});
-		}
-	} else {
-		curl_easy_cleanup (curl);
-		throw (HttpException {__LINE__});
-	}
-	return reply_1;
 }
 
 
@@ -296,6 +156,30 @@ string Http::perform (string url, vector <string> headers)
 	curl_easy_setopt (curl, CURLOPT_WRITEDATA, & reply_1);
 	curl_easy_setopt (curl,  CURLOPT_CONNECTTIMEOUT, 60);
 	curl_easy_setopt (curl,  CURLOPT_TIMEOUT, 60);
+	res = curl_easy_perform (curl);
+	long response_code;
+	if (res == CURLE_OK) {
+		curl_easy_getinfo (curl, CURLINFO_RESPONSE_CODE, & response_code);
+		if (response_code != 200) {
+			cerr << "HTTP response: " << response_code << endl;
+			throw (HttpException {__LINE__});
+		}
+	} else {
+		throw (HttpException {__LINE__});
+	}
+	return reply_1;
+}
+
+
+string Http::endure (string url)
+{
+	CURLcode res;
+
+	curl_easy_setopt (curl, CURLOPT_URL, url.c_str ());
+	string reply_1;
+	curl_easy_setopt (curl, CURLOPT_WRITEFUNCTION, writer);
+	curl_easy_setopt (curl, CURLOPT_WRITEDATA, & reply_1);
+	curl_easy_setopt (curl,  CURLOPT_CONNECTTIMEOUT, 120);
 	res = curl_easy_perform (curl);
 	long response_code;
 	if (res == CURLE_OK) {
@@ -959,10 +843,12 @@ void get_profile (bool pagenation, string host, string user, string &a_screen_na
 
 void get_profile (string host, string user, string &a_screen_name, string &a_bio, string & a_avatar, string & a_type)
 {
+	Http http;
+
 	string query = string {"https://"} + host + string {"/users/"} + user;
 	vector <string> headers {string {"Accept: application/activity+json"}};
 	cerr << query << endl;
-	string reply = http_get_quick (query, headers);
+	string reply = http.perform (query, headers);
         picojson::value reply_value;
 	string error = picojson::parse (reply_value, reply);
 	if (! error.empty ()) {
@@ -1014,10 +900,11 @@ static bool elder_impl (string atom_query)
 	time_t first_toot_timestamp = numeric_limits <time_t>::max ();
 
 	try {
+		Http http;
 		vector <string> timeline;
 
 		cerr << atom_query << endl;
-		string atom_reply = http_get_quick (atom_query);
+		string atom_reply = http.perform (atom_query);
 		
 		XMLDocument atom_document;
 		XMLError atom_parse_error = atom_document.Parse (atom_reply.c_str ());
@@ -1249,8 +1136,9 @@ string escape_utf8_fragment (string in) {
 
 set <string> get_international_hosts ()
 {
+	Http http;
 	const string url {"http://distsn.org/cgi-bin/instances-api.cgi"};
-	string reply = http_get (url);
+	string reply = http.endure (url);
 
 	picojson::value reply_value;
 	string error = picojson::parse (reply_value, reply);
@@ -1397,9 +1285,10 @@ string fetch_cache (string a_host, string a_user, bool & a_hit)
 
 static set <string> get_friends_pleroma (string host, string user)
 {
+	Http http;
 	string url = string {"https://"} + host + string {"/api/statuses/friends.json?user_id="} + user;
 	cerr << url << endl;
-	string reply_string = http_get_quick (url);
+	string reply_string = http.perform (url);
 	picojson::value reply_value;
 	string error = picojson::parse (reply_value, reply_string);
 	if (! error.empty ()) {
