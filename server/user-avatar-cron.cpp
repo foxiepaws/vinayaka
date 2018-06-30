@@ -59,6 +59,7 @@ int main (int argc, char **argv)
 {
 	auto users = get_users ();
 	vector <pair <User, Profile>> users_and_profiles;
+	Http http;
 	for (auto user: users) {
 		cerr << user.user << "@" << user.host << endl;
 		try {
@@ -66,7 +67,7 @@ int main (int argc, char **argv)
 			string bio;
 			string avatar;
 			string type;
-			get_profile (user.host, user.user, screen_name, bio, avatar, type);
+			get_profile (user.host, user.user, screen_name, bio, avatar, type, http);
 			Profile profile;
 			profile.screen_name = screen_name;
 			profile.bio = bio;

@@ -844,7 +844,12 @@ void get_profile (bool pagenation, string host, string user, string &a_screen_na
 void get_profile (string host, string user, string &a_screen_name, string &a_bio, string & a_avatar, string & a_type)
 {
 	Http http;
+	get_profile (host, user, a_screen_name, a_bio, a_avatar, a_type, http);
+}
 
+
+void get_profile (string host, string user, string &a_screen_name, string &a_bio, string & a_avatar, string & a_type, Http & http)
+{
 	string query = string {"https://"} + host + string {"/users/"} + user;
 	vector <string> headers {string {"Accept: application/activity+json"}};
 	cerr << query << endl;
