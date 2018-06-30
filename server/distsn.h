@@ -114,6 +114,24 @@ public:
 };
 
 
+class HttpGlobal {
+public:
+	HttpGlobal ();
+};
+
+
+class Http {
+public:
+	static HttpGlobal global;
+	CURL *curl;
+public:
+	Http ();
+	std::string perform (std::string url, std::vector <std::string> header);
+	std::string perform (std::string url);
+	~Http ();
+};
+
+
 std::string get_id (const picojson::value &toot);
 std::vector <picojson::value> get_timeline (std::string host);
 std::string http_get (std::string url);

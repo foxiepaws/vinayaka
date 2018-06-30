@@ -259,6 +259,64 @@ string http_get_quick (string url, vector <string> headers)
 }
 
 
+HttpGlobal::HttpGlobal ()
+{
+	curl_global_init (CURL_GLOBAL_ALL);
+}
+
+
+Http::Http ()
+{
+	curl = curl_easy_init ();
+	if (! curl) {
+		throw (HttpException {__LINE__});
+	}
+}
+
+
+string Http::perform (string url)
+{
+	return perform (url, vector <string> {});
+}
+
+
+string Http::perform (string url, vector <string> headers)
+{
+	CURLcode res;
+
+	struct curl_slist * list = nullptr;
+	for (auto &header: headers) {
+		list = curl_slist_append (list, header.c_str ());
+	}
+
+	curl_easy_setopt (curl, CURLOPT_URL, url.c_str ());
+	curl_easy_setopt (curl, CURLOPT_HTTPHEADER, list);
+	string reply_1;
+	curl_easy_setopt (curl, CURLOPT_WRITEFUNCTION, writer);
+	curl_easy_setopt (curl, CURLOPT_WRITEDATA, & reply_1);
+	curl_easy_setopt (curl,  CURLOPT_CONNECTTIMEOUT, 60);
+	curl_easy_setopt (curl,  CURLOPT_TIMEOUT, 60);
+	res = curl_easy_perform (curl);
+	long response_code;
+	if (res == CURLE_OK) {
+		curl_easy_getinfo (curl, CURLINFO_RESPONSE_CODE, & response_code);
+		if (response_code != 200) {
+			cerr << "HTTP response: " << response_code << endl;
+			throw (HttpException {__LINE__});
+		}
+	} else {
+		throw (HttpException {__LINE__});
+	}
+	return reply_1;
+}
+
+
+Http::~Http ()
+{
+	curl_easy_cleanup (curl);
+}
+
+
 time_t get_time (const picojson::value &toot)
 {
 	if (! toot.is <picojson::object> ()) {
@@ -1501,12 +1559,13 @@ static void parse_friend (string a_code, bool & a_ok, string & a_host, string & 
 
 static set <string> get_friends_mastodon (string host, string user)
 {
+	Http http;
 	set <string> friends;
 	for (unsigned int page = 1; page < 1000; page ++) {
 		stringstream url;
 		url << string {"https://"} << host << string {"/users/"} << user << string {"/following.json?page="} << page;
 		cerr << url.str () << endl;
-		string reply_string = http_get_quick (url.str ());
+		string reply_string = http.perform (url.str ());
 		picojson::value reply_value;
 		string error = picojson::parse (reply_value, reply_string);
 		if (! error.empty ()) {
