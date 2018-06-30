@@ -1165,7 +1165,10 @@ set <string> get_international_hosts ()
 			hosts.insert (instance_string);
 		}
 	}
-	
+
+	/* Manually add. */
+	hosts.insert (string {"switter.at"});
+
 	return hosts;
 }
 
