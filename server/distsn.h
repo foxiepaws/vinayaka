@@ -2,6 +2,7 @@
 #define DISTSN_H
 
 
+#include <curl/curl.h>
 #include <string>
 #include <vector>
 #include <set>
