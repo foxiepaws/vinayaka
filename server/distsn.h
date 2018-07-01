@@ -142,7 +142,8 @@ time_t str2time (std::string s);
 
 std::string escape_json (std::string in);
 std::vector <std::string> get_words_from_toots (std::vector <std::string> toots, unsigned int word_length, unsigned int vocabulary_size);
-std::vector <std::string> get_words_from_toots (std::vector <std::string> toots, unsigned int word_length, unsigned int vocabulary_size, std::map <std::string, std::string> concrete_to_abstract_words);
+std::vector <std::string> get_words_from_toots (std::vector <std::string> toots, unsigned int word_length, unsigned int vocabulary_size, std::map <std::string, unsigned int> word_to_occupancy);
+double get_rarity (unsigned int occupancy);
 void get_profile (bool pagenation, std::string host, std::string user, std::string &a_screen_name, std::string &a_bio, std::vector <std::string> &a_toots);
 void get_profile (std::string host, std::string user, std::string &a_screen_name, std::string &a_bio, std::string &a_avatar, std::string &a_type);
 void get_profile (std::string host, std::string user, std::string &a_screen_name, std::string &a_bio, std::string &a_avatar, std::string &a_type, class Http &http);

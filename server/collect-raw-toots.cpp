@@ -20,9 +20,6 @@ using namespace std;
 
 static const unsigned int history_variations = 24;
 
-
-static map <string, unsigned int> words_to_speakers;
-
 	
 static vector <User> get_users (unsigned int size)
 {
@@ -143,9 +140,9 @@ static map <User, set <string>> get_full_words (map <User, set <string>> users_t
 }
 
 
-static void get_words_to_speakers (map <User, set <string>> a_users_to_words)
+static map <string, unsigned int> get_words_to_speakers (map <User, set <string>> a_users_to_words)
 {
-	words_to_speakers.clear ();
+	map <string, unsigned int> words_to_speakers;
 
 	for (auto user_to_words: a_users_to_words) {
 		auto words = user_to_words.second;
@@ -157,21 +154,24 @@ static void get_words_to_speakers (map <User, set <string>> a_users_to_words)
 			}
 		}
 	}
+	
+	return words_to_speakers;
 }
 
 
-static void write_concrete_user_words (map <User, set <string>> users_to_toots)
+static void write_concrete_user_words (map <User, set <string>> users_to_toots, map <string, unsigned int> words_to_speakers)
 {
 	ofstream out {"/var/lib/vinayaka/model/concrete-user-words.csv"};
 	for (auto user_to_toots: users_to_toots) {
 		User user = user_to_toots.first;
 		set <string> toots = user_to_toots.second;
 		vector <string> toots_vector {toots.begin (), toots.end ()};
-		vector <string> model_6 = get_words_from_toots (toots_vector, 6, 800);
-		vector <string> model_7 = get_words_from_toots (toots_vector, 7, 800);
-		vector <string> model_8 = get_words_from_toots (toots_vector, 8, 800);
-		vector <string> model_9 = get_words_from_toots (toots_vector, 9, 800);
-		vector <string> model_12 = get_words_from_toots (toots_vector, 12, 800);
+		const unsigned int vocabulary_size {800};
+		vector <string> model_6 = get_words_from_toots (toots_vector, 6, vocabulary_size, words_to_speakers);
+		vector <string> model_7 = get_words_from_toots (toots_vector, 7, vocabulary_size, words_to_speakers);
+		vector <string> model_8 = get_words_from_toots (toots_vector, 8, vocabulary_size, words_to_speakers);
+		vector <string> model_9 = get_words_from_toots (toots_vector, 9, vocabulary_size, words_to_speakers);
+		vector <string> model_12 = get_words_from_toots (toots_vector, 12, vocabulary_size, words_to_speakers);
 		set <string> all;
 		all.insert (model_6.begin (), model_6.end ());
 		all.insert (model_7.begin (), model_7.end ());
@@ -187,7 +187,7 @@ static void write_concrete_user_words (map <User, set <string>> users_to_toots)
 }
 
 
-static void write_occupancy ()
+static void write_occupancy (map <string, unsigned int> words_to_speakers)
 {
 	ofstream out {"/var/lib/vinayaka/model/occupancy.csv"};
 	for (auto word_to_speakers: words_to_speakers) {
@@ -212,13 +212,13 @@ int main (int argc, char **argv)
 	map <User, set <string>> full_words = get_full_words (users_to_toots);
 
 	cerr << "get_words_to_speakers" << endl;
-	get_words_to_speakers (full_words);
+	map <string, unsigned int> words_to_speakers = get_words_to_speakers (full_words);
 
 	cerr << "write_concrete_user_words" << endl;
-	write_concrete_user_words (users_to_toots);
+	write_concrete_user_words (users_to_toots, words_to_speakers);
 
 	cerr << "write_occupancy" << endl;
-	write_occupancy ();
+	write_occupancy (words_to_speakers);
 }
 
 

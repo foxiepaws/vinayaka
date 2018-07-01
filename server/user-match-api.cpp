@@ -39,13 +39,6 @@ static bool by_similarity_desc (const UserAndSimilarity &a, const UserAndSimilar
 }
 
 
-static double get_rarity (unsigned int occupancy)
-{
-	return (static_cast <double> (minimum_occupancy) * 10.0)
-		/ static_cast <double> (occupancy);
-}
-
-
 static double get_similarity
 	(set <string> listener_set,
 	set <string> speaker_set,
@@ -65,7 +58,7 @@ static double get_similarity
 		if (words_to_occupancy.find (word) != words_to_occupancy.end ()) {
 			occupancy = words_to_occupancy.at (word);
 		}
-		double rarity = get_rarity (occupancy);
+		double rarity = static_cast <double> (minimum_occupancy) * 10.0 * get_rarity (occupancy);
 		similarity += rarity;
 		a_intersection.insert (pair <string, double> {word, rarity});
 	}
@@ -94,12 +87,13 @@ public:
 
 static set <string> get_words_of_listener
 	(vector <string> toots,
-	vector <ModelTopology> models)
+	vector <ModelTopology> models,
+	map <string, unsigned int> words_to_occupancy)
 {
 	set <string> words;
 	for (auto model: models) {
 		vector <string> words_in_a_model
-			= get_words_from_toots (toots, model.word_length, model.vocabulary_size);
+			= get_words_from_toots (toots, model.word_length, model.vocabulary_size, words_to_occupancy);
 		words.insert (words_in_a_model.begin (), words_in_a_model.end ());
 	}
 	return words;
@@ -324,17 +318,17 @@ int main (int argc, char **argv)
 		ModelTopology {12, 800},
 	};
 	
+	cerr << "get_words_to_occupancy" << endl;
+	map <string, unsigned int> words_to_occupancy
+		= get_words_to_occupancy (string {"/var/lib/vinayaka/model/occupancy.csv"});
+		
 	cerr << "get_words_of_listener" << endl;
-	set <string> words_of_listener = get_words_of_listener (toots, models);
+	set <string> words_of_listener = get_words_of_listener (toots, models, words_to_occupancy);
 	
 	cerr << "get_words_of_speakers" << endl;
 	map <User, set <string>> speaker_to_words
 		= get_words_of_speakers (string {"/var/lib/vinayaka/model/concrete-user-words.csv"});
 	
-	cerr << "get_words_to_occupancy" << endl;
-	map <string, unsigned int> words_to_occupancy
-		= get_words_to_occupancy (string {"/var/lib/vinayaka/model/occupancy.csv"});
-		
 	vector <UserAndSimilarity> speakers_and_similarity;
 	map <User, map <string, double>> speaker_to_intersection;
 	
