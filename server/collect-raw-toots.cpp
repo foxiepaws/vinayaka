@@ -161,7 +161,7 @@ static map <string, unsigned int> get_words_to_speakers (map <User, set <string>
 
 static void write_concrete_user_words (map <User, set <string>> users_to_toots, map <string, unsigned int> words_to_speakers)
 {
-	ofstream out {"/var/lib/vinayaka/model/concrete-user-words.csv"};
+	stringstream out;
 	for (auto user_to_toots: users_to_toots) {
 		User user = user_to_toots.first;
 		set <string> toots = user_to_toots.second;
@@ -184,6 +184,8 @@ static void write_concrete_user_words (map <User, set <string>> users_to_toots, 
 			out << "\"" << escape_csv (abstract_word) << "\"" << endl;
 		}
 	}
+	ofstream fout {"/var/lib/vinayaka/model/concrete-user-words.csv"};
+	fout << out.str ();
 }
 
 
