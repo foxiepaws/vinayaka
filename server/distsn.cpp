@@ -638,7 +638,7 @@ static bool valid_position (string toot, unsigned int offset)
 
 vector <string> get_words_from_toots (vector <string> toots, unsigned int word_length, unsigned int vocabulary_size)
 {
-	return get_words_from_toots (toots, word_length, vocabulary_size, map <string, unsigned int> {});
+	return get_words_from_toots (toots, word_length, vocabulary_size, map <string, unsigned int> {}, 1);
 }
 
 
@@ -646,7 +646,8 @@ vector <string> get_words_from_toots
 	(vector <string> toots,
 	unsigned int word_length,
 	unsigned int vocabulary_size,
-	map <string, unsigned int> words_to_occupancy)
+	map <string, unsigned int> words_to_occupancy,
+	unsigned int minimum_occupancy)
 {
 	map <string, unsigned int> occupancy_count_map;
 	for (auto raw_toot: toots) {
@@ -673,7 +674,7 @@ vector <string> get_words_from_toots
 	for (auto i: occupancy_count_map) {
 		string word {i.first};
 		unsigned int occupancy_in_this_user {i.second};
-		unsigned int occupancy_in_all_users = 16;
+		unsigned int occupancy_in_all_users = minimum_occupancy;
 		if (words_to_occupancy.find (word) != words_to_occupancy.end ()) {
 			occupancy_in_all_users = words_to_occupancy.at (word);
 		}

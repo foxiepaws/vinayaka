@@ -93,7 +93,7 @@ static set <string> get_words_of_listener
 	set <string> words;
 	for (auto model: models) {
 		vector <string> words_in_a_model
-			= get_words_from_toots (toots, model.word_length, model.vocabulary_size, words_to_occupancy);
+			= get_words_from_toots (toots, model.word_length, model.vocabulary_size, words_to_occupancy, minimum_occupancy);
 		words.insert (words_in_a_model.begin (), words_in_a_model.end ());
 	}
 	return words;
