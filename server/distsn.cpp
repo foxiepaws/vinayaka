@@ -574,9 +574,13 @@ static unsigned int number_of_spaces (string s)
 }
 
 
-static bool starts_with_whitespace (string word)
+static bool starts_with_alphabet (string word)
 {
-	return is_space (word.at (0));
+	char c = word.at (0);
+	return ('a' <= c && c <= 'z')
+		||  ('A' <= c && c <= 'Z')
+		||  ('0' <= c && c <= '9')
+		||  (! (0x00 <= c && c <= 0x7f));
 }
 
 
@@ -586,11 +590,24 @@ static bool is_hashtag (string word)
 }
 
 
+static unsigned int length_of_first_word (string word)
+{
+	for (unsigned int cn = 0; cn < word.size (); cn ++) {
+		auto c = word.at (cn);
+		if (is_space (c)) {
+			return cn;
+		}
+	}
+	return word.size ();
+}
+
+
 static bool valid_word (string word)
 {
 	bool invalid
 		= (! starts_with_utf8_codepoint_boundary (word))
-		|| starts_with_whitespace (word)
+		|| (! starts_with_alphabet (word))
+		|| length_of_first_word (word) < 4
 		|| is_hashtag (word)
 		|| (word.size () < 9 && all_kana (word))
 		|| (word.size () < 12 && all_hiragana (word))
