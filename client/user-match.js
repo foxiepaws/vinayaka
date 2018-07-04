@@ -43,18 +43,21 @@ function setJapaneseMessages () {
 
 function search (detail) {
 	var user_and_host = document.getElementById ('user-input').value;
-	var match = /^https:\/\/([\w\.\-]+)\/@([\w]+)$/.exec (user_and_host);
+	var match_1 = /^https:\/\/([\w\.\-]+)\/@([\w]+)$/.exec (user_and_host);
+	var match_2 = /^([\w]+)@([\w\.\-]+)$/.exec (user_and_host);
+	var match_3 = /^@([\w]+)@([\w\.\-]+)$/.exec (user_and_host);
 	var user_and_host_array = user_and_host.split ('@');
-	if (match) {
-		var host = match[1];
-		var user = match[2];
+	if (match_1) {
+		var host = match_1[1];
+		var user = match_1[2];
 		search_impl (host, user, detail);
-	} else if (1 < user_and_host_array.length &&
-		0 < user_and_host_array[0].length &&
-		0 < user_and_host_array[1].length)
-	{
-		var user = user_and_host_array[0];
-		var host = user_and_host_array[1];
+	} else if (match_2) {
+		var user = match_2[1];
+		var host = match_2[2];
+		search_impl (host, user, detail);
+	} else if (match_3) {
+		var user = match_3[1];
+		var host = match_3[2];
 		search_impl (host, user, detail);
 	} else {
 		document.getElementById ('placeholder').innerHTML =
