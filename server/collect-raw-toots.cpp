@@ -112,17 +112,15 @@ static set <string> get_full_words (set <string> toots)
 {
 	const unsigned int model_size {1600};
 	vector <string> toots_vector {toots.begin (), toots.end ()};
-	vector <string> model_6 = get_words_from_toots (toots_vector, 6, model_size);
+	vector <string> model_6 = get_words_from_toots (toots_vector, 6, model_size * 2);
 	vector <string> model_7 = get_words_from_toots (toots_vector, 7, model_size);
 	vector <string> model_8 = get_words_from_toots (toots_vector, 8, model_size);
 	vector <string> model_9 = get_words_from_toots (toots_vector, 9, model_size);
-	vector <string> model_12 = get_words_from_toots (toots_vector, 12, model_size);
 	set <string> all;
 	all.insert (model_6.begin (), model_6.end ());
 	all.insert (model_7.begin (), model_7.end ());
 	all.insert (model_8.begin (), model_8.end ());
 	all.insert (model_9.begin (), model_9.end ());
-	all.insert (model_12.begin (), model_12.end ());
 	return all;
 }
 
@@ -176,17 +174,15 @@ static void write_concrete_user_words
 		set <string> toots = user_to_toots.second;
 		vector <string> toots_vector {toots.begin (), toots.end ()};
 		const unsigned int vocabulary_size {800};
-		vector <string> model_6 = get_words_from_toots (toots_vector, 6, vocabulary_size, words_to_speakers, minimum_occupancy);
+		vector <string> model_6 = get_words_from_toots (toots_vector, 6, vocabulary_size * 2, words_to_speakers, minimum_occupancy);
 		vector <string> model_7 = get_words_from_toots (toots_vector, 7, vocabulary_size, words_to_speakers, minimum_occupancy);
 		vector <string> model_8 = get_words_from_toots (toots_vector, 8, vocabulary_size, words_to_speakers, minimum_occupancy);
 		vector <string> model_9 = get_words_from_toots (toots_vector, 9, vocabulary_size, words_to_speakers, minimum_occupancy);
-		vector <string> model_12 = get_words_from_toots (toots_vector, 12, vocabulary_size, words_to_speakers, minimum_occupancy);
 		set <string> all;
 		all.insert (model_6.begin (), model_6.end ());
 		all.insert (model_7.begin (), model_7.end ());
 		all.insert (model_8.begin (), model_8.end ());
 		all.insert (model_9.begin (), model_9.end ());
-		all.insert (model_12.begin (), model_12.end ());
 		for (auto abstract_word: all) {
 			out << "\"" << escape_csv (user.host) << "\",";
 			out << "\"" << escape_csv (user.user) << "\",";

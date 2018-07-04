@@ -311,11 +311,10 @@ int main (int argc, char **argv)
 	toots.push_back (bio);
 
 	vector <ModelTopology> models = {
-		ModelTopology {6, 800},
+		ModelTopology {6, 1600},
 		ModelTopology {7, 800},
 		ModelTopology {8, 800},
 		ModelTopology {9, 800},
-		ModelTopology {12, 800},
 	};
 	
 	cerr << "get_words_to_occupancy" << endl;
