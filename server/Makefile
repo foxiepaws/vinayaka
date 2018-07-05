@@ -60,7 +60,8 @@ cgi_scripts = \
 	vinayaka-user-profiles-api.cgi \
 	vinayaka-user-new-api.cgi
 cron_scripts = \
-	vinayaka-clear-cache-cron
+	vinayaka-clear-cache-cron \
+	vinayaka-https-renew-cron
 cgis = $(cgi_binaries) $(cgi_scripts)
 crons = $(cron_binaries) $(cron_scripts)
 impls = $(impl_binaries) $(impl_scripts)

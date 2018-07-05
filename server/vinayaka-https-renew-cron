@@ -1,0 +1,5 @@
+#!/bin/bash
+systemctl stop apache2
+letsencrypt renew
+systemctl start apache2
+
