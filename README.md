@@ -50,6 +50,10 @@ Write following code in crontab:
     20 */6 * * * /usr/local/bin/vinayaka-collect-raw-toots-cron
     50 */6 * * * /usr/local/bin/vinayaka-store-raw-toots-cron
 
+Write following code in crontab for the root:
+
+    42 2 * * 2 /usr/local/bin/vinayaka-https-renew-cron
+
 ## Update
 
     $ make clean
