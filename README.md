@@ -13,6 +13,8 @@ http://vinayaka.distsn.org
 
 http://vinayaka.distsn.org/cgi-bin/vinayaka-user-match-api.cgi?mstdn.jp+nullkal (フル)
 
+http://vinayaka.distsn.org/cgi-bin/vinayaka-user-match-filtered-api.cgi?mstdn.jp+nullkal (本人、ブラックリスト、ボットを除く)
+
 http://vinayaka.distsn.org/cgi-bin/vinayaka-user-match-osa-api.cgi?mstdn.jp+nullkal ([おすすめフォロワー](https://followlink.osa-p.net/recommend.html)互換形式)
 
 
