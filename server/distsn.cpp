@@ -1588,7 +1588,7 @@ set <User> get_optouted_users ()
 FileLock::FileLock (string a_path, int operation)
 {
 	path = a_path;
-	int fd = open (path.c_str (), O_RDWR);
+	fd = open (path.c_str (), O_RDWR);
 	if (fd < 0) {
 		abort ();
 	}
