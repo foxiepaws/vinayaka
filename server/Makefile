@@ -1,4 +1,4 @@
-.PHONY: all clean install uninstall initialize refresh activate-cgi
+.PHONY: all clean install uninstall initialize refresh-cache refresh-all activate-cgi
 
 srcdir = .
 
@@ -14,6 +14,7 @@ INSTALL_DATA = $(INSTALL) -m a=r
 MKDIR = mkdir
 RMDIR = rmdir
 CHMOD = chmod
+TOUCH = touch
 
 cgidir = /usr/lib/cgi-bin
 bindir = /usr/local/bin
@@ -135,9 +136,13 @@ initialize:
 	$(MKDIR) -p /var/lib/vinayaka/raw-toots
 	$(MKDIR) -p /var/lib/vinayaka/model
 	$(MKDIR) -p /var/lib/vinayaka/user-first-toot
+	$(TOUCH) /var/lib/vinayaka/match-cache.csv
 	$(CHMOD) -R a+rwx /var/lib/vinayaka
 
-refresh:
+refresh-cache:
+	-$(RM) /var/lib/vinayaka/match-cache.csv
+
+refresh-all: refresh-cache
 	-$(RM) /var/lib/vinayaka/*.json
 	-$(RM) /var/lib/vinayaka/*.csv
 	-$(RM) /var/lib/vinayaka/user-speed/*

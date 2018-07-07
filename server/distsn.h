@@ -7,6 +7,8 @@
 #include <vector>
 #include <set>
 #include <map>
+#include <sys/file.h>
+#include <unistd.h>
 #include "tinyxml2.h"
 #include "picojson.h"
 
@@ -131,6 +133,16 @@ public:
 	std::string perform (std::string url);
 	std::string endure (std::string url);
 	~Http ();
+};
+
+
+class FileLock {
+public:
+	int fd;
+	std::string path;
+public:
+	FileLock (std::string a_path, int operation = LOCK_EX);
+	~FileLock ();
 };
 
 

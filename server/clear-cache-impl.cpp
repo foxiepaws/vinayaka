@@ -12,8 +12,11 @@ using namespace std;
 
 int main (int argc, char *argv [])
 {
+	string file_name {"/var/lib/vinayaka/match-cache.csv"};
+	FileLock {file_name};
+
 	vector <vector <string>> table_in;
-	FILE * in = fopen ("/var/lib/vinayaka/match-cache.csv", "rb");
+	FILE * in = fopen (file_name.c_str (), "rb");
 	if (in != nullptr) {
 		table_in = parse_csv (in);
 		fclose (in);

@@ -1298,8 +1298,11 @@ string fetch_cache (string a_host, string a_user, bool & a_hit)
 {
 	a_hit = false;
 
+	string file_name {"/var/lib/vinayaka/match-cache.csv"};
+	FileLock {file_name, LOCK_SH};
+
 	vector <vector <string>> table;
-	FILE * in = fopen ("/var/lib/vinayaka/match-cache.csv", "rb");
+	FILE * in = fopen (file_name.c_str (), "rb");
 	if (in != nullptr) {
 		table = parse_csv (in);
 		fclose (in);
@@ -1579,6 +1582,27 @@ set <User> get_optouted_users ()
 	}
 	
 	return optouted_users;
+}
+
+
+FileLock::FileLock (string a_path, int operation)
+{
+	path = a_path;
+	int fd = open (path.c_str (), O_RDWR);
+	if (fd < 0) {
+		abort ();
+	}
+	int reply = flock (fd, operation);
+	if (reply < 0) {
+		abort ();
+	}
+}
+
+
+FileLock::~FileLock ()
+{
+	flock (fd, LOCK_UN);
+	close (fd);
 }
 
 

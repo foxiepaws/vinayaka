@@ -1,4 +1,4 @@
-.PHONY: all clean install uninstall initialize refresh activate-cgi
+.PHONY: all clean install uninstall initialize refresh-all refresh-cache activate-cgi
 
 all:
 	-$(MAKE) all -C server
@@ -17,9 +17,12 @@ uninstall:
 initialize:
 	-$(MAKE) initialize -C server
 
-refresh:
-	-$(MAKE) refresh -C server
-	
+refresh-all:
+	-$(MAKE) refresh-all -C server
+
+refresh-cache:
+	-$(MAKE) refresh-cache -C server
+
 activate-cgi:
 	-$(MAKE) activate-cgi -C server
 
