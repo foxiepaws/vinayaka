@@ -13,7 +13,7 @@ using namespace std;
 int main (int argc, char *argv [])
 {
 	string file_name {"/var/lib/vinayaka/match-cache.csv"};
-	FileLock {file_name};
+	FileLock lock {file_name};
 
 	vector <vector <string>> table_in;
 	FILE * in = fopen (file_name.c_str (), "rb");

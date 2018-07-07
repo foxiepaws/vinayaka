@@ -1299,7 +1299,7 @@ string fetch_cache (string a_host, string a_user, bool & a_hit)
 	a_hit = false;
 
 	string file_name {"/var/lib/vinayaka/match-cache.csv"};
-	FileLock {file_name, LOCK_SH};
+	FileLock lock {file_name, LOCK_SH};
 
 	vector <vector <string>> table;
 	FILE * in = fopen (file_name.c_str (), "rb");

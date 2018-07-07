@@ -191,14 +191,20 @@ static void write_concrete_user_words
 	}
 	cerr << endl;
 	
-	ofstream fout {"/var/lib/vinayaka/model/concrete-user-words.csv"};
-	fout << out.str ();
+	{
+		string file_name {"/var/lib/vinayaka/model/concrete-user-words.csv"};
+		FileLock lock {file_name};
+		ofstream fout {file_name};
+		fout << out.str ();
+	}
 }
 
 
 static void write_occupancy (map <string, unsigned int> words_to_speakers)
 {
-	ofstream out {"/var/lib/vinayaka/model/occupancy.csv"};
+	string file_name {"/var/lib/vinayaka/model/occupancy.csv"};
+	FileLock lock {file_name};
+	ofstream out {file_name};
 	for (auto word_to_speakers: words_to_speakers) {
 		string word = word_to_speakers.first;
 		unsigned int speakers = word_to_speakers.second;

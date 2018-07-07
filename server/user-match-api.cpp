@@ -102,6 +102,8 @@ static set <string> get_words_of_listener
 
 static map <User, set <string>> get_words_of_speakers (string filename)
 {
+	FileLock lock {filename, LOCK_SH};
+
 	map <User, set <string>> users_to_words;
 	FILE *in = fopen (filename.c_str (), "r");
 	if (in == nullptr) {
@@ -139,6 +141,8 @@ static map <User, set <string>> get_words_of_speakers (string filename)
 
 static map <string, unsigned int> get_words_to_occupancy (string filename)
 {
+	FileLock lock {filename, LOCK_SH};
+
 	map <string, unsigned int> words_to_occupancy;
 	FILE *in = fopen (filename.c_str (), "r");
 	if (in == nullptr) {
@@ -261,7 +265,7 @@ static string format_result
 static void add_to_cache (string host, string user, string result)
 {
 	string file_name {"/var/lib/vinayaka/match-cache.csv"};
-	FileLock {file_name};
+	FileLock lock {file_name};
 	ofstream out {file_name.c_str (), std::ofstream::out | std::ofstream::app};
 	time_t now = time (nullptr);
 	out << "\"" << escape_csv (host) << "\",";
