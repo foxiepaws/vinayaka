@@ -625,9 +625,18 @@ static bool enquete_toot (string toot)
 }
 
 
+static bool posted_by_third_party (string toot)
+{
+	return toot.find ("https://shindanmaker.com/") != string::npos
+		|| toot.find ("http://mystery.distsn.org/") != string::npos
+		|| toot.find ("https://mystery.distsn.org/") != string::npos
+		|| toot.find ("https://vote.thedesk.top/") != string::npos;
+}
+
+
 static bool valid_toot (string toot)
 {
-	return ! enquete_toot (toot);
+	return (! enquete_toot (toot)) && (! posted_by_third_party (toot));
 }
 
 
