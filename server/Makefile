@@ -22,6 +22,7 @@ etcdir = /etc/vinayaka
 objects = \
 	cache-fetcher.o \
 	cache-fetcher-osa.o \
+	cache-fetcher-filtered.o \
 	clear-cache-impl.o \
 	distsn.o \
 	report-cache.o \
@@ -38,7 +39,8 @@ objects = \
 	instance-size-cron.o
 cgi_binaries = \
 	vinayaka-user-speed-api.cgi \
-	vinayaka-user-search-api.cgi
+	vinayaka-user-search-api.cgi \
+	vinayaka-user-match-filtered-api.cgi
 cron_binaries = \
 	vinayaka-user-avatar-cron \
 	vinayaka-user-speed-cron \
@@ -85,6 +87,9 @@ vinayaka-user-match-cache-fetcher: tinyxml2.o distsn.o cache-fetcher.o
 
 vinayaka-user-match-cache-fetcher-osa: tinyxml2.o distsn.o cache-fetcher-osa.o
 	$(CXX) tinyxml2.o distsn.o cache-fetcher-osa.o -lcurl $(CFLAGS) -o $@
+
+vinayaka-user-match-filtered-api.cgi: tinyxml2.o distsn.o cache-fetcher-filtered.o
+	$(CXX) tinyxml2.o distsn.o cache-fetcher-filtered.o -lcurl $(CFLAGS) -o $@
 
 vinayaka-user-speed-cron: tinyxml2.o distsn.o user-speed-cron.o
 	$(CXX) tinyxml2.o distsn.o user-speed-cron.o -lcurl $(CFLAGS) -o $@

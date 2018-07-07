@@ -47,4 +47,5 @@ vinayaka-user-new-cron
 vinayaka-user-profile-record-cron
 vinayaka-user-search-api.cgi
 vinayaka-instance-size-cron
+vinayaka-user-match-filtered-api.cgi
 
