@@ -30,7 +30,7 @@ int main (int argc, char *argv [])
 			stringstream timestamp_sstream {row.at (3)};
 			time_t timestamp_time_t;
 			timestamp_sstream >> timestamp_time_t;
-			if (difftime (now, timestamp_time_t) < 60 * 60) {
+			if (difftime (now, timestamp_time_t) < 6 * 60 * 60) {
 				table_out.push_back (row);
 			}
 		}
