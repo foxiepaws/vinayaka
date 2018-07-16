@@ -11,12 +11,17 @@ http://vinayaka.distsn.org
 
 ### 似ているユーザーを検索
 
-http://vinayaka.distsn.org/cgi-bin/vinayaka-user-match-api.cgi?mstdn.jp+nullkal (フル)
+http://vinayaka.distsn.org/cgi-bin/vinayaka-user-match-api.cgi?mastodon.social+Gargron  
+(フル)
 
-http://vinayaka.distsn.org/cgi-bin/vinayaka-user-match-filtered-api.cgi?mstdn.jp+nullkal (本人、フォロー済み、ブラックリスト、ボットを除く)
+http://vinayaka.distsn.org/cgi-bin/vinayaka-user-match-filtered-api.cgi?mastodon.social+Gargron  
+(本人、フォロー済み、ブラックリスト、ボットを除く)
 
-http://vinayaka.distsn.org/cgi-bin/vinayaka-user-match-osa-api.cgi?mstdn.jp+nullkal ([おすすめフォロワー](https://followlink.osa-p.net/recommend.html)互換形式)
+http://vinayaka.distsn.org/cgi-bin/vinayaka-user-match-osa-api.cgi?mastodon.social+Gargron  
+([おすすめフォロワー](https://followlink.osa-p.net/recommend.html)互換形式)
 
+http://vinayaka.distsn.org/cgi-bin/vinayaka-user-match-suggestions-api.cgi?mastodon.social+Gargron  
+(マストドン公式 `/api/v1/suggestions` 互換)
 
 ### ユーザーを検索
 
