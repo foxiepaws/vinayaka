@@ -362,6 +362,7 @@ static void cache_sorted_result (set <string> hosts)
 	get_profile_for_all_users (newcomers);
 
 	const string filename {"/var/lib/vinayaka/users-new-cache.json"};
+	FileLock {filename};
 	ofstream out {filename};
 
 	out << "[";
