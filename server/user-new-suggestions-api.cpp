@@ -41,19 +41,6 @@ static string get_filtered_api (string in, set <string> friends, string listener
 		bool described = ((! screen_name.empty ()) && (! bio.empty ()) && (! avatar.empty ()));
 
 		if ((! self) && (! following_bool) && (! blacklisted) && (! bot) && described) {
-			vector <string> intersection_vector;
-			map <string, double> intersection_map;
-			auto intersection_array = user_object.at (string {"intersection"}).get <picojson::array> ();
-			for (auto word_and_score_value: intersection_array) {
-				auto word_and_score_object = word_and_score_value.get <picojson::object> ();
-				auto word_value = word_and_score_object.at (string {"word"});
-				auto word_string = word_value.get <string> ();
-				auto score_value = word_and_score_object.at (string {"rarity"});
-				auto score_double = score_value.get <double> ();
-				intersection_vector.push_back (word_string);
-				intersection_map.insert (pair <string, double> {word_string, score_double});
-			}
-
 			stringstream out_user;
 			out_user
 				<< "{"
