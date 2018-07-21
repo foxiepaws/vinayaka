@@ -31,7 +31,11 @@ http://vinayaka.distsn.org/cgi-bin/vinayaka-user-search-api.cgi?nagiept
 
 ### 新規ユーザーリスト
 
-http://vinayaka.distsn.org/cgi-bin/vinayaka-user-new-api.cgi
+http://vinayaka.distsn.org/cgi-bin/vinayaka-user-new-api.cgi  
+(フル)
+
+http://vinayaka.distsn.org/cgi-bin/vinayaka-user-new-suggestions-api.cgi?mastodon.social+Gargron  
+(マストドン公式 `/api/v1/suggestions` 互換)
 
 ### 流速順ユーザーリスト
 
