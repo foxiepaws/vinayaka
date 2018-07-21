@@ -38,12 +38,14 @@ objects = \
 	collect-raw-toots.o \
 	user-new-cron.o \
 	user-search-api.o \
-	instance-size-cron.o
+	instance-size-cron.o \
+	user-new-suggestions-api.o
 cgi_binaries = \
 	vinayaka-user-speed-api.cgi \
 	vinayaka-user-search-api.cgi \
 	vinayaka-user-match-filtered-api.cgi \
-	vinayaka-user-match-suggestions-api.cgi
+	vinayaka-user-match-suggestions-api.cgi \
+	vinayaka-user-new-suggestions-api.cgi
 cron_binaries = \
 	vinayaka-user-avatar-cron \
 	vinayaka-user-speed-cron \
@@ -120,6 +122,9 @@ vinayaka-user-search-api.cgi: tinyxml2.o distsn.o sort-user-speed.o user-search-
 
 vinayaka-instance-size-cron: tinyxml2.o distsn.o instance-size-cron.o
 	$(CXX) tinyxml2.o distsn.o instance-size-cron.o -lcurl $(CFLAGS) -o $@
+
+vinayaka-user-new-suggestions-api.cgi: tinyxml2.o distsn.o sort-user-speed.o user-new-suggestions-api.o
+	$(CXX) tinyxml2.o distsn.o sort-user-speed.o user-new-suggestions-api.o -lcurl $(CFLAGS) -o $@
 
 install: $(cgis)
 	$(INSTALL_PROGRAM) $(cgis) --target-directory=$(cgidir)
