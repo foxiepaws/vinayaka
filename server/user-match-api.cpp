@@ -316,11 +316,12 @@ int main (int argc, char **argv)
 	toots.push_back (screen_name);
 	toots.push_back (bio);
 
+	const unsigned int vocabulary_size {400};
 	vector <ModelTopology> models = {
-		ModelTopology {6, 1600},
-		ModelTopology {7, 800},
-		ModelTopology {8, 800},
-		ModelTopology {9, 800},
+		ModelTopology {6, vocabulary_size * 2},
+		ModelTopology {7, vocabulary_size},
+		ModelTopology {8, vocabulary_size},
+		ModelTopology {9, vocabulary_size},
 	};
 	
 	cerr << "get_words_to_occupancy" << endl;
