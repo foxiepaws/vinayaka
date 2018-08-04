@@ -310,9 +310,13 @@ int main (int argc, char **argv)
 	
 	string screen_name;
 	string bio;
-	vector <string> toots;
+	vector <string> raw_toots;
 	cerr << "get_profile" << endl;
-	get_profile (true /* pagenation */, host, user, screen_name, bio, toots);
+	get_profile (true /* pagenation */, host, user, screen_name, bio, raw_toots);
+	vector <string> toots;
+	for (unsigned int cn = 0; cn < raw_toots.size () && cn < 80; cn ++) {
+		toots.push_back (raw_toots.at (cn));
+	}
 	toots.push_back (screen_name);
 	toots.push_back (bio);
 
