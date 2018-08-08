@@ -51,7 +51,10 @@ static string get_filtered_api (string in, set <string> friends, string listener
 				<< "\"note\":\"" << escape_json (bio) << "\","
 				<< "\"url\":\"" << escape_json (string {"https://"} + host + string {"/users/"} + user) << "\","
 				<< "\"avatar\":\"" << escape_json (avatar) << "\","
-				<< "\"avatar_static\":\"" << escape_json (avatar) << "\""
+				<< "\"avatar_static\":\"" << escape_json (avatar) << "\","
+				<< "\"followers_count\":0,"
+				<< "\"following_count\":0,"
+				<< "\"statuses_count\":0"
 				<< "}";
 			filtered_formats.push_back (out_user.str ());
 		}
