@@ -19,7 +19,7 @@ function setJapaneseMessages () {
 		'm-instances': 'インスタンス',
 		'm-code': 'コード',
 		'm-donation': '寄付',
-		'm-mastodon-user-matching': 'マストドンユーザーマッチング',
+		'm-mastodon-user-matching': 'マストドン/Pleromaユーザーマッチング',
 		'm-search': '検索',
 		'm-new': '新規',
 		'm-active': '流速',
