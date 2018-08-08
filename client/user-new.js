@@ -17,13 +17,13 @@ function setJapaneseMessages () {
 		'm-users': 'ユーザー',
 		'm-instances': 'インスタンス',
 		'm-code': 'コード',
-		'm-donation': '寄付',
-		'm-newcomers': 'マストドン/Pleromaの新しいユーザー',
-		'm-search': '検索',
-		'm-new': '新規',
-		'm-active': '流速',
+		'm-donation': 'かねくれ',
+		'm-newcomers': 'マストドンとプレロマのあたらしいユーザー',
+		'm-search': 'さがす',
+		'm-new': 'あたらしい',
+		'm-active': 'アクティブ',
 		'm-optout': 'オプトアウト',
-		'anti-harassment-message': 'ボット、スパム、ハラスメントを通報するには <a href="https://github.com/distsn/vinayaka/blob/master/server/blacklisted_users.csv" target="_blank">blacklisted_users.csv</a> にプルリクエストを送ってください。'
+		'anti-harassment-message': 'ボット、スパム、ハラスメントをつうほうするには <a href="https://github.com/distsn/vinayaka/blob/master/server/blacklisted_users.csv" target="_blank">blacklisted_users.csv</a> にプルリクエストをおくってください。'
 	}
 	for (var id in messages) {
 		var placeholder = document.getElementById (id);

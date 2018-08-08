@@ -18,15 +18,15 @@ function setJapaneseMessages () {
 		'm-users': 'ユーザー',
 		'm-instances': 'インスタンス',
 		'm-code': 'コード',
-		'm-donation': '寄付',
-		'm-mastodon-user-matching': 'マストドン/Pleromaユーザーマッチング',
-		'm-search': '検索',
-		'm-new': '新規',
-		'm-active': '流速',
+		'm-donation': 'かねくれ',
+		'm-mastodon-user-matching': 'マストドンとプレロマのユーザーマッチング',
+		'm-search': 'さがす',
+		'm-new': 'あたらしい',
+		'm-active': 'アクティブ',
 		'm-optout': 'オプトアウト',
-		'm-description': 'あなたに似ているマストドン/Pleromaユーザーを探します。スクリーンネーム、プロフィール、トゥートで使用している語彙から判断します。',
-		'm-user-input': 'あなたのユーザー名とインスタンスのホスト名 (例: nullkal@mstdn.jp)',
-		'anti-harassment-message': 'ボット、スパム、ハラスメントを通報するには <a href="https://github.com/distsn/vinayaka/blob/master/server/blacklisted_users.csv" target="_blank">blacklisted_users.csv</a> にプルリクエストを送ってください。'
+		'm-description': 'あなたと、にたことばをつかっている、マストドンまたはプレロマのユーザーを、さがします。ことばは、スクリーンネームとプロフィールとトゥートにでてくるものを、つかいます。',
+		'm-user-input': 'あなたのユーザーめいと、インスタンスのホストめい (れい: nullkal@mstdn.jp)',
+		'anti-harassment-message': 'ボット、スパム、ハラスメントをつうほうするには <a href="https://github.com/distsn/vinayaka/blob/master/server/blacklisted_users.csv" target="_blank">blacklisted_users.csv</a> にプルリクエストをおくってください。'
 	}
 	for (var id in messages) {
 		var placeholder = document.getElementById (id);
@@ -34,8 +34,8 @@ function setJapaneseMessages () {
 			placeholder.innerHTML = messages[id]
 		}
 	}
-	document.getElementById　('search-button').value = '検索'
-	document.getElementById　('detail-button').value = '詳細'
+	document.getElementById　('search-button').value = 'さがす'
+	document.getElementById　('detail-button').value = 'くわしく'
 	document.getElementById　('share-button').value = 'シェア'
 }
 
@@ -61,7 +61,7 @@ function search (detail) {
 	} else {
 		document.getElementById ('placeholder').innerHTML =
 			'<strong>' +
-			(g_language === 'ja'? 'ユーザー名とホスト名が入力されていません。':
+			(g_language === 'ja'? 'ユーザーめいと、ホストめいが、わかりません。':
 			'Username or instance is not available.') +
 			'</strong>'
 	}
@@ -96,14 +96,14 @@ function search_impl (host, user, detail) {
 				} catch (e) {
 					document.getElementById ('placeholder').innerHTML =
 						'<strong>' +
-						(g_language === 'ja'? '絶望と仲良くなろうよ。':
+						(g_language === 'ja'? 'ぜつぼうとなかよくなろうよ。':
 						'Sorry.') +
 						'</strong>'
 				}
 			} else {
 				document.getElementById ('placeholder').innerHTML =
 					'<strong>' +
-					(g_language === 'ja'? '情報を取得できませんでした。':
+					(g_language === 'ja'? 'じょうほうがえられませんでした。':
 					'Sorry.') +
 					'</strong>'
 			}
@@ -112,8 +112,8 @@ function search_impl (host, user, detail) {
 	document.getElementById ('anti-harassment-message').setAttribute ('style', 'display:none;');
 	document.getElementById ('placeholder').innerHTML =
 		'<strong>' +
-		(g_language === 'ja'? 'お待ちください。':
-		'Searching... (about 30 seconds)') +
+		(g_language === 'ja'? 'おまちください。':
+		'Searching... (about 60 seconds)') +
 		'</strong>'
 	document.getElementById ('search-button').setAttribute ('disabled', 'disabled');
 	document.getElementById ('detail-button').setAttribute ('disabled', 'disabled');
@@ -191,7 +191,7 @@ for (cn = 0; cn < users.length && cn < limit + number_of_blacklisted_users; cn +
 			(g_language === 'ja'? 'フォローしています':
 			'Following')
 		var m_similarity =
-			(g_language === 'ja'? '類似度':
+			(g_language === 'ja'? 'スコア':
 			'Similarity')
 		var m_bot = 'Bot'
 		if (user.blacklisted) {
@@ -287,7 +287,7 @@ function activate_share_button (users, current_host, current_user) {
 	var intent = '';
 	if (g_language === 'ja') {
 		intent += '@' + current_user + '@' + current_host + ' ' +
-			'に似ているユーザー' + "\n\n";
+			'ににているユーザー' + "\n\n";
 		for (var cn = 0; cn < 6 && cn < users.length; cn ++) {
 			var user = users[cn];
 			if (! (user.host === current_host && user.user === current_user)) {

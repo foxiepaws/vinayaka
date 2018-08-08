@@ -17,14 +17,14 @@ function setJapaneseMessages () {
 		'm-users': 'ユーザー',
 		'm-instances': 'インスタンス',
 		'm-code': 'コード',
-		'm-donation': '寄付',
-		'm-mastodon-pleroma-user-search': 'マストドン/Pleromaユーザー検索',
-		'm-search': '検索',
-		'm-new': '新規',
-		'm-active': '流速',
+		'm-donation': 'かねくれ',
+		'm-mastodon-pleroma-user-search': 'マストドンとプレロマのユーザーをさがす',
+		'm-search': 'さがす',
+		'm-new': 'あたらしい',
+		'm-active': 'アクティブ',
 		'm-optout': 'オプトアウト',
-		'm-description': 'ユーザー名、スクリーンネーム、プロフィールを検索します。',
-		'anti-harassment-message': 'ボット、スパム、ハラスメントを通報するには <a href="https://github.com/distsn/vinayaka/blob/master/server/blacklisted_users.csv" target="_blank">blacklisted_users.csv</a> にプルリクエストを送ってください。'
+		'm-description': 'ユーザーめい、スクリーンネーム、プロフィールでユーザーをさがします。',
+		'anti-harassment-message': 'ボット、スパム、ハラスメントをつうほうするには <a href="https://github.com/distsn/vinayaka/blob/master/server/blacklisted_users.csv" target="_blank">blacklisted_users.csv</a> にプルリクエストをおくってください。'
 	}
 	for (var id in messages) {
 		var placeholder = document.getElementById (id);
@@ -32,7 +32,7 @@ function setJapaneseMessages () {
 			placeholder.innerHTML = messages[id]
 		}
 	}
-	document.getElementById　('search-button').value = '検索'
+	document.getElementById　('search-button').value = 'さがす'
 }
 
 
@@ -43,7 +43,7 @@ function search () {
 	} else {
 		document.getElementById ('placeholder').innerHTML =
 			'<strong>' +
-			(g_language === 'ja'? '検索キーワードが入力されていません。':
+			(g_language === 'ja'? 'キーワードが入力されていません。':
 			'Keyword is not available.') +
 			'</strong>'
 	}
@@ -67,14 +67,14 @@ function search_impl (keyword) {
 				} catch (e) {
 					document.getElementById ('placeholder').innerHTML =
 						'<strong>' +
-						(g_language === 'ja'? '絶望と仲良くなろうよ。':
+						(g_language === 'ja'? 'ぜつぼうとなかよくなろうよ。':
 						'Sorry.') +
 						'</strong>'
 				}
 			} else {
 				document.getElementById ('placeholder').innerHTML =
 					'<strong>' +
-					(g_language === 'ja'? '情報を取得できませんでした。':
+					(g_language === 'ja'? 'じょうほうがえられませんでした。':
 					'Sorry.') +
 					'</strong>'
 			}
@@ -83,7 +83,7 @@ function search_impl (keyword) {
 	document.getElementById ('anti-harassment-message').setAttribute ('style', 'display:none;');
 	document.getElementById ('placeholder').innerHTML =
 		'<strong>' +
-		(g_language === 'ja'? 'お待ちください。':
+		(g_language === 'ja'? 'おまちください。':
 		'Searching...') +
 		'</strong>'
 	document.getElementById ('search-button').setAttribute ('disabled', 'disabled');
@@ -117,7 +117,7 @@ function show_users (users) {
 		show_users_impl (users)
 	} else {
 		var message =
-			(g_language === 'ja'? '検索結果は ' + users.length + ' 件です。表示してよろしいですか？':
+			(g_language === 'ja'? users.length + ' けん、みつかりました。つづけてもよろしいですか？':
 				users.length + ' users found.')
 		var reply = window.confirm (message)
 		if (reply) {
