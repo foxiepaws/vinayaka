@@ -16,7 +16,6 @@ function setJapaneseMessages () {
 		'm-matching': 'マッチング',
 		'm-users': 'ユーザー',
 		'm-instances': 'インスタンス',
-		'm-mystery': 'ミステリーポスト',
 		'm-code': 'コード',
 		'm-donation': '寄付',
 		'm-mastodon-pleroma-user-search': 'マストドン/Pleromaユーザー検索',
