@@ -34,11 +34,11 @@ static string get_lightweight_api (string in, set <string> friends, string liste
 		string bio = user_object.at (string {"bio"}).get <string> ();
 		string avatar = user_object.at (string {"avatar"}).get <string> ();
 		bool following_bool = following (host, user, friends);
-		bool self = (host == listener_host && user == listener_user);
+		bool local = (host == listener_host);
 		string type = user_object.at (string {"type"}).get <string> ();
 		bool bot = (type == string {"Service"});
 
-		if ((! self) && (! following_bool) && (! blacklisted) && (! bot)) {
+		if ((! local) && (! following_bool) && (! blacklisted) && (! bot)) {
 			stringstream out;
 			out
 				<< "{"
