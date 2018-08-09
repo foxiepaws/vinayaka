@@ -24,7 +24,7 @@ function setJapaneseMessages () {
 		'm-new': 'あたらしい',
 		'm-active': 'アクティブ',
 		'm-optout': 'オプトアウト',
-		'm-description': 'つかっていることばが、あなたとにている、マストドンまたはプレロマのユーザーを、さがします。ことばは、スクリーンネームとプロフィールとトゥートにでてくるものを、つかいます。',
+		'm-description': 'つかっていることばでマッチング。あなたとにている、マストドンまたはプレロマのユーザーを、さがします。ことばは、スクリーンネームとプロフィールとトゥートにでてくるものを、つかいます。',
 		'm-user-input': 'あなたのユーザーめいと、インスタンスのホストめい (れい: nullkal@mstdn.jp)',
 		'anti-harassment-message': 'ボット、スパム、ハラスメントをつうほうするには <a href="https://github.com/distsn/vinayaka/blob/master/server/blacklisted_users.csv" target="_blank">blacklisted_users.csv</a> にプルリクエストをおくってください。'
 	}
