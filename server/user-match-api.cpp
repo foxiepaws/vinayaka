@@ -320,7 +320,7 @@ int main (int argc, char **argv)
 	toots.push_back (screen_name);
 	toots.push_back (bio);
 
-	const unsigned int vocabulary_size {400};
+	const unsigned int vocabulary_size {300};
 	vector <ModelTopology> models = {
 		ModelTopology {6, vocabulary_size * 2},
 		ModelTopology {7, vocabulary_size},
