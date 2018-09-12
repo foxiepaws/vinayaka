@@ -229,7 +229,7 @@ int main (int argc, char **argv)
 	cerr << "get_words_to_popularity" << endl;
 	map <string, unsigned int> raw_words_to_popularity = get_words_to_popularity (full_words);
 
-	unsigned int minimum_popularity {16};
+	unsigned int minimum_popularity {64};
 
 	cerr << "compress_words_to_popularity" << endl;
 	map <string, unsigned int> words_to_popularity = compress_words_to_popularity (raw_words_to_popularity, minimum_popularity);
