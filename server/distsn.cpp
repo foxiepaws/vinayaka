@@ -608,6 +608,55 @@ static unsigned int length_of_first_word (string word)
 }
 
 
+static unsigned int number_of_numbers (string word)
+{
+	const set <string> numbers {
+		string {"0"},
+		string {"1"},
+		string {"2"},
+		string {"3"},
+		string {"4"},
+		string {"5"},
+		string {"6"},
+		string {"7"},
+		string {"8"},
+		string {"9"},
+		string {"."},
+		string {","},
+		string {":"},
+		string {"#"},
+		string {"$"},
+		string {"\""},
+		string {"€"},
+		string {"年"},
+		string {"月"},
+		string {"日"},
+		string {"時"},
+		string {"分"},
+	};
+
+	unsigned int number_of_numbers = 0;
+
+	for (unsigned int cn = 0; cn < word.size (); cn ++) {
+		for (string number: numbers) {
+			if (number.size () + cn <= word.size ()
+				&& word.substr (cn, number.size ()) == number
+			) {
+				number_of_numbers += number.size ();
+			}
+		}
+	}
+	
+	return number_of_numbers;
+}
+
+
+static bool too_much_numbers (string word)
+{
+	return word.size () < number_of_numbers (word) * 2;
+}
+
+
 static bool valid_word (string word)
 {
 	bool invalid
@@ -615,6 +664,7 @@ static bool valid_word (string word)
 		|| (! starts_with_alphabet (word))
 		|| length_of_first_word (word) < 4
 		|| is_hashtag (word)
+		|| too_much_numbers (word)
 		|| (word.size () < 9 && all_kana (word))
 		|| (word.size () < 12 && all_hiragana (word))
 		|| (word.size () < 9 && 2 <= number_of_spaces (word))
