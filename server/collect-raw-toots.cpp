@@ -154,7 +154,7 @@ static map <string, unsigned int> get_words_to_popularity (map <User, set <strin
 static void write_concrete_user_words
 	(map <User, set <string>> users_to_toots,
 	map <string, unsigned int> words_to_popularity,
-	unsigned int minimum_occupancy)
+	unsigned int minimum_popularity)
 {
 	stringstream out;
 	unsigned int cn = 0;
@@ -168,7 +168,7 @@ static void write_concrete_user_words
 		set <string> toots = user_to_toots.second;
 		vector <string> toots_vector {toots.begin (), toots.end ()};
 		const unsigned int vocabulary_size {1600};
-		vector <string> model_6 = get_words_from_toots (toots_vector, 6, vocabulary_size, words_to_popularity, minimum_occupancy);
+		vector <string> model_6 = get_words_from_toots (toots_vector, 6, vocabulary_size, words_to_popularity, minimum_popularity);
 		set <string> all;
 		all.insert (model_6.begin (), model_6.end ());
 		for (auto abstract_word: all) {
@@ -203,11 +203,11 @@ static void write_popularity (map <string, unsigned int> words_to_popularity)
 
 
 static map <string, unsigned int> compress_words_to_popularity
-	(map <string, unsigned int> in, unsigned int minimum_occupancy)
+	(map <string, unsigned int> in, unsigned int minimum_popularity)
 {
 	map <string, unsigned int> out;
 	for (auto word_to_popularity: in) {
-		if (minimum_occupancy < word_to_popularity.second) {
+		if (minimum_popularity < word_to_popularity.second) {
 			out.insert (word_to_popularity);
 		}
 	}
@@ -229,13 +229,13 @@ int main (int argc, char **argv)
 	cerr << "get_words_to_popularity" << endl;
 	map <string, unsigned int> raw_words_to_popularity = get_words_to_popularity (full_words);
 
-	unsigned int minimum_occupancy {16};
+	unsigned int minimum_popularity {16};
 
 	cerr << "compress_words_to_popularity" << endl;
-	map <string, unsigned int> words_to_popularity = compress_words_to_popularity (raw_words_to_popularity, minimum_occupancy);
+	map <string, unsigned int> words_to_popularity = compress_words_to_popularity (raw_words_to_popularity, minimum_popularity);
 
 	cerr << "write_concrete_user_words" << endl;
-	write_concrete_user_words (users_to_toots, words_to_popularity, minimum_occupancy);
+	write_concrete_user_words (users_to_toots, words_to_popularity, minimum_popularity);
 
 	cerr << "write_popularity" << endl;
 	write_popularity (words_to_popularity);

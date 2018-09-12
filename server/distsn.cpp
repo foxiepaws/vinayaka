@@ -729,7 +729,7 @@ vector <string> get_words_from_toots
 	unsigned int word_length,
 	unsigned int vocabulary_size,
 	map <string, unsigned int> words_to_popularity,
-	unsigned int minimum_occupancy)
+	unsigned int minimum_popularity)
 {
 	map <string, unsigned int> occupancy_count_map;
 	for (auto raw_toot: toots) {
@@ -756,7 +756,7 @@ vector <string> get_words_from_toots
 	for (auto i: occupancy_count_map) {
 		string word {i.first};
 		unsigned int occupancy_in_this_user {i.second};
-		unsigned int popularity = minimum_occupancy;
+		unsigned int popularity = minimum_popularity;
 		if (words_to_popularity.find (word) != words_to_popularity.end ()) {
 			popularity = words_to_popularity.at (word);
 		}
