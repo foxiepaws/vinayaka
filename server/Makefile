@@ -147,6 +147,9 @@ initialize:
 	$(MKDIR) -p /var/lib/vinayaka/model
 	$(MKDIR) -p /var/lib/vinayaka/user-first-toot
 	$(TOUCH) /var/lib/vinayaka/match-cache.csv
+	$(TOUCH) /var/lib/vinayaka/model/concrete-user-words.csv
+	$(TOUCH) /var/lib/vinayaka/model/popularity.csv
+	$(TOUCH) /var/lib/vinayaka/users-new-cache.json
 	$(CHMOD) -R a+rwx /var/lib/vinayaka
 
 refresh-cache:
