@@ -18,7 +18,7 @@ using namespace tinyxml2;
 using namespace std;
 
 
-const unsigned int minimum_occupancy = 64;
+const unsigned int minimum_popularity = 64;
 
 
 class UserAndSimilarity {
@@ -43,7 +43,7 @@ static double get_similarity
 	(set <string> listener_set,
 	set <string> speaker_set,
 	map <string, double> & a_intersection,
-	map <string, unsigned int> words_to_occupancy)
+	map <string, unsigned int> words_to_popularity)
 {
 	set <string> intersection;
 	set_intersection (listener_set.begin (), listener_set.end (),
@@ -54,11 +54,11 @@ static double get_similarity
 	a_intersection.clear ();
 
 	for (string word: intersection) {
-		unsigned int occupancy = minimum_occupancy;
-		if (words_to_occupancy.find (word) != words_to_occupancy.end ()) {
-			occupancy = words_to_occupancy.at (word);
+		unsigned int popularity = minimum_popularity;
+		if (words_to_popularity.find (word) != words_to_popularity.end ()) {
+			popularity = words_to_popularity.at (word);
 		}
-		double rarity = static_cast <double> (minimum_occupancy) * 10.0 * get_rarity (occupancy);
+		double rarity = static_cast <double> (minimum_popularity) * 10.0 * get_rarity (popularity);
 		similarity += rarity;
 		a_intersection.insert (pair <string, double> {word, rarity});
 	}
@@ -88,12 +88,12 @@ public:
 static set <string> get_words_of_listener
 	(vector <string> toots,
 	vector <ModelTopology> models,
-	map <string, unsigned int> words_to_occupancy)
+	map <string, unsigned int> words_to_popularity)
 {
 	set <string> words;
 	for (auto model: models) {
 		vector <string> words_in_a_model
-			= get_words_from_toots (toots, model.word_length, model.vocabulary_size, words_to_occupancy, minimum_occupancy);
+			= get_words_from_toots (toots, model.word_length, model.vocabulary_size, words_to_popularity, minimum_popularity);
 		words.insert (words_in_a_model.begin (), words_in_a_model.end ());
 	}
 	return words;
@@ -139,11 +139,11 @@ static map <User, set <string>> get_words_of_speakers (string filename)
 }
 
 
-static map <string, unsigned int> get_words_to_occupancy (string filename)
+static map <string, unsigned int> get_words_to_popularity (string filename)
 {
 	FileLock lock {filename, LOCK_SH};
 
-	map <string, unsigned int> words_to_occupancy;
+	map <string, unsigned int> words_to_popularity;
 	FILE *in = fopen (filename.c_str (), "r");
 	if (in == nullptr) {
 		cerr << "File not found: " << filename << endl;
@@ -154,13 +154,13 @@ static map <string, unsigned int> get_words_to_occupancy (string filename)
 			for (auto row: table) {
 				if (1 < row.size ()) {
 					string word = row.at (0);
-					stringstream occupancy_stream {row.at (1)};
-					unsigned int occupancy;
-					occupancy_stream >> occupancy;
-					if (minimum_occupancy < occupancy
-						&& words_to_occupancy.find (word) == words_to_occupancy.end ())
+					stringstream popularity_stream {row.at (1)};
+					unsigned int popularity;
+					popularity_stream >> popularity;
+					if (minimum_popularity < popularity
+						&& words_to_popularity.find (word) == words_to_popularity.end ())
 					{
-						words_to_occupancy.insert (pair <string, unsigned int> {word, occupancy});
+						words_to_popularity.insert (pair <string, unsigned int> {word, popularity});
 					}
 				}
 			}
@@ -168,7 +168,7 @@ static map <string, unsigned int> get_words_to_occupancy (string filename)
 			cerr << "ParseException " << e.line << " " << filename << endl;
 		}
 	}
-	return words_to_occupancy;
+	return words_to_popularity;
 }
 
 
@@ -325,12 +325,12 @@ int main (int argc, char **argv)
 		ModelTopology {6, vocabulary_size},
 	};
 	
-	cerr << "get_words_to_occupancy" << endl;
-	map <string, unsigned int> words_to_occupancy
-		= get_words_to_occupancy (string {"/var/lib/vinayaka/model/occupancy.csv"});
+	cerr << "get_words_to_popularity" << endl;
+	map <string, unsigned int> words_to_popularity
+		= get_words_to_popularity (string {"/var/lib/vinayaka/model/occupancy.csv"});
 		
 	cerr << "get_words_of_listener" << endl;
-	set <string> words_of_listener = get_words_of_listener (toots, models, words_to_occupancy);
+	set <string> words_of_listener = get_words_of_listener (toots, models, words_to_popularity);
 	
 	cerr << "get_words_of_speakers" << endl;
 	map <User, set <string>> speaker_to_words
@@ -350,7 +350,7 @@ int main (int argc, char **argv)
 		User speaker = speaker_and_words.first;
 		set <string> words_of_speaker = speaker_and_words.second;
 		map <string, double> intersection;
-		double similarity = get_similarity (words_of_listener, words_of_speaker, intersection, words_to_occupancy);
+		double similarity = get_similarity (words_of_listener, words_of_speaker, intersection, words_to_popularity);
 		UserAndSimilarity speaker_and_similarity;
 		speaker_and_similarity.user = speaker.user;
 		speaker_and_similarity.host = speaker.host;
