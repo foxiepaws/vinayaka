@@ -728,7 +728,7 @@ vector <string> get_words_from_toots
 	(vector <string> toots,
 	unsigned int word_length,
 	unsigned int vocabulary_size,
-	map <string, unsigned int> words_to_occupancy,
+	map <string, unsigned int> words_to_popularity,
 	unsigned int minimum_occupancy)
 {
 	map <string, unsigned int> occupancy_count_map;
@@ -757,8 +757,8 @@ vector <string> get_words_from_toots
 		string word {i.first};
 		unsigned int occupancy_in_this_user {i.second};
 		unsigned int occupancy_in_all_users = minimum_occupancy;
-		if (words_to_occupancy.find (word) != words_to_occupancy.end ()) {
-			occupancy_in_all_users = words_to_occupancy.at (word);
+		if (words_to_popularity.find (word) != words_to_popularity.end ()) {
+			occupancy_in_all_users = words_to_popularity.at (word);
 		}
 		double rarity = get_rarity (occupancy_in_all_users);
 		double score = static_cast <double> (occupancy_in_this_user) * rarity;

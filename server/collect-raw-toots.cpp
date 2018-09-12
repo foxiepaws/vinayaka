@@ -132,28 +132,28 @@ static map <User, set <string>> get_full_words (map <User, set <string>> users_t
 }
 
 
-static map <string, unsigned int> get_words_to_speakers (map <User, set <string>> a_users_to_words)
+static map <string, unsigned int> get_words_to_popularity (map <User, set <string>> a_users_to_words)
 {
-	map <string, unsigned int> words_to_speakers;
+	map <string, unsigned int> words_to_popularity;
 
 	for (auto user_to_words: a_users_to_words) {
 		auto words = user_to_words.second;
 		for (auto word: words) {
-			if (words_to_speakers.find (word) == words_to_speakers.end ()) {
-				words_to_speakers.insert (pair <string, unsigned int> {word, 1});
+			if (words_to_popularity.find (word) == words_to_popularity.end ()) {
+				words_to_popularity.insert (pair <string, unsigned int> {word, 1});
 			} else {
-				words_to_speakers.at (word) ++;
+				words_to_popularity.at (word) ++;
 			}
 		}
 	}
 	
-	return words_to_speakers;
+	return words_to_popularity;
 }
 
 
 static void write_concrete_user_words
 	(map <User, set <string>> users_to_toots,
-	map <string, unsigned int> words_to_speakers,
+	map <string, unsigned int> words_to_popularity,
 	unsigned int minimum_occupancy)
 {
 	stringstream out;
@@ -168,7 +168,7 @@ static void write_concrete_user_words
 		set <string> toots = user_to_toots.second;
 		vector <string> toots_vector {toots.begin (), toots.end ()};
 		const unsigned int vocabulary_size {1600};
-		vector <string> model_6 = get_words_from_toots (toots_vector, 6, vocabulary_size, words_to_speakers, minimum_occupancy);
+		vector <string> model_6 = get_words_from_toots (toots_vector, 6, vocabulary_size, words_to_popularity, minimum_occupancy);
 		set <string> all;
 		all.insert (model_6.begin (), model_6.end ());
 		for (auto abstract_word: all) {
@@ -188,27 +188,27 @@ static void write_concrete_user_words
 }
 
 
-static void write_occupancy (map <string, unsigned int> words_to_speakers)
+static void write_popularity (map <string, unsigned int> words_to_popularity)
 {
 	string file_name {"/var/lib/vinayaka/model/occupancy.csv"};
 	FileLock lock {file_name};
 	ofstream out {file_name};
-	for (auto word_to_speakers: words_to_speakers) {
-		string word = word_to_speakers.first;
-		unsigned int speakers = word_to_speakers.second;
+	for (auto word_to_popularity: words_to_popularity) {
+		string word = word_to_popularity.first;
+		unsigned int speakers = word_to_popularity.second;
 		out << "\"" << escape_csv (word) << "\",";
 		out << "\"" << speakers << "\"" << endl;
 	}
 }
 
 
-static map <string, unsigned int> compress_words_to_occupancy
+static map <string, unsigned int> compress_words_to_popularity
 	(map <string, unsigned int> in, unsigned int minimum_occupancy)
 {
 	map <string, unsigned int> out;
-	for (auto word_to_occupancy: in) {
-		if (minimum_occupancy < word_to_occupancy.second) {
-			out.insert (word_to_occupancy);
+	for (auto word_to_popularity: in) {
+		if (minimum_occupancy < word_to_popularity.second) {
+			out.insert (word_to_popularity);
 		}
 	}
 	return out;
@@ -226,19 +226,19 @@ int main (int argc, char **argv)
 	cerr << "get_full_words" << endl;
 	map <User, set <string>> full_words = get_full_words (users_to_toots);
 
-	cerr << "get_words_to_speakers" << endl;
-	map <string, unsigned int> raw_words_to_speakers = get_words_to_speakers (full_words);
+	cerr << "get_words_to_popularity" << endl;
+	map <string, unsigned int> raw_words_to_popularity = get_words_to_popularity (full_words);
 
 	unsigned int minimum_occupancy {16};
 
-	cerr << "compress_words_to_speakers" << endl;
-	map <string, unsigned int> words_to_speakers = compress_words_to_occupancy (raw_words_to_speakers, minimum_occupancy);
+	cerr << "compress_words_to_popularity" << endl;
+	map <string, unsigned int> words_to_popularity = compress_words_to_popularity (raw_words_to_popularity, minimum_occupancy);
 
 	cerr << "write_concrete_user_words" << endl;
-	write_concrete_user_words (users_to_toots, words_to_speakers, minimum_occupancy);
+	write_concrete_user_words (users_to_toots, words_to_popularity, minimum_occupancy);
 
-	cerr << "write_occupancy" << endl;
-	write_occupancy (words_to_speakers);
+	cerr << "write_popularity" << endl;
+	write_popularity (words_to_popularity);
 }
 
 

@@ -161,7 +161,7 @@ std::vector <std::string> get_words_from_toots
 	(std::vector <std::string> toots,
 	unsigned int word_length,
 	unsigned int vocabulary_size,
-	std::map <std::string, unsigned int> word_to_occupancy,
+	std::map <std::string, unsigned int> word_to_popularity,
 	unsigned int minimum_occupancy);
 double get_rarity (unsigned int occupancy);
 void get_profile (bool pagenation, std::string host, std::string user, std::string &a_screen_name, std::string &a_bio, std::vector <std::string> &a_toots);
