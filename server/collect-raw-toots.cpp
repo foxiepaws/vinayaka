@@ -190,7 +190,7 @@ static void write_concrete_user_words
 
 static void write_popularity (map <string, unsigned int> words_to_popularity)
 {
-	string file_name {"/var/lib/vinayaka/model/occupancy.csv"};
+	string file_name {"/var/lib/vinayaka/model/popularity.csv"};
 	FileLock lock {file_name};
 	ofstream out {file_name};
 	for (auto word_to_popularity: words_to_popularity) {

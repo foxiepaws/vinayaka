@@ -327,7 +327,7 @@ int main (int argc, char **argv)
 	
 	cerr << "get_words_to_popularity" << endl;
 	map <string, unsigned int> words_to_popularity
-		= get_words_to_popularity (string {"/var/lib/vinayaka/model/occupancy.csv"});
+		= get_words_to_popularity (string {"/var/lib/vinayaka/model/popularity.csv"});
 		
 	cerr << "get_words_of_listener" << endl;
 	set <string> words_of_listener = get_words_of_listener (toots, models, words_to_popularity);
