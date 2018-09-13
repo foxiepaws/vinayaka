@@ -31,7 +31,7 @@ function setJapaneseMessages () {
 		'm-active': 'アクティブ',
 		'm-optout': 'オプトアウト',
 		'a-full': 'すべて',
-		'm-tpd': 'TPD = トゥート/日',
+		'm-tpd': 'TPD = トゥート／日',
 		'anti-harassment-message': 'ボット、スパム、ハラスメントをつうほうするには <a href="https://github.com/distsn/vinayaka/blob/master/server/blacklisted_users.csv" target="_blank">blacklisted_users.csv</a> にプルリクエストをおくってください。',
 		'm-media-proxy': 'あなたのプライバシー: アバターは <a href="https://images.weserv.nl" target="_blank">images.weserv.nl</a> によりホストされています。'
 	}
