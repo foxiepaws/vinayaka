@@ -550,39 +550,8 @@ static bool all_kana (string word)
 }
 
 
-static bool all_hiragana (string word)
+static bool effective_character (char c)
 {
-	for (unsigned int cn = 0; cn * 3 + 2 < word.size (); cn ++) {
-		string codepoint = word.substr (cn * 3, 3);
-		if (! is_hiragana (codepoint)) {
-			return false;
-		}
-	}
-	return true;
-}
-
-
-static bool is_space (char c)
-{
-	return c == ' ' || c == '\n';
-}
-
-
-static unsigned int number_of_spaces (string s)
-{
-	unsigned int cn = 0;
-	for (auto c: s) {
-		if (is_space (c)) {
-			cn ++;
-		}
-	}
-	return cn;
-}
-
-
-static bool starts_with_alphabet (string word)
-{
-	char c = word.at (0);
 	return ('a' <= c && c <= 'z')
 		||  ('A' <= c && c <= 'Z')
 		||  ('0' <= c && c <= '9')
@@ -590,21 +559,14 @@ static bool starts_with_alphabet (string word)
 }
 
 
-static bool is_hashtag (string word)
+static bool effective_word (string s)
 {
-	return word.at (0) == '#';
-}
-
-
-static unsigned int length_of_first_word (string word)
-{
-	for (unsigned int cn = 0; cn < word.size (); cn ++) {
-		auto c = word.at (cn);
-		if (is_space (c)) {
-			return cn;
+	for (auto c: s) {
+		if (! effective_character (c)) {
+			return false;
 		}
 	}
-	return word.size ();
+	return true;
 }
 
 
@@ -659,18 +621,11 @@ static bool too_much_numbers (string word)
 
 static bool valid_word (string word)
 {
-	bool invalid
-		= (! starts_with_utf8_codepoint_boundary (word))
-		|| (! starts_with_alphabet (word))
-		|| length_of_first_word (word) < 4
-		|| is_hashtag (word)
-		|| too_much_numbers (word)
-		|| (word.size () < 9 && all_kana (word))
-		|| (word.size () < 12 && all_hiragana (word))
-		|| (word.size () < 9 && 2 <= number_of_spaces (word))
-		|| (word.size () < 12 && 3 <= number_of_spaces (word))
-		|| (word.size () < 15 && 4 <= number_of_spaces (word));
-	return ! invalid;
+	return
+		starts_with_utf8_codepoint_boundary (word)
+		&& effective_word (word)
+		&& (! too_much_numbers (word))
+		&& (! all_kana (word));
 }
 
 
