@@ -1,6 +1,13 @@
 var g_language
 
 
+function mediaProxy (image) {
+	return 'https://images.weserv.nl/?url=' +
+		encodeURIComponent (image.replace (/^http(s)?\:\/\//, '')) +
+		'&errorredirect=' + encodeURIComponent ('distsn.org/missing.png')
+}
+
+
 window.addEventListener ('load', function () {
 	if (window.navigator.language === 'ja' || window.navigator.language.startsWith ('ja-')) {
 		g_language = 'ja'
@@ -87,7 +94,7 @@ for (cn = 0; cn < users.length; cn ++) {
 			'" target="vinayaka-external-user-profile">' +
 			'<img class="avatar" src="';
 		if (user.avatar && 0 < user.avatar.length) {
-			user_html += encodeURI (user.avatar);
+			user_html += mediaProxy (user.avatar);
 		} else {
 			user_html += 'missing.png';
 		}
