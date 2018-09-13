@@ -31,7 +31,8 @@ www_files = \
 	user-new.js \
 	user-search.html \
 	user-search.js \
-	optout.html
+	optout.html \
+	fake-pleroma-light.css
 
 
 install: $(www_files)
