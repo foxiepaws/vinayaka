@@ -31,7 +31,8 @@ function setJapaneseMessages () {
 		'm-active': 'アクティブ',
 		'm-optout': 'オプトアウト',
 		'm-description': 'ユーザーめい、スクリーンネーム、プロフィールでユーザーをさがします。',
-		'anti-harassment-message': 'ボット、スパム、ハラスメントをつうほうするには <a href="https://github.com/distsn/vinayaka/blob/master/server/blacklisted_users.csv" target="_blank">blacklisted_users.csv</a> にプルリクエストをおくってください。'
+		'anti-harassment-message': 'ボット、スパム、ハラスメントをつうほうするには <a href="https://github.com/distsn/vinayaka/blob/master/server/blacklisted_users.csv" target="_blank">blacklisted_users.csv</a> にプルリクエストをおくってください。',
+		'm-media-proxy': 'あなたのプライバシー: アバターは <a href="https://images.weserv.nl" target="_blank">images.weserv.nl</a> によりホストされています。'
 	}
 	for (var id in messages) {
 		var placeholder = document.getElementById (id);
