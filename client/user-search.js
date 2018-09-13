@@ -4,7 +4,7 @@ var g_language
 function mediaProxy (image) {
 	return 'https://images.weserv.nl/?url=' +
 		encodeURIComponent (image.replace (/^http(s)?\:\/\//, '')) +
-		'&errorredirect=' + encodeURIComponent ('distsn.org/missing.png')
+		'&errorredirect=' + encodeURIComponent ('vinayaka.distsn.org/missing.png')
 }
 
 
