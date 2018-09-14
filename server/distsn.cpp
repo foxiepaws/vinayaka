@@ -619,13 +619,41 @@ static bool too_much_numbers (string word)
 }
 
 
+static bool contains_japanese_punctuations (string word)
+{
+	vector <string> japanese_punctuations {
+		string {"、"},
+		string {"。"},
+		string {"，"},
+		string {"．"},
+		string {"？"},
+		string {"！"},
+		string {"「"},
+		string {"」"},
+		string {"（"},
+		string {"）"},
+		string {"『"},
+		string {"』"},
+		string {"【"},
+		string {"】"},
+	};
+	for (auto punctuation: japanese_punctuations) {
+		if (word.find (punctuation) != string::npos) {
+			return true;
+		}
+	}
+	return false;
+}
+
+
 static bool valid_word (string word)
 {
 	return
 		starts_with_utf8_codepoint_boundary (word)
 		&& effective_word (word)
 		&& (! too_much_numbers (word))
-		&& (! all_kana (word));
+		&& (! all_kana (word))
+		&& (! contains_japanese_punctuations (word));
 }
 
 
