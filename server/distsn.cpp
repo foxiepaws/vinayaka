@@ -595,7 +595,7 @@ static string katakana_to_latin (string in)
 
 	string out;
 
-	for (unsigned int cn = 0; cn < in.size (); cn ++) {
+	for (unsigned int cn = 0; cn < in.size (); ) {
 		bool hit = false;
 		for (auto rule: rules) {
 			string katakana = rule.first;
@@ -603,12 +603,14 @@ static string katakana_to_latin (string in)
 			if (katakana.size () + cn <= in.size () && in.substr (cn, katakana.size ()) == katakana) {
 				out += latin;
 				hit = true;
+				cn += katakana.size ();
 				break;
 			}
 		}
 		if (! hit) {
-			auto c = out.at (cn);
+			auto c = in.at (cn);
 			out.push_back (c);
+			cn ++;
 		}
 	}
 
