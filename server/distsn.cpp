@@ -526,7 +526,7 @@ static bool is_hiragana (string codepoint)
 
 static bool starts_with_hiragana (string word)
 {
-	return 3 >= word.size () && is_hiragana (word.substr (0, 3));
+	return 3 <= word.size () && is_hiragana (word.substr (0, 3));
 }
 
 
