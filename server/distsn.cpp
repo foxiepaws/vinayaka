@@ -492,6 +492,130 @@ static string small_letterize (string in)
 }
 
 
+static string katakana_to_latin (string in)
+{
+	map <string, string> rules {
+		{string {"゠"}, string {"="}},
+		{string {"ァ"}, string {"a"}},
+		{string {"ア"}, string {"a"}},
+		{string {"ィ"}, string {"i"}},
+		{string {"イ"}, string {"i"}},
+		{string {"ゥ"}, string {"u"}},
+		{string {"ウ"}, string {"u"}},
+		{string {"ェ"}, string {"e"}},
+		{string {"エ"}, string {"e"}},
+		{string {"ォ"}, string {"o"}},
+		{string {"オ"}, string {"o"}},
+		{string {"カ"}, string {"ka"}},
+		{string {"ガ"}, string {"ga"}},
+		{string {"キ"}, string {"ki"}},
+		{string {"ギ"}, string {"gi"}},
+		{string {"ク"}, string {"ku"}},
+		{string {"グ"}, string {"gu"}},
+		{string {"ケ"}, string {"ke"}},
+		{string {"ゲ"}, string {"ge"}},
+		{string {"コ"}, string {"ko"}},
+		{string {"ゴ"}, string {"go"}},
+		{string {"サ"}, string {"sa"}},
+		{string {"ザ"}, string {"za"}},
+		{string {"シ"}, string {"si"}},
+		{string {"ジ"}, string {"zi"}},
+		{string {"ス"}, string {"su"}},
+		{string {"ズ"}, string {"zu"}},
+		{string {"セ"}, string {"se"}},
+		{string {"ゼ"}, string {"ze"}},
+		{string {"ソ"}, string {"so"}},
+		{string {"ゾ"}, string {"zo"}},
+		{string {"タ"}, string {"ta"}},
+		{string {"ダ"}, string {"da"}},
+		{string {"チ"}, string {"ti"}},
+		{string {"ヂ"}, string {"zi"}},
+		{string {"ッ"}, string {""}},
+		{string {"ツ"}, string {"tu"}},
+		{string {"ヅ"}, string {"zu"}},
+		{string {"テ"}, string {"te"}},
+		{string {"デ"}, string {"de"}},
+		{string {"ト"}, string {"to"}},
+		{string {"ド"}, string {"do"}},
+		{string {"ナ"}, string {"na"}},
+		{string {"ニ"}, string {"ni"}},
+		{string {"ヌ"}, string {"nu"}},
+		{string {"ネ"}, string {"ne"}},
+		{string {"ノ"}, string {"no"}},
+		{string {"ハ"}, string {"ha"}},
+		{string {"バ"}, string {"ba"}},
+		{string {"パ"}, string {"pa"}},
+		{string {"ヒ"}, string {"hi"}},
+		{string {"ビ"}, string {"bi"}},
+		{string {"ピ"}, string {"pi"}},
+		{string {"フ"}, string {"hu"}},
+		{string {"ブ"}, string {"bu"}},
+		{string {"プ"}, string {"pu"}},
+		{string {"ヘ"}, string {"he"}},
+		{string {"ベ"}, string {"be"}},
+		{string {"ペ"}, string {"pe"}},
+		{string {"ホ"}, string {"ho"}},
+		{string {"ボ"}, string {"bo"}},
+		{string {"ポ"}, string {"po"}},
+		{string {"マ"}, string {"ma"}},
+		{string {"ミ"}, string {"mi"}},
+		{string {"ム"}, string {"mu"}},
+		{string {"メ"}, string {"me"}},
+		{string {"モ"}, string {"mo"}},
+		{string {"ャ"}, string {"a"}},
+		{string {"ヤ"}, string {"ya"}},
+		{string {"ュ"}, string {"u"}},
+		{string {"ユ"}, string {"ya"}},
+		{string {"ョ"}, string {"o"}},
+		{string {"ヨ"}, string {"yo"}},
+		{string {"ラ"}, string {"ra"}},
+		{string {"リ"}, string {"ri"}},
+		{string {"ル"}, string {"ru"}},
+		{string {"レ"}, string {"re"}},
+		{string {"ロ"}, string {"ro"}},
+		{string {"ヮ"}, string {"a"}},
+		{string {"ワ"}, string {"wa"}},
+		{string {"ヰ"}, string {"i"}},
+		{string {"ヱ"}, string {"e"}},
+		{string {"ヲ"}, string {"o"}},
+		{string {"ン"}, string {"n"}},
+		{string {"ヴ"}, string {"b"}},
+		{string {"ヵ"}, string {"箇"}},
+		{string {"ヶ"}, string {"箇"}},
+		{string {"ヷ"}, string {"b"}},
+		{string {"ヸ"}, string {"be"}},
+		{string {"ヹ"}, string {"bi"}},
+		{string {"ヺ"}, string {"bo"}},
+		{string {"・"}, string {"-"}},
+		{string {"ー"}, string {""}},
+		{string {"ヽ"}, string {""}},
+		{string {"ヾ"}, string {""}},
+		{string {"ヿ"}, string {""}},
+	};
+
+	string out;
+
+	for (unsigned int cn = 0; cn < in.size (); cn ++) {
+		bool hit = false;
+		for (auto rule: rules) {
+			string katakana = rule.first;
+			string latin = rule.second;
+			if (katakana.size () + cn <= in.size () && in.substr (cn, katakana.size ()) == katakana) {
+				out += latin;
+				hit = true;
+				break;
+			}
+		}
+		if (! hit) {
+			auto c = out.at (cn);
+			out.push_back (c);
+		}
+	}
+
+	return out;
+}
+
+
 class OccupancyCount {
 public:
 	string word;
@@ -697,18 +821,21 @@ vector <string> get_words_from_toots
 	map <string, unsigned int> occupancy_count_map;
 	for (auto raw_toot: toots) {
 		string toot = remove_html (raw_toot);
+		toot = remove_character_reference (toot);
 		toot = remove_url (toot);
 		toot = remove_mention (toot);
-		toot = remove_character_reference (toot);
 		toot = small_letterize (toot);
-		if (valid_toot (toot) && word_length <= toot.size ()) {
-			for (unsigned int offset = 0; offset <= toot.size () - word_length; offset ++) {
-				string word = toot.substr (offset, word_length);
-				if (valid_position (toot, offset) && valid_word (word)) {
-					if (occupancy_count_map.find (word) == occupancy_count_map.end ()) {
-						occupancy_count_map.insert (pair <string, unsigned int> {word, 1});
-					} else {
-						occupancy_count_map.at (word) ++;
+		if (valid_toot (toot)) {
+			toot = katakana_to_latin (toot);
+			if (word_length <= toot.size ()) {
+				for (unsigned int offset = 0; offset <= toot.size () - word_length; offset ++) {
+					string word = toot.substr (offset, word_length);
+					if (valid_position (toot, offset) && valid_word (word)) {
+						if (occupancy_count_map.find (word) == occupancy_count_map.end ()) {
+							occupancy_count_map.insert (pair <string, unsigned int> {word, 1});
+						} else {
+							occupancy_count_map.at (word) ++;
+						}
 					}
 				}
 			}
