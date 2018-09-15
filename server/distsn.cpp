@@ -650,9 +650,14 @@ static bool is_hiragana (string codepoint)
 }
 
 
-static bool starts_with_hiragana (string word)
+static bool contains_hiragana (string word)
 {
-	return 3 <= word.size () && is_hiragana (word.substr (0, 3));
+	for (unsigned int cn = 0; cn + 3 <= word.size (); cn ++) {
+		if (is_hiragana (word.substr (cn, 3))) {
+			return true;
+		}
+	}
+	return false;
 }
 
 
@@ -758,7 +763,7 @@ static bool valid_word (string word)
 		starts_with_utf8_codepoint_boundary (word)
 		&& effective_word (word)
 		&& (! too_much_numbers (word))
-		&& (! starts_with_hiragana (word))
+		&& (! contains_hiragana (word))
 		&& (! contains_japanese_punctuations (word));
 }
 
