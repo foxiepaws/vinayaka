@@ -530,7 +530,7 @@ static string katakana_to_latin (string in)
 		{string {"ダ"}, string {"da"}},
 		{string {"チ"}, string {"ti"}},
 		{string {"ヂ"}, string {"zi"}},
-		{string {"ッ"}, string {""}},
+		{string {"ッ"}, string {"x"}},
 		{string {"ツ"}, string {"tu"}},
 		{string {"ヅ"}, string {"zu"}},
 		{string {"テ"}, string {"te"}},
