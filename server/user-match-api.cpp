@@ -9,6 +9,9 @@
 #include <set>
 #include <ctime>
 #include <random>
+
+#include <socialnet-1.h>
+
 #include "picojson.h"
 #include "tinyxml2.h"
 #include "distsn.h"
@@ -227,7 +230,8 @@ static string format_result
 				<< "\"screen_name\":\"\","
 				<< "\"bio\":\"\","
 				<< "\"avatar\":\"\","
-				<< "\"type\":\"\",";
+				<< "\"type\":\"\","
+				<< "\"url\":\"\",";
 		} else {
 			Profile profile = users_to_profile.at (User {speaker.host, speaker.user});
 			out
@@ -239,6 +243,7 @@ static string format_result
 				out << "\"avatar\":\"\",";
 			}
 			out << "\"type\":\"" << escape_json (profile.type) << "\",";
+			out << "\"url\":\"" << escape_json (profile.url) << "\",";
 		}
 
 		out << "\"intersection\":[";
@@ -307,18 +312,26 @@ int main (int argc, char **argv)
 		add_to_cache (host, user, result);
 		return 0;
 	}
-	
+
+	socialnet::Http http;
+	auto socialnet_user = socialnet::make_user (host, user, http);
+
 	string screen_name;
 	string bio;
-	vector <string> raw_toots;
+	string avatar;
+	string type;
 	cerr << "get_profile" << endl;
-	get_profile (true /* pagenation */, host, user, screen_name, bio, raw_toots);
+	socialnet_user->get_profile (screen_name, bio, avatar, type);
+
 	vector <string> toots;
-	for (unsigned int cn = 0; cn < raw_toots.size () && cn < 80; cn ++) {
-		toots.push_back (raw_toots.at (cn));
-	}
 	toots.push_back (screen_name);
 	toots.push_back (bio);
+
+	vector <socialnet::Status> socialnet_statuses = socialnet_user->get_timeline (10);
+
+	for (unsigned int cn = 0; cn < socialnet_statuses.size () && cn < 80; cn ++) {
+		toots.push_back (socialnet_statuses.at (cn).content);
+	}
 
 	const unsigned int vocabulary_size {1600};
 	vector <ModelTopology> models = {
