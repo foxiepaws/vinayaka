@@ -38,6 +38,7 @@ static string get_filtered_api (string in, set <string> friends, string listener
 		bool local = (host == listener_host);
 		string type = user_object.at (string {"type"}).get <string> ();
 		bool bot = (type == string {"Service"});
+		string url = user_object.at (string {"url"}).get <string> ();
 
 		if ((! local) && (! following_bool) && (! blacklisted) && (! bot)) {
 			stringstream out_user;
@@ -49,7 +50,7 @@ static string get_filtered_api (string in, set <string> friends, string listener
 				<< "\"display_name\":\"" << escape_json (screen_name) << "\","
 				<< "\"bot\":false,"
 				<< "\"note\":\"" << escape_json (bio) << "\","
-				<< "\"url\":\"" << escape_json (string {"https://"} + host + string {"/users/"} + user) << "\","
+				<< "\"url\":\"" << escape_json (url) << "\","
 				<< "\"avatar\":\"" << escape_json (avatar) << "\","
 				<< "\"avatar_static\":\"" << escape_json (avatar) << "\","
 				<< "\"followers_count\":0,"

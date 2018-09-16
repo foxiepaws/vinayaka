@@ -39,6 +39,7 @@ static string get_filtered_api (string in, set <string> friends, string listener
 		bool local = (host == listener_host);
 		string type = user_object.at (string {"type"}).get <string> ();
 		bool bot = (type == string {"Service"});
+		string url = user_object.at (string {"url"}).get <string> ();
 
 		if ((! local) && (! following_bool) && (! blacklisted) && (! bot)) {
 			vector <string> intersection_vector;
@@ -64,7 +65,8 @@ static string get_filtered_api (string in, set <string> friends, string listener
 				<< "\"screen_name\":\"" << escape_json (screen_name) << "\","
 				<< "\"bio\":\"" << escape_json (bio) << "\","
 				<< "\"avatar\":\"" << escape_json (avatar) << "\","
-				<< "\"type\":\"" << escape_json (type) << "\",";
+				<< "\"type\":\"" << escape_json (type) << "\","
+				<< "\"url\":\"" << escape_json (url) << "\",";
 			out_user
 				<< "\"intersection\":[";
 			for (unsigned int cn_intersection = 0; cn_intersection < intersection_vector.size (); cn_intersection ++) {

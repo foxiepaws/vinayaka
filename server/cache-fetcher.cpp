@@ -42,6 +42,7 @@ static string get_advanced_api (string in, set <string> friends)
 		string avatar = user_object.at (string {"avatar"}).get <string> ();
 		bool following_bool = following (host, user, friends);
 		string type = user_object.at (string {"type"}).get <string> ();
+		string url = user_object.at (string {"url"}).get <string> ();
 
 		vector <string> intersection_vector;
 		map <string, double> intersection_map;
@@ -66,7 +67,8 @@ static string get_advanced_api (string in, set <string> friends)
 			<< "\"screen_name\":\"" << escape_json (screen_name) << "\","
 			<< "\"bio\":\"" << escape_json (bio) << "\","
 			<< "\"avatar\":\"" << escape_json (avatar) << "\","
-			<< "\"type\":\"" << escape_json (type) << "\",";
+			<< "\"type\":\"" << escape_json (type) << "\","
+			<< "\"url\":\"" << escape_json (url) << "\",";
 		out_user
 			<< "\"intersection\":[";
 		for (unsigned int cn_intersection = 0; cn_intersection < intersection_vector.size (); cn_intersection ++) {

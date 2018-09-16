@@ -37,6 +37,7 @@ static string get_lightweight_api (string in, set <string> friends, string liste
 		bool local = (host == listener_host);
 		string type = user_object.at (string {"type"}).get <string> ();
 		bool bot = (type == string {"Service"});
+		string url = user_object.at (string {"url"}).get <string> ();
 
 		if ((! local) && (! following_bool) && (! blacklisted) && (! bot)) {
 			stringstream out;
@@ -48,7 +49,7 @@ static string get_lightweight_api (string in, set <string> friends, string liste
 				<< "\"from_cnt\":" << similarity << ","
 				<< "\"name\":\"" << escape_json (screen_name) << "\","
 				<< "\"icon\":\"" << escape_json (avatar) << "\","
-				<< "\"url\":\"" << escape_json (string {"https://"} + host + string {"/users/"} + user) << "\""
+				<< "\"url\":\"" << escape_json (url) << "\""
 				<< "}";
 			osa_format_for_users.push_back (out.str ());
 		}
