@@ -85,6 +85,10 @@ static void for_host (shared_ptr <socialnet::Host> host)
 	/* Get timeline. */
 	vector <socialnet::Status> toots = host->get_local_timeline (60 * 60 * 3);
 
+	if (toots.size () < 10) {
+		return;
+	}
+
 	/* Count occupancy */
 	map <string, unsigned int> occupancy;
 
@@ -107,6 +111,10 @@ static void for_host (shared_ptr <socialnet::Host> host)
 	time_t bottom_time = toots.back ().timestamp;
 
 	double duration = max (start_time, top_time) - bottom_time;
+	
+	if (duration < 60 * 60) {
+		return;
+	}
 	
 	/* Update memo. */
 	for (auto user_occupancy: occupancy) {
