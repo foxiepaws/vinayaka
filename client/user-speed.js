@@ -106,6 +106,12 @@ function escapeHtml (text) {
 };
 
 
+function escapeAttribute (text) {
+        text = text.replace (/\"/g, '&quot;')
+        return text
+}
+
+
 function show_users (users) {
 var m_bot = 'Bot'
 var boilerplate = (window.location.search === '?boilerplate');
@@ -133,7 +139,7 @@ for (cn = 0; cn < users.length; cn ++) {
 		user_html +=
 			'<p>' +
 			'<a href="' +
-			'https://' + encodeURIComponent (user.host) + '/users/' + encodeURIComponent (user.username) +
+			escapeAttribute (user.url) +
 			'" target="vinayaka-external-user-profile">' +
 			'<img class="avatar" src="';
 		if (user.avatar && 0 < user.avatar.length) {
@@ -145,7 +151,7 @@ for (cn = 0; cn < users.length; cn ++) {
 			'">' +
 			'</a>' +
 			'<a href="' +
-			'https://' + encodeURIComponent (user.host) + '/users/' + encodeURIComponent (user.username) +
+			escapeAttribute (user.url) +
 			'" target="vinayaka-external-user-profile" class="headline">' +
 			escapeHtml (user.username) + '@<wbr>' + escapeHtml (user.host) +
 			'</a>' +

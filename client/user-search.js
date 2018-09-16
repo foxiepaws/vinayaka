@@ -120,6 +120,12 @@ function escapeHtml (text) {
 }
 
 
+function escapeAttribute (text) {
+        text = text.replace (/\"/g, '&quot;')
+        return text
+}
+
+
 function show_users (users) {
 	if (users.length <= 100) {
 		show_users_impl (users)
@@ -158,7 +164,7 @@ for (cn = 0; cn < users.length; cn ++) {
 			'<img class="avatar" src="blacklisted.png">' +
 			'<span class="headline">' +
 			'<a href="' +
-			'https://' + encodeURIComponent (user.host) + '/users/' + encodeURIComponent (user.user) +
+			escapeAttribute (user.url) +
 			'" target="vinayaka-external-user-profile">' +
 			escapeHtml (user.user) + '@<wbr>' + escapeHtml (user.host) +
 			'</a>' + ' ' +
@@ -167,7 +173,7 @@ for (cn = 0; cn < users.length; cn ++) {
 	} else {
 		user_html +=
 			'<a href="' +
-			'https://' + encodeURIComponent (user.host) + '/users/' + encodeURIComponent (user.user) +
+			escapeAttribute (user.url) +
 			'" target="vinayaka-external-user-profile">' +
 			'<img class="avatar" src="';
 		if (user.avatar && 0 < user.avatar.length) {
@@ -179,7 +185,7 @@ for (cn = 0; cn < users.length; cn ++) {
 			'">' +
 			'</a>' +
 			'<a href="' +
-			'https://' + encodeURIComponent (user.host) + '/users/' + encodeURIComponent (user.user) +
+			escapeAttribute (user.url) +
 			'" target="vinayaka-external-user-profile" class="headline">' +
 			escapeHtml (user.user) + '@<wbr>' + escapeHtml (user.host) +
 			'</a>'
