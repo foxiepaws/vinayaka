@@ -100,7 +100,7 @@ vinayaka-user-match-suggestions-api.cgi: tinyxml2.o distsn.o cache-fetcher-sugge
 	$(CXX) tinyxml2.o distsn.o cache-fetcher-suggestions.o -lcurl $(CFLAGS) -o $@
 
 vinayaka-user-speed-cron: tinyxml2.o distsn.o user-speed-cron.o
-	$(CXX) tinyxml2.o distsn.o user-speed-cron.o -lcurl $(CFLAGS) -o $@
+	$(CXX) tinyxml2.o distsn.o user-speed-cron.o -lsocialnet-1 -lcurl $(CFLAGS) -o $@
 
 vinayaka-user-speed-api.cgi: tinyxml2.o distsn.o sort-user-speed.o user-speed-api.o
 	$(CXX) tinyxml2.o distsn.o sort-user-speed.o user-speed-api.o -lcurl $(CFLAGS) -o $@
