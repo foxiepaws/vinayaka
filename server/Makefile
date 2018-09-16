@@ -102,7 +102,7 @@ vinayaka-user-speed-cron: distsn.o user-speed-cron.o
 	$(CXX) distsn.o user-speed-cron.o -lsocialnet-1 -lcurl -ltinyxml2 $(CFLAGS) -o $@
 
 vinayaka-user-speed-api.cgi: distsn.o sort-user-speed.o user-speed-api.o
-	$(CXX) distsn.o sort-user-speed.o user-speed-api.o -lcurl -ltinyxml2 $(CFLAGS) -o $@
+	$(CXX) distsn.o sort-user-speed.o user-speed-api.o -lsocialnet-1 -lcurl -ltinyxml2 $(CFLAGS) -o $@
 
 vinayaka-clear-cache-impl: distsn.o clear-cache-impl.o
 	$(CXX) distsn.o clear-cache-impl.o -lcurl -ltinyxml2 $(CFLAGS) -o $@
@@ -111,19 +111,19 @@ vinayaka-store-raw-toots-cron: distsn.o sort-user-speed.o store-raw-toots.o
 	$(CXX) distsn.o sort-user-speed.o store-raw-toots.o -lsocialnet-1 -lcurl -ltinyxml2 $(CFLAGS) -o $@
 
 vinayaka-collect-raw-toots-cron: distsn.o sort-user-speed.o collect-raw-toots.o
-	$(CXX) distsn.o sort-user-speed.o collect-raw-toots.o -lcurl -ltinyxml2 $(CFLAGS) -o $@
+	$(CXX) distsn.o sort-user-speed.o collect-raw-toots.o -lsocialnet-1 -lcurl -ltinyxml2 $(CFLAGS) -o $@
 
 vinayaka-user-new-cron: distsn.o sort-user-speed.o user-new-cron.o
-	$(CXX) distsn.o sort-user-speed.o user-new-cron.o -lcurl -ltinyxml2 $(CFLAGS) -o $@
+	$(CXX) distsn.o sort-user-speed.o user-new-cron.o -lsocialnet-1 -lcurl -ltinyxml2 $(CFLAGS) -o $@
 
 vinayaka-user-search-api.cgi: distsn.o sort-user-speed.o user-search-api.o
-	$(CXX) distsn.o sort-user-speed.o user-search-api.o -lcurl -ltinyxml2 $(CFLAGS) -o $@
+	$(CXX) distsn.o sort-user-speed.o user-search-api.o -lsocialnet-1 -lcurl -ltinyxml2 $(CFLAGS) -o $@
 
 vinayaka-instance-size-cron: distsn.o instance-size-cron.o
 	$(CXX) distsn.o instance-size-cron.o -lcurl -ltinyxml2 $(CFLAGS) -o $@
 
 vinayaka-user-new-suggestions-api.cgi: distsn.o sort-user-speed.o user-new-suggestions-api.o
-	$(CXX) distsn.o sort-user-speed.o user-new-suggestions-api.o -lcurl -ltinyxml2 $(CFLAGS) -o $@
+	$(CXX) distsn.o sort-user-speed.o user-new-suggestions-api.o -lsocialnet-1 -lcurl -ltinyxml2 $(CFLAGS) -o $@
 
 install: $(cgis)
 	$(INSTALL_PROGRAM) $(cgis) --target-directory=$(cgidir)

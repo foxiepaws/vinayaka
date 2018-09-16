@@ -6,6 +6,9 @@
 #include <vector>
 #include <set>
 #include <algorithm>
+
+#include <socialnet-1.h>
+
 #include "picojson.h"
 #include "distsn.h"
 
@@ -89,14 +92,21 @@ vector <UserAndSpeed> get_users_and_speed_impl (double limit)
 {
 	set <User> blacklisted_users = get_blacklisted_users ();
 
-	set <string> hosts = get_international_hosts ();
+	set <string> host_names;
+
+	{
+		auto hosts = socialnet::get_hosts ();
+		for (auto host: hosts) {
+			host_names.insert (host->host_name);
+		}
+	}
 
 	vector <UserAndSpeed> users;
 
-	for (auto host: hosts) {
+	for (auto host_name: host_names) {
 		map <string, double> speeds;
 		{
-			const string storage_filename = string {"/var/lib/vinayaka/user-speed/"} + host;
+			const string storage_filename = string {"/var/lib/vinayaka/user-speed/"} + host_name;
 			FILE * storage_file_in = fopen (storage_filename.c_str (), "r");
 			if (storage_file_in != nullptr) {
 				speeds = read_storage (storage_file_in);
@@ -107,9 +117,9 @@ vector <UserAndSpeed> get_users_and_speed_impl (double limit)
 			string username = i.first;
 			double speed = i.second;
 			bool blacklisted
-				= (blacklisted_users.find (User {host, username}) != blacklisted_users.end ())
-				|| (blacklisted_users.find (User {host, string {"*"}}) != blacklisted_users.end ());
-			UserAndSpeed user {host, username, speed, blacklisted};
+				= (blacklisted_users.find (User {host_name, username}) != blacklisted_users.end ())
+				|| (blacklisted_users.find (User {host_name, string {"*"}}) != blacklisted_users.end ());
+			UserAndSpeed user {host_name, username, speed, blacklisted};
 			users.push_back (user);
 		}
 	}
