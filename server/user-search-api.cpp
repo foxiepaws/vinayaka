@@ -24,6 +24,7 @@ public:
 	string text;
 	string avatar;
 	string type;
+	string url;
 	bool blacklisted;
 public:
 	SearchResult ():
@@ -48,6 +49,7 @@ public:
 		json += string {"\"text\":\""} + escape_json (text) + string {"\","};
 		json += string {"\"avatar\":\""} + escape_json (avatar) + string {"\","};
 		json += string {"\"type\":\""} + escape_json (type) + string {"\","};
+		json += string {"\"url\":\""} + escape_json (url) + string {"\","};
 		json += string {"\"blacklisted\":"} + (blacklisted? string {"true"}: string {"false"});
 		json += string {"}"};
 		return json;
@@ -129,6 +131,7 @@ int main (int argc, char **argv)
 		if (users_to_profile.find (user) != users_to_profile.end ()) {
 			result.avatar = users_to_profile.at (user).avatar;
 			result.type = users_to_profile.at (user).type;
+			result.url = users_to_profile.at (user).url;
 		}
 	}
 

@@ -41,7 +41,8 @@ int main (int argc, char **argv)
 				cout
 					<< "\"screen_name\":\"\","
 					<< "\"avatar\":\"\","
-					<< "\"type\":\"\"";
+					<< "\"type\":\"\","
+					<< "\"url\":\"\"";
 			} else {
 				Profile profile = users_to_profile.at (User {user.host, user.username});
 				cout << "\"screen_name\":\"" << escape_json (profile.screen_name) << "\",";
@@ -50,7 +51,8 @@ int main (int argc, char **argv)
 				} else {
 					cout << "\"avatar\":\"\",";
 				}
-				cout << "\"type\":\"" << escape_json (profile.type) << "\"";
+				cout << "\"type\":\"" << escape_json (profile.type) << "\",";
+				cout << "\"url\":\"" << escape_json (profile.url) << "\"";
 			}
 		cout
 			<< "}";
