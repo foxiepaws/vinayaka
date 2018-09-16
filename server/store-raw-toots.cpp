@@ -8,6 +8,9 @@
 #include <fstream>
 #include <set>
 #include <random>
+
+#include <socialnet-1.h>
+
 #include "picojson.h"
 #include "tinyxml2.h"
 #include "distsn.h"
@@ -51,23 +54,33 @@ static const unsigned int history_variations = 24;
 	
 static void get_and_save_toots (vector <User> users)
 {
+	socialnet::Http http;
 	vector <pair <User, vector <string>>> users_and_toots;
+
 	for (auto user: users) {
 		try {
 			cerr << user.user << "@" << user.host << endl;
+			
+			auto socialnet_user = socialnet::make_user (user.host, user.user, http);
+			
 			string screen_name;
 			string bio;
+			string avatar;
+			string type;
+			socialnet_user->get_profile (screen_name, bio, avatar, type);
+
+			unsigned int page = 1;
+			auto socialnet_statuses =socialnet_user->get_timeline (page);
+
 			vector <string> toots;
-			bool pagenation = false;
-			get_profile (pagenation, user.host, user.user, screen_name, bio, toots);
 			toots.push_back (screen_name);
 			toots.push_back (bio);
-			vector <string> short_toots;
-			for (auto toot: toots) {
-				short_toots.push_back (toot.substr (0, 5000));
+
+			for (auto socialnet_status: socialnet_statuses) {
+				string short_toot = socialnet_status.content.substr (0, 5000);
+				toots.push_back (short_toot);
 			}
-			users_and_toots.push_back (pair <User, vector <string>> {user, short_toots});
-		} catch (UserException e) {
+		} catch (socialnet::ExceptionWithLineNumber e) {
 			cerr << "Error " << user.user << "@" << user.host << " " << e.line << endl;
 		}
 	}

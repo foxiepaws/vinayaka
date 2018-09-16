@@ -109,7 +109,7 @@ vinayaka-clear-cache-impl: tinyxml2.o distsn.o clear-cache-impl.o
 	$(CXX) tinyxml2.o distsn.o clear-cache-impl.o -lcurl $(CFLAGS) -o $@
 
 vinayaka-store-raw-toots-cron: tinyxml2.o distsn.o sort-user-speed.o store-raw-toots.o
-	$(CXX) tinyxml2.o distsn.o sort-user-speed.o store-raw-toots.o -lcurl $(CFLAGS) -o $@
+	$(CXX) tinyxml2.o distsn.o sort-user-speed.o store-raw-toots.o -lsocialnet-1 -lcurl $(CFLAGS) -o $@
 
 vinayaka-collect-raw-toots-cron: tinyxml2.o distsn.o sort-user-speed.o collect-raw-toots.o
 	$(CXX) tinyxml2.o distsn.o sort-user-speed.o collect-raw-toots.o -lcurl $(CFLAGS) -o $@
