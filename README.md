@@ -45,6 +45,8 @@ http://vinayaka.distsn.org/cgi-bin/vinayaka-user-speed-api.cgi (フル)
 
 ## Install
 
+Depends on: https://gitlab.com/distsn/libsocialnet
+
     $ sudo apt install build-essential libcurl4-openssl-dev apache2
     $ make
     $ sudo make install
