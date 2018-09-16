@@ -10,11 +10,9 @@
 #include <random>
 #include <limits>
 #include "picojson.h"
-#include "tinyxml2.h"
 #include "distsn.h"
 
 
-using namespace tinyxml2;
 using namespace std;
 
 

@@ -29,7 +29,6 @@ objects = \
 	distsn.o \
 	report-cache.o \
 	sort-user-speed.o \
-	tinyxml2.o \
 	user-avatar-cron.o \
 	user-match-api.o \
 	user-speed-api.o \
@@ -81,50 +80,50 @@ etcs = blacklisted_users.csv
 
 all: $(binaries)
 
-vinayaka-user-match-impl: tinyxml2.o distsn.o user-match-api.o sort-user-speed.o
-	$(CXX) tinyxml2.o distsn.o user-match-api.o  sort-user-speed.o -lsocialnet-1 -lcurl $(CFLAGS) -o $@
+vinayaka-user-match-impl: distsn.o user-match-api.o sort-user-speed.o
+	$(CXX) distsn.o user-match-api.o  sort-user-speed.o -lsocialnet-1 -lcurl -ltinyxml2 $(CFLAGS) -o $@
 
-vinayaka-user-avatar-cron: tinyxml2.o distsn.o user-avatar-cron.o sort-user-speed.o
-	$(CXX) tinyxml2.o distsn.o user-avatar-cron.o sort-user-speed.o -lsocialnet-1 -lcurl $(CFLAGS) -o $@
+vinayaka-user-avatar-cron: distsn.o user-avatar-cron.o sort-user-speed.o
+	$(CXX) distsn.o user-avatar-cron.o sort-user-speed.o -lsocialnet-1 -lcurl -ltinyxml2 $(CFLAGS) -o $@
 
-vinayaka-user-match-cache-fetcher: tinyxml2.o distsn.o cache-fetcher.o
-	$(CXX) tinyxml2.o distsn.o cache-fetcher.o -lcurl $(CFLAGS) -o $@
+vinayaka-user-match-cache-fetcher: distsn.o cache-fetcher.o
+	$(CXX) distsn.o cache-fetcher.o -lcurl -ltinyxml2 $(CFLAGS) -o $@
 
-vinayaka-user-match-cache-fetcher-osa: tinyxml2.o distsn.o cache-fetcher-osa.o
-	$(CXX) tinyxml2.o distsn.o cache-fetcher-osa.o -lcurl $(CFLAGS) -o $@
+vinayaka-user-match-cache-fetcher-osa: distsn.o cache-fetcher-osa.o
+	$(CXX) distsn.o cache-fetcher-osa.o -lcurl -ltinyxml2 $(CFLAGS) -o $@
 
-vinayaka-user-match-filtered-api.cgi: tinyxml2.o distsn.o cache-fetcher-filtered.o
-	$(CXX) tinyxml2.o distsn.o cache-fetcher-filtered.o -lcurl $(CFLAGS) -o $@
+vinayaka-user-match-filtered-api.cgi: distsn.o cache-fetcher-filtered.o
+	$(CXX) distsn.o cache-fetcher-filtered.o -lcurl -ltinyxml2 $(CFLAGS) -o $@
 
-vinayaka-user-match-suggestions-api.cgi: tinyxml2.o distsn.o cache-fetcher-suggestions.o
-	$(CXX) tinyxml2.o distsn.o cache-fetcher-suggestions.o -lcurl $(CFLAGS) -o $@
+vinayaka-user-match-suggestions-api.cgi: distsn.o cache-fetcher-suggestions.o
+	$(CXX) distsn.o cache-fetcher-suggestions.o -lcurl -ltinyxml2 $(CFLAGS) -o $@
 
-vinayaka-user-speed-cron: tinyxml2.o distsn.o user-speed-cron.o
-	$(CXX) tinyxml2.o distsn.o user-speed-cron.o -lsocialnet-1 -lcurl $(CFLAGS) -o $@
+vinayaka-user-speed-cron: distsn.o user-speed-cron.o
+	$(CXX) distsn.o user-speed-cron.o -lsocialnet-1 -lcurl -ltinyxml2 $(CFLAGS) -o $@
 
-vinayaka-user-speed-api.cgi: tinyxml2.o distsn.o sort-user-speed.o user-speed-api.o
-	$(CXX) tinyxml2.o distsn.o sort-user-speed.o user-speed-api.o -lcurl $(CFLAGS) -o $@
+vinayaka-user-speed-api.cgi: distsn.o sort-user-speed.o user-speed-api.o
+	$(CXX) distsn.o sort-user-speed.o user-speed-api.o -lcurl -ltinyxml2 $(CFLAGS) -o $@
 
-vinayaka-clear-cache-impl: tinyxml2.o distsn.o clear-cache-impl.o
-	$(CXX) tinyxml2.o distsn.o clear-cache-impl.o -lcurl $(CFLAGS) -o $@
+vinayaka-clear-cache-impl: distsn.o clear-cache-impl.o
+	$(CXX) distsn.o clear-cache-impl.o -lcurl -ltinyxml2 $(CFLAGS) -o $@
 
-vinayaka-store-raw-toots-cron: tinyxml2.o distsn.o sort-user-speed.o store-raw-toots.o
-	$(CXX) tinyxml2.o distsn.o sort-user-speed.o store-raw-toots.o -lsocialnet-1 -lcurl $(CFLAGS) -o $@
+vinayaka-store-raw-toots-cron: distsn.o sort-user-speed.o store-raw-toots.o
+	$(CXX) distsn.o sort-user-speed.o store-raw-toots.o -lsocialnet-1 -lcurl -ltinyxml2 $(CFLAGS) -o $@
 
-vinayaka-collect-raw-toots-cron: tinyxml2.o distsn.o sort-user-speed.o collect-raw-toots.o
-	$(CXX) tinyxml2.o distsn.o sort-user-speed.o collect-raw-toots.o -lcurl $(CFLAGS) -o $@
+vinayaka-collect-raw-toots-cron: distsn.o sort-user-speed.o collect-raw-toots.o
+	$(CXX) distsn.o sort-user-speed.o collect-raw-toots.o -lcurl -ltinyxml2 $(CFLAGS) -o $@
 
-vinayaka-user-new-cron: tinyxml2.o distsn.o sort-user-speed.o user-new-cron.o
-	$(CXX) tinyxml2.o distsn.o sort-user-speed.o user-new-cron.o -lcurl $(CFLAGS) -o $@
+vinayaka-user-new-cron: distsn.o sort-user-speed.o user-new-cron.o
+	$(CXX) distsn.o sort-user-speed.o user-new-cron.o -lcurl -ltinyxml2 $(CFLAGS) -o $@
 
-vinayaka-user-search-api.cgi: tinyxml2.o distsn.o sort-user-speed.o user-search-api.o
-	$(CXX) tinyxml2.o distsn.o sort-user-speed.o user-search-api.o -lcurl $(CFLAGS) -o $@
+vinayaka-user-search-api.cgi: distsn.o sort-user-speed.o user-search-api.o
+	$(CXX) distsn.o sort-user-speed.o user-search-api.o -lcurl -ltinyxml2 $(CFLAGS) -o $@
 
-vinayaka-instance-size-cron: tinyxml2.o distsn.o instance-size-cron.o
-	$(CXX) tinyxml2.o distsn.o instance-size-cron.o -lcurl $(CFLAGS) -o $@
+vinayaka-instance-size-cron: distsn.o instance-size-cron.o
+	$(CXX) distsn.o instance-size-cron.o -lcurl -ltinyxml2 $(CFLAGS) -o $@
 
-vinayaka-user-new-suggestions-api.cgi: tinyxml2.o distsn.o sort-user-speed.o user-new-suggestions-api.o
-	$(CXX) tinyxml2.o distsn.o sort-user-speed.o user-new-suggestions-api.o -lcurl $(CFLAGS) -o $@
+vinayaka-user-new-suggestions-api.cgi: distsn.o sort-user-speed.o user-new-suggestions-api.o
+	$(CXX) distsn.o sort-user-speed.o user-new-suggestions-api.o -lcurl -ltinyxml2 $(CFLAGS) -o $@
 
 install: $(cgis)
 	$(INSTALL_PROGRAM) $(cgis) --target-directory=$(cgidir)
