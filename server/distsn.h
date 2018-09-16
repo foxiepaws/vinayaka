@@ -114,6 +114,7 @@ public:
 	std::string bio;
 	std::string avatar;
 	std::string type;
+	std::string url;
 };
 
 

@@ -8,6 +8,9 @@
 #include <fstream>
 #include <set>
 #include <random>
+
+#include <socialnet-1.h>
+
 #include "picojson.h"
 #include "tinyxml2.h"
 #include "distsn.h"
@@ -47,34 +50,36 @@ static void write_to_storage (vector <pair <User, Profile>> users_and_profiles, 
 			<< "\"screen_name\":\"" << escape_json (profile.screen_name) << "\","
 			<< "\"bio\":\"" << escape_json (profile.bio) << "\","
 			<< "\"avatar\":\"" << escape_json (profile.avatar) << "\","
-			<< "\"type\":\"" << escape_json (profile.type) << "\""
+			<< "\"type\":\"" << escape_json (profile.type) << "\","
+			<< "\"url\":\"" << escape_json (profile.url) << "\""
 			<< "}";
 	}
 	out << "]";
 }
 
 
-#if 1
 int main (int argc, char **argv)
 {
 	auto users = get_users ();
 	vector <pair <User, Profile>> users_and_profiles;
-	Http http;
+	socialnet::Http http;
 	for (auto user: users) {
 		cerr << user.user << "@" << user.host << endl;
 		try {
+			auto socialnet_user = socialnet::make_user (user.host, user.user, http);
 			string screen_name;
 			string bio;
 			string avatar;
 			string type;
-			get_profile (user.host, user.user, screen_name, bio, avatar, type, http);
+			socialnet_user->get_profile (screen_name, bio, avatar, type);
 			Profile profile;
 			profile.screen_name = screen_name;
 			profile.bio = bio;
 			profile.avatar = avatar;
 			profile.type = type;
+			profile.url = socialnet_user->url ();
 			users_and_profiles.push_back (pair <User, Profile> {user, profile});
-		} catch (ExceptionWithLineNumber e) {
+		} catch (socialnet::ExceptionWithLineNumber e) {
 			cerr << "Error " << e.line << endl;
 		};
 	};
@@ -82,27 +87,5 @@ int main (int argc, char **argv)
 	ofstream out {filename};
 	write_to_storage (users_and_profiles, out);
 }
-#endif
 
-
-#if 0
-int main (int argc, char **argv)
-{
-	string host {"mstdn.jp"};
-	string user {"nullkal"};
-	try {
-		string screen_name;
-		string bio;
-		string avatar;
-		string type;
-		get_profile (host, user, screen_name, bio, avatar, type);
-		cout << screen_name << endl;
-		cout << bio << endl;
-		cout << avatar << endl;
-		cout << type << endl;
-	} catch (ExceptionWithLineNumber e) {
-		cerr << "Error " << e.line << endl;
-	};
-}
-#endif
 
