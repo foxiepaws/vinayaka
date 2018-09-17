@@ -85,7 +85,7 @@ static void for_host (shared_ptr <socialnet::Host> host)
 	/* Get timeline. */
 	vector <socialnet::Status> toots = host->get_local_timeline (60 * 60 * 3);
 
-	if (toots.size () < 10) {
+	if (toots.size () < 1) {
 		cerr << host->host_name << " too few toots " << toots.size () << endl;
 		return;
 	}
@@ -113,7 +113,7 @@ static void for_host (shared_ptr <socialnet::Host> host)
 
 	double duration = max (start_time, top_time) - bottom_time;
 	
-	if (duration < 60 * 60) {
+	if (duration < 60 * 60 * 3) {
 		cerr << host->host_name << " too short duration " << duration << endl;
 		return;
 	}
