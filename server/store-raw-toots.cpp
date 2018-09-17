@@ -52,7 +52,7 @@ static const unsigned int history_variations = 24;
 	
 static void get_and_save_toots (vector <User> users)
 {
-	socialnet::Http http;
+	auto http = make_shared <socialnet::Http> ();
 	vector <pair <User, vector <string>>> users_and_toots;
 
 	for (auto user: users) {

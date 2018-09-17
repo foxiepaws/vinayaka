@@ -60,7 +60,7 @@ int main (int argc, char **argv)
 {
 	auto users = get_users ();
 	vector <pair <User, Profile>> users_and_profiles;
-	socialnet::Http http;
+	auto http = make_shared <socialnet::Http> ();
 	for (auto user: users) {
 		cerr << user.user << "@" << user.host << endl;
 		try {
