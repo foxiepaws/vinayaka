@@ -56,12 +56,14 @@ Depends on: https://gitlab.com/distsn/libsocialnet
 
 Write following code in crontab:
 
-    0  */3  * * * /usr/local/bin/vinayaka-user-speed-cron
-    10 */2  * * * /usr/local/bin/vinayaka-user-new-cron
-    20 */6  * * * /usr/local/bin/vinayaka-user-avatar-cron
-    30 *    * * * /usr/local/bin/vinayaka-clear-cache-cron
-    40 4,14 * * * /usr/local/bin/vinayaka-collect-raw-toots-cron
-    40 10   * * * /usr/local/bin/vinayaka-store-raw-toots-cron
+```
+10 */3   * * * /usr/local/bin/vinayaka-user-speed-cron
+20 */2   * * * /usr/local/bin/vinayaka-user-new-cron
+30 3,15  * * * /usr/local/bin/vinayaka-user-avatar-cron
+40 *     * * * /usr/local/bin/vinayaka-clear-cache-cron
+30 7,19  * * * /usr/local/bin/vinayaka-collect-raw-toots-cron
+30 11,23 * * * /usr/local/bin/vinayaka-store-raw-toots-cron
+```
 
 Write following code in crontab for the root:
 
