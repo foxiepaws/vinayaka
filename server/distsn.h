@@ -28,13 +28,6 @@ public:
 };
 
 
-class HttpException: public ExceptionWithLineNumber {
-public:
-	HttpException (unsigned int a_line): ExceptionWithLineNumber (a_line) { };
-	HttpException () { };
-};
-
-
 class HostException: public ExceptionWithLineNumber {
 public:
 	HostException (unsigned int a_line): ExceptionWithLineNumber (a_line) { };
