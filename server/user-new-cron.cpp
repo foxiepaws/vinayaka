@@ -278,7 +278,7 @@ int main (int argc, char **argv)
 	auto hosts = socialnet::get_hosts ();
 
 	for (auto host: hosts) {
-		cerr << host << endl;
+		cerr << host->host_name << endl;
 		try {
 			for_host (host);
 		} catch (socialnet::ExceptionWithLineNumber e) {
