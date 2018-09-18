@@ -61,6 +61,9 @@ int main (int argc, char **argv)
 	auto users = get_users ();
 	vector <pair <User, Profile>> users_and_profiles;
 	auto http = make_shared <socialnet::Http> ();
+	
+	unsigned int peaceful_age_count = 0;
+	
 	for (auto user: users) {
 		cerr << user.user << "@" << user.host << endl;
 		try {
@@ -77,6 +80,11 @@ int main (int argc, char **argv)
 			profile.type = type;
 			profile.url = socialnet_user->url ();
 			users_and_profiles.push_back (pair <User, Profile> {user, profile});
+		} catch (socialnet::PeacefulAgeException e) {
+			peaceful_age_count ++;
+			if (16 < peaceful_age_count) {
+				break;
+			}
 		} catch (socialnet::ExceptionWithLineNumber e) {
 			cerr << "Error " << e.line << endl;
 		};

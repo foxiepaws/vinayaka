@@ -55,6 +55,8 @@ static void get_and_save_toots (vector <User> users)
 	auto http = make_shared <socialnet::Http> ();
 	vector <pair <User, vector <string>>> users_and_toots;
 
+	unsigned int peaceful_age_count = 0;
+
 	for (auto user: users) {
 		try {
 			cerr << user.user << "@" << user.host << endl;
@@ -79,6 +81,11 @@ static void get_and_save_toots (vector <User> users)
 				toots.push_back (short_toot);
 			}
 			users_and_toots.push_back (pair <User, vector <string>> {user, toots});
+		} catch (socialnet::PeacefulAgeException e) {
+			peaceful_age_count ++;
+			if (16 < peaceful_age_count) {
+				break;
+			}
 		} catch (socialnet::ExceptionWithLineNumber e) {
 			cerr << "Error " << user.user << "@" << user.host << " " << e.line << endl;
 		}

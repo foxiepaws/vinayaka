@@ -144,10 +144,17 @@ int main (int argc, char **argv)
 {
 	auto hosts = socialnet::get_hosts ();
 
+	unsigned int peaceful_age_count = 0;
+
 	for (auto host: hosts) {
 		cerr << host->host_name << endl;
 		try {
 			for_host (host);
+		} catch (socialnet::PeacefulAgeException e) {
+			peaceful_age_count ++;
+			if (16 < peaceful_age_count) {
+				break;
+			}
 		} catch (socialnet::HttpException e) {
 			cerr << "socialnet::HttpException" << " " << e.line << endl;
 		} catch (socialnet::HostException e) {
