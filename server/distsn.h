@@ -120,25 +120,6 @@ public:
 };
 
 
-class HttpGlobal {
-public:
-	HttpGlobal ();
-};
-
-
-class Http {
-public:
-	static HttpGlobal global;
-	CURL *curl;
-public:
-	Http ();
-	std::string perform (std::string url, std::vector <std::string> header);
-	std::string perform (std::string url);
-	std::string endure (std::string url);
-	~Http ();
-};
-
-
 class FileLock {
 public:
 	int fd;
@@ -150,7 +131,6 @@ public:
 
 
 std::string get_id (const picojson::value &toot);
-std::vector <picojson::value> get_timeline (std::string host);
 time_t get_time (const picojson::value &toot);
 time_t str2time (std::string s);
 
@@ -167,11 +147,6 @@ std::vector <std::string> get_words_from_toots
 	std::map <std::string, unsigned int> word_to_popularity,
 	unsigned int minimum_popularity);
 double get_rarity (unsigned int occupancy);
-void get_profile (bool pagenation, std::string host, std::string user, std::string &a_screen_name, std::string &a_bio, std::vector <std::string> &a_toots);
-void get_profile (std::string host, std::string user, std::string &a_screen_name, std::string &a_bio, std::string &a_avatar, std::string &a_type);
-void get_profile (std::string host, std::string user, std::string &a_screen_name, std::string &a_bio, std::string &a_avatar, std::string &a_type, class Http &http);
-bool elder (std::string host, std::string user);
-std::vector <std::string> get_words (bool pagenation, std::string host, std::string user, unsigned int word_length, unsigned int vocabulary_size);
 
 std::vector <UserAndWords> read_storage (std::string filename);
 
@@ -179,11 +154,9 @@ std::vector <std::vector <std::string>> parse_csv (FILE *in);
 std::string escape_csv (std::string in);
 std::string escape_utf8_fragment (std::string in);
 
-std::set <std::string> get_international_hosts ();
 std::map <User, Profile> read_profiles ();
 bool safe_url (std::string url);
 std::string fetch_cache (std::string a_host, std::string a_user, bool & a_hit);
-std::set <std::string> get_friends (std::string host, std::string user);
 
 std::set <User> get_optouted_users ();
 

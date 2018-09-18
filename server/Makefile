@@ -37,7 +37,6 @@ objects = \
 	collect-raw-toots.o \
 	user-new-cron.o \
 	user-search-api.o \
-	instance-size-cron.o \
 	user-new-suggestions-api.o
 cgi_binaries = \
 	vinayaka-user-speed-api.cgi \
@@ -50,8 +49,7 @@ cron_binaries = \
 	vinayaka-user-speed-cron \
 	vinayaka-store-raw-toots-cron \
 	vinayaka-collect-raw-toots-cron \
-	vinayaka-user-new-cron \
-	vinayaka-instance-size-cron
+	vinayaka-user-new-cron
 impl_binaries = \
 	vinayaka-user-match-impl \
 	vinayaka-user-match-cache-fetcher \
@@ -118,9 +116,6 @@ vinayaka-user-new-cron: distsn.o sort-user-speed.o user-new-cron.o
 
 vinayaka-user-search-api.cgi: distsn.o sort-user-speed.o user-search-api.o
 	$(CXX) distsn.o sort-user-speed.o user-search-api.o -lsocialnet-1 -lcurl -ltinyxml2 $(CFLAGS) -o $@
-
-vinayaka-instance-size-cron: distsn.o instance-size-cron.o
-	$(CXX) distsn.o instance-size-cron.o -lcurl -ltinyxml2 $(CFLAGS) -o $@
 
 vinayaka-user-new-suggestions-api.cgi: distsn.o sort-user-speed.o user-new-suggestions-api.o
 	$(CXX) distsn.o sort-user-speed.o user-new-suggestions-api.o -lsocialnet-1 -lcurl -ltinyxml2 $(CFLAGS) -o $@
