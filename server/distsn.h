@@ -28,13 +28,6 @@ public:
 };
 
 
-class UserException: public ExceptionWithLineNumber {
-public:
-	UserException (unsigned int a_line): ExceptionWithLineNumber (a_line) { };
-	UserException () { };
-};
-
-
 class ModelException: public ExceptionWithLineNumber {
 public:
 	ModelException () { };
