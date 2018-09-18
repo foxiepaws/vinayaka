@@ -78,6 +78,7 @@ static void get_and_save_toots (vector <User> users)
 				string short_toot = socialnet_status.content.substr (0, 5000);
 				toots.push_back (short_toot);
 			}
+			users_and_toots.push_back (pair <User, vector <string>> {user, toots});
 		} catch (socialnet::ExceptionWithLineNumber e) {
 			cerr << "Error " << user.user << "@" << user.host << " " << e.line << endl;
 		}
