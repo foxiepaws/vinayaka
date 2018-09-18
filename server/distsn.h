@@ -130,11 +130,6 @@ public:
 };
 
 
-std::string get_id (const picojson::value &toot);
-time_t get_time (const picojson::value &toot);
-time_t str2time (std::string s);
-
-
 std::string escape_json (std::string in);
 std::vector <std::string> get_words_from_toots
 	(std::vector <std::string> toots,
