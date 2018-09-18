@@ -28,13 +28,6 @@ public:
 };
 
 
-class HostException: public ExceptionWithLineNumber {
-public:
-	HostException (unsigned int a_line): ExceptionWithLineNumber (a_line) { };
-	HostException () { };
-};
-
-
 class TootException: public ExceptionWithLineNumber {
 public:
 	TootException (unsigned int a_line): ExceptionWithLineNumber (a_line) { };
