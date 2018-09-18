@@ -277,6 +277,13 @@ int main (int argc, char **argv)
 {
 	auto hosts = socialnet::get_hosts ();
 
+	set <string> host_names;
+	for (auto host: hosts) {
+		host_names.insert (host->host_name);
+	}
+
+	cache_sorted_result (host_names);
+
 	unsigned int peaceful_age_count = 0;
 
 	for (auto host: hosts) {
@@ -292,13 +299,6 @@ int main (int argc, char **argv)
 			cerr << "Error " << e.line << endl;
 		}
 	}
-
-	set <string> host_names;
-	for (auto host: hosts) {
-		host_names.insert (host->host_name);
-	}
-
-	cache_sorted_result (host_names);
 
 	return 0;
 }
