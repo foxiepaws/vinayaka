@@ -87,16 +87,16 @@ vinayaka-user-avatar-cron: distsn.o user-avatar-cron.o sort-user-speed.o
 	$(CXX) distsn.o user-avatar-cron.o sort-user-speed.o -lsocialnet-1 -lcurl -ltinyxml2 $(CFLAGS) -o $@
 
 vinayaka-user-match-cache-fetcher: distsn.o cache-fetcher.o
-	$(CXX) distsn.o cache-fetcher.o -lcurl -ltinyxml2 $(CFLAGS) -o $@
+	$(CXX) distsn.o cache-fetcher.o -lsocialnet-1 -lcurl -ltinyxml2 $(CFLAGS) -o $@
 
 vinayaka-user-match-cache-fetcher-osa: distsn.o cache-fetcher-osa.o
-	$(CXX) distsn.o cache-fetcher-osa.o -lcurl -ltinyxml2 $(CFLAGS) -o $@
+	$(CXX) distsn.o cache-fetcher-osa.o -lsocialnet-1 -lcurl -ltinyxml2 $(CFLAGS) -o $@
 
 vinayaka-user-match-filtered-api.cgi: distsn.o cache-fetcher-filtered.o
-	$(CXX) distsn.o cache-fetcher-filtered.o -lcurl -ltinyxml2 $(CFLAGS) -o $@
+	$(CXX) distsn.o cache-fetcher-filtered.o -lsocialnet-1 -lcurl -ltinyxml2 $(CFLAGS) -o $@
 
 vinayaka-user-match-suggestions-api.cgi: distsn.o cache-fetcher-suggestions.o
-	$(CXX) distsn.o cache-fetcher-suggestions.o -lcurl -ltinyxml2 $(CFLAGS) -o $@
+	$(CXX) distsn.o cache-fetcher-suggestions.o -lsocialnet-1 -lcurl -ltinyxml2 $(CFLAGS) -o $@
 
 vinayaka-user-speed-cron: distsn.o user-speed-cron.o
 	$(CXX) distsn.o user-speed-cron.o -lsocialnet-1 -lcurl -ltinyxml2 $(CFLAGS) -o $@

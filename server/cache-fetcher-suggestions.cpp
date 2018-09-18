@@ -4,6 +4,9 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+
+#include <socialnet-1.h>
+
 #include "picojson.h"
 #include "distsn.h"
 
@@ -11,7 +14,7 @@
 using namespace std;
 
 
-static string get_filtered_api (string in, set <string> friends, string listener_host, string listener_user)
+static string get_filtered_api (string in, set <socialnet::HostNameAndUserName> friends, string listener_host, string listener_user)
 {
 
 	picojson::value json_value;
@@ -34,7 +37,7 @@ static string get_filtered_api (string in, set <string> friends, string listener
 		string screen_name = user_object.at (string {"screen_name"}).get <string> ();
 		string bio = user_object.at (string {"bio"}).get <string> ();
 		string avatar = user_object.at (string {"avatar"}).get <string> ();
-		bool following_bool = following (host, user, friends);
+		bool following_bool = socialnet::following (host, user, friends);
 		bool local = (host == listener_host);
 		string type = user_object.at (string {"type"}).get <string> ();
 		bool bot = (type == string {"Service"});
@@ -82,15 +85,18 @@ int main (int argc, char *argv [])
 	bool hit;
 	string result = fetch_cache (host, user, hit);
 	if (hit) {
+		auto socialnet_user = socialnet::make_user (host, user, make_shared <socialnet::Http> ());
+		auto friends = socialnet_user->get_friends ();
 		cout << "Access-Control-Allow-Origin: *" << endl;
 		cout << "Content-Type: application/json" << endl << endl;
-		cout << get_filtered_api (result, get_friends (host, user), host, user);
+		cout << get_filtered_api (result, friends, host, user);
 	} else {
 		pid_t pid = fork ();
 		if (pid == 0) {
 			execv ("/usr/local/bin/vinayaka-user-match-impl", argv);
 		} else {
-			set <string> friends = get_friends (host, user);
+			auto socialnet_user = socialnet::make_user (host, user, make_shared <socialnet::Http> ());
+			auto friends = socialnet_user->get_friends ();
 			int status;
 			waitpid (pid, &status, 0);
 			string result_2 = fetch_cache (host, user, hit);
