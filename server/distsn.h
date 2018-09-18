@@ -28,13 +28,6 @@ public:
 };
 
 
-class TootException: public ExceptionWithLineNumber {
-public:
-	TootException (unsigned int a_line): ExceptionWithLineNumber (a_line) { };
-	TootException () { };
-};
-
-
 class UserException: public ExceptionWithLineNumber {
 public:
 	UserException (unsigned int a_line): ExceptionWithLineNumber (a_line) { };
