@@ -67,29 +67,34 @@ int main (int argc, char **argv)
 	
 	for (auto user: users) {
 		cerr << user.user << "@" << user.host << endl;
-		try {
-			auto socialnet_user = socialnet::make_user (user.host, user.user, http);
-			string screen_name;
-			string bio;
-			string avatar;
-			string type;
-			socialnet_user->get_profile (screen_name, bio, avatar, type);
-			Profile profile;
-			profile.screen_name = screen_name;
-			profile.bio = bio;
-			profile.avatar = avatar;
-			profile.type = type;
-			profile.url = socialnet_user->url ();
-			profile.implementation = socialnet_user->host->implementation ();
-			users_and_profiles.push_back (pair <User, Profile> {user, profile});
-		} catch (socialnet::PeacefulAgeException e) {
-			peaceful_age_count ++;
-			if (16 < peaceful_age_count) {
-				break;
-			}
-		} catch (socialnet::ExceptionWithLineNumber e) {
-			cerr << "Error " << e.line << endl;
-		};
+		string screen_name;
+		string bio;
+		string avatar;
+		string type;
+		string url = string {"https://"} + host + string {"/users/"} + user;
+		auto implementation = socialnet::eImplementation::UNKNOWN;
+		
+		if (peaceful_age_count < 16) {
+			try {
+				auto socialnet_user = socialnet::make_user (user.host, user.user, http);
+				url = socialnet_user->url ();
+				implementation = socialnet_user->host->implementation ();
+				socialnet_user->get_profile (screen_name, bio, avatar, type);
+			} catch (socialnet::PeacefulAgeException e) {
+				peaceful_age_count ++;
+			} catch (socialnet::ExceptionWithLineNumber e) {
+				cerr << "Error " << e.line << endl;
+			};
+		}
+
+		Profile profile;
+		profile.screen_name = screen_name;
+		profile.bio = bio;
+		profile.avatar = avatar;
+		profile.type = type;
+		profile.url = url;
+		profile.implementation = implementation;
+		users_and_profiles.push_back (pair <User, Profile> {user, profile});
 	};
 	string filename {"/var/lib/vinayaka/user-profiles.json"};
 	ofstream out {filename};
