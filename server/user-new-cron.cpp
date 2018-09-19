@@ -28,6 +28,7 @@ public:
 	string avatar;
 	string type;
 	string url;
+	socialnet::eImplementation implementation;
 public:
 	UserAndFirstToot () {};
 	UserAndFirstToot
@@ -35,7 +36,8 @@ public:
 		host (a_host),
 		user (a_user),
 		first_toot_timestamp (a_first_toot_timestamp),
-		blacklisted (false)
+		blacklisted (false),
+		implementation (socialnet::eImplementation::UNKNOWN)
 		{};
 };
 
@@ -206,13 +208,15 @@ static void get_profile_for_all_users (vector <UserAndFirstToot> &users_and_firs
 		string avatar;
 		string type;
 		string url = string {"https://"} + host + string {"/users/"} + user;
+		auto implementation = socialnet::eImplementation::UNKNOWN;
 
 		if (peaceful_age_count < 16) {
 			try {
 				cerr << user << "@" << host << endl;
 				auto socialnet_user = socialnet::make_user (host, user, http);
-				socialnet_user->get_profile (screen_name, bio, avatar, type);
 				url = socialnet_user->url ();
+				implementation = socialnet_user->host->implementation ();
+				socialnet_user->get_profile (screen_name, bio, avatar, type);
 			} catch (socialnet::PeacefulAgeException e) {
 				peaceful_age_count ++;
 			} catch (socialnet::ExceptionWithLineNumber e) {
@@ -225,6 +229,7 @@ static void get_profile_for_all_users (vector <UserAndFirstToot> &users_and_firs
 		user_and_first_toot.avatar = avatar;
 		user_and_first_toot.type = type;
 		user_and_first_toot.url = url;
+		user_and_first_toot.implementation = implementation;
 	}
 }
 
@@ -273,7 +278,8 @@ static void cache_sorted_result (set <string> hosts)
 		} else {
 			out << "\"avatar\":\"\",";
 		}
-		out << "\"type\":\"" << escape_json (user.type) << "\"";
+		out << "\"type\":\"" << escape_json (user.type) << "\",";
+		out << "\"implementation\":\"" << socialnet::format (user.implementation) << "\"";
 		out
 			<< "}";
 	}

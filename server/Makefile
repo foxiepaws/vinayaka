@@ -103,7 +103,7 @@ vinayaka-user-speed-api.cgi: distsn.o sort-user-speed.o user-speed-api.o
 	$(CXX) distsn.o sort-user-speed.o user-speed-api.o -lsocialnet-1 -lcurl -ltinyxml2 $(CFLAGS) -o $@
 
 vinayaka-clear-cache-impl: distsn.o clear-cache-impl.o
-	$(CXX) distsn.o clear-cache-impl.o -lcurl -ltinyxml2 $(CFLAGS) -o $@
+	$(CXX) distsn.o clear-cache-impl.o -lsocialnet-1 -lcurl -ltinyxml2 $(CFLAGS) -o $@
 
 vinayaka-store-raw-toots-cron: distsn.o sort-user-speed.o store-raw-toots.o
 	$(CXX) distsn.o sort-user-speed.o store-raw-toots.o -lsocialnet-1 -lcurl -ltinyxml2 $(CFLAGS) -o $@

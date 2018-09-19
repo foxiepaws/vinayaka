@@ -861,12 +861,18 @@ map <User, Profile> read_profiles ()
 		if (user_object.find (string {"url"}) != user_object.end ()) {
 			url = user_object.at (string {"url"}).get <string> ();
 		}
+		auto implementation = socialnet::eImplementation::UNKNOWN;
+		if (user_object.find (string {"implementation"}) != user_object.end ()) {
+			socialnet::decode (user_object.at (string {"implementation"}).get <string> (), implementation);
+		}
+		
 		Profile profile;
 		profile.screen_name = screen_name;
 		profile.bio = bio;
 		profile.avatar = avatar;
 		profile.type = type;
 		profile.url = url;
+		profile.implementation = implementation;
 		users_to_profile.insert (pair <User, Profile> {User {host, user}, profile});
 	}
 	return users_to_profile;

@@ -12,6 +12,8 @@
 
 #include <tinyxml2.h>
 
+#include <socialnet-1.h>
+
 #include "picojson.h"
 
 
@@ -89,6 +91,7 @@ public:
 	std::string avatar;
 	std::string type;
 	std::string url;
+	socialnet::eImplementation implementation;
 };
 
 

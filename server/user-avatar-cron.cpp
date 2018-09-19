@@ -49,7 +49,8 @@ static void write_to_storage (vector <pair <User, Profile>> users_and_profiles, 
 			<< "\"bio\":\"" << escape_json (profile.bio) << "\","
 			<< "\"avatar\":\"" << escape_json (profile.avatar) << "\","
 			<< "\"type\":\"" << escape_json (profile.type) << "\","
-			<< "\"url\":\"" << escape_json (profile.url) << "\""
+			<< "\"url\":\"" << escape_json (profile.url) << "\","
+			<< "\"implementation\":\"" << socialnet::format (profile.implementation) << "\""
 			<< "}";
 	}
 	out << "]";
@@ -79,6 +80,7 @@ int main (int argc, char **argv)
 			profile.avatar = avatar;
 			profile.type = type;
 			profile.url = socialnet_user->url ();
+			profile.implementation = socialnet_user->host->implementation ();
 			users_and_profiles.push_back (pair <User, Profile> {user, profile});
 		} catch (socialnet::PeacefulAgeException e) {
 			peaceful_age_count ++;
