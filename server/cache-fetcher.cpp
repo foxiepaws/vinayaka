@@ -46,6 +46,7 @@ static string get_advanced_api (string in, set <socialnet::HostNameAndUserName> 
 		bool following_bool = socialnet::following (host, user, friends);
 		string type = user_object.at (string {"type"}).get <string> ();
 		string url = user_object.at (string {"url"}).get <string> ();
+		string implementation = user_object.at (string {"implementation"}).get <string> ();
 
 		vector <string> intersection_vector;
 		map <string, double> intersection_map;
@@ -71,7 +72,8 @@ static string get_advanced_api (string in, set <socialnet::HostNameAndUserName> 
 			<< "\"bio\":\"" << escape_json (bio) << "\","
 			<< "\"avatar\":\"" << escape_json (avatar) << "\","
 			<< "\"type\":\"" << escape_json (type) << "\","
-			<< "\"url\":\"" << escape_json (url) << "\",";
+			<< "\"url\":\"" << escape_json (url) << "\","
+			<< "\"implementation\":\"" << escape_json (implementation) << "\",";
 		out_user
 			<< "\"intersection\":[";
 		for (unsigned int cn_intersection = 0; cn_intersection < intersection_vector.size (); cn_intersection ++) {

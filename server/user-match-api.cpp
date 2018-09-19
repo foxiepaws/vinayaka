@@ -242,6 +242,7 @@ static string format_result
 			}
 			out << "\"type\":\"" << escape_json (profile.type) << "\",";
 			out << "\"url\":\"" << escape_json (profile.url) << "\",";
+			out << "\"implementation\":\"" << socialnet::format (profile.implementation) << "\",";
 		}
 
 		out << "\"intersection\":[";

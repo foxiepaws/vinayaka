@@ -9,6 +9,9 @@
 #include <set>
 #include <functional>
 #include <tuple>
+
+#include <socialnet-1.h>
+
 #include "picojson.h"
 #include "distsn.h"
 
@@ -25,6 +28,7 @@ public:
 	string avatar;
 	string type;
 	string url;
+	socialnet::eImplementation implementation;
 	bool blacklisted;
 public:
 	SearchResult ():
@@ -35,6 +39,7 @@ public:
 		user (a_user),
 		at (a_at),
 		text (a_text),
+		implementation (socialnet::eImplementation::UNKNOWN),
 		blacklisted (false)
 		{};
 	bool operator < (const SearchResult &r) const {
@@ -50,6 +55,7 @@ public:
 		json += string {"\"avatar\":\""} + escape_json (avatar) + string {"\","};
 		json += string {"\"type\":\""} + escape_json (type) + string {"\","};
 		json += string {"\"url\":\""} + escape_json (url) + string {"\","};
+		json += string {"\"implementation\":\""} + socialnet::format (implementation) + string {"\","};
 		json += string {"\"blacklisted\":"} + (blacklisted? string {"true"}: string {"false"});
 		json += string {"}"};
 		return json;
@@ -132,6 +138,7 @@ int main (int argc, char **argv)
 			result.avatar = users_to_profile.at (user).avatar;
 			result.type = users_to_profile.at (user).type;
 			result.url = users_to_profile.at (user).url;
+			result.implementation = users_to_profile.at (user).implementation;
 		}
 	}
 

@@ -71,7 +71,7 @@ int main (int argc, char **argv)
 		string bio;
 		string avatar;
 		string type;
-		string url = string {"https://"} + host + string {"/users/"} + user;
+		string url = string {"https://"} + user.host + string {"/users/"} + user.user;
 		auto implementation = socialnet::eImplementation::UNKNOWN;
 		
 		if (peaceful_age_count < 16) {

@@ -42,7 +42,8 @@ int main (int argc, char **argv)
 					<< "\"screen_name\":\"\","
 					<< "\"avatar\":\"\","
 					<< "\"type\":\"\","
-					<< "\"url\":\"\"";
+					<< "\"url\":\"\","
+					<< "\"implementation\":\"unknown\"";
 			} else {
 				Profile profile = users_to_profile.at (User {user.host, user.username});
 				cout << "\"screen_name\":\"" << escape_json (profile.screen_name) << "\",";
@@ -52,7 +53,8 @@ int main (int argc, char **argv)
 					cout << "\"avatar\":\"\",";
 				}
 				cout << "\"type\":\"" << escape_json (profile.type) << "\",";
-				cout << "\"url\":\"" << escape_json (profile.url) << "\"";
+				cout << "\"url\":\"" << escape_json (profile.url) << "\",";
+				cout << "\"implementation\":\"" << socialnet::format (profile.implementation) << "\"";
 			}
 		cout
 			<< "}";
