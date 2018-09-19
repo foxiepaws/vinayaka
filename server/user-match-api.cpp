@@ -229,7 +229,8 @@ static string format_result
 				<< "\"bio\":\"\","
 				<< "\"avatar\":\"\","
 				<< "\"type\":\"\","
-				<< "\"url\":\"\",";
+				<< "\"url\":\"\","
+				<< "\"implementation\":\"unknown\",";
 		} else {
 			Profile profile = users_to_profile.at (User {speaker.host, speaker.user});
 			out
