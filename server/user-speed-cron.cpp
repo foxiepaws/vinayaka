@@ -83,7 +83,7 @@ static void for_host (shared_ptr <socialnet::Host> host)
 	}
 
 	/* Get timeline. */
-	vector <socialnet::Status> toots = host->get_local_timeline (60 * 60 * 3);
+	vector <socialnet::Status> toots = host->get_local_timeline (60 * 60 * 6);
 
 	if (toots.size () < 1) {
 		cerr << host->host_name << " too few toots " << toots.size () << endl;

@@ -124,7 +124,7 @@ static void for_host (shared_ptr <socialnet::Host> socialnet_host)
 		}
 	}
 
-	auto toots = socialnet_host->get_local_timeline (3 * 60 * 60);
+	auto toots = socialnet_host->get_local_timeline (60 * 60 * 6);
 
 	for (auto toot: toots) {
 		if (valid_username (toot.user_name)) {
