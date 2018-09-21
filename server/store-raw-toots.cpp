@@ -52,7 +52,9 @@ static const unsigned int history_variations = 24;
 	
 static void get_and_save_toots (vector <User> users)
 {
-	auto http = make_shared <socialnet::Http> ();
+	socialnet::Hosts hosts;
+	hosts.initialize ();
+
 	vector <pair <User, vector <string>>> users_and_toots;
 
 	unsigned int peaceful_age_count = 0;
@@ -61,7 +63,10 @@ static void get_and_save_toots (vector <User> users)
 		try {
 			cerr << user.user << "@" << user.host << endl;
 			
-			auto socialnet_user = socialnet::make_user (user.host, user.user, http);
+			auto socialnet_user = hosts.make_user (user.host, user.user);
+			if (! socialnet_user) {
+				throw (socialnet::UserException {__LINE__});
+			}
 			
 			string screen_name;
 			string bio;

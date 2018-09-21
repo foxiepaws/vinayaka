@@ -196,7 +196,8 @@ static vector <UserAndFirstToot> get_users_in_all_hosts (unsigned int limit, set
 
 static void get_profile_for_all_users (vector <UserAndFirstToot> &users_and_first_toots)
 {
-	auto http = make_shared <socialnet::Http> ();
+	socialnet::Hosts hosts;
+	hosts.initialize ();
 
 	unsigned int peaceful_age_count = 0;
 
@@ -213,7 +214,10 @@ static void get_profile_for_all_users (vector <UserAndFirstToot> &users_and_firs
 		if (peaceful_age_count < 16) {
 			try {
 				cerr << user << "@" << host << endl;
-				auto socialnet_user = socialnet::make_user (host, user, http);
+				auto socialnet_user = hosts.make_user (host, user);
+				if (! socialnet_user) {
+					throw (socialnet::UserException {__LINE__});
+				}
 				url = socialnet_user->url ();
 				implementation = socialnet_user->host->implementation ();
 				socialnet_user->get_profile (screen_name, bio, avatar, type);

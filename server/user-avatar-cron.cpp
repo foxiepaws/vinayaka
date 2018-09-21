@@ -61,7 +61,9 @@ int main (int argc, char **argv)
 {
 	auto users = get_users ();
 	vector <pair <User, Profile>> users_and_profiles;
-	auto http = make_shared <socialnet::Http> ();
+
+	socialnet::Hosts hosts;
+	hosts.initialize ();
 	
 	unsigned int peaceful_age_count = 0;
 	
@@ -76,7 +78,10 @@ int main (int argc, char **argv)
 		
 		if (peaceful_age_count < 16) {
 			try {
-				auto socialnet_user = socialnet::make_user (user.host, user.user, http);
+				auto socialnet_user = hosts.make_user (user.host, user.user);
+				if (! socialnet_user) {
+					throw (socialnet::UserException {__LINE__});
+				}
 				url = socialnet_user->url ();
 				implementation = socialnet_user->host->implementation ();
 				socialnet_user->get_profile (screen_name, bio, avatar, type);
