@@ -59,7 +59,9 @@ static void write_to_storage (vector <pair <User, Profile>> users_and_profiles, 
 
 int main (int argc, char **argv)
 {
-	auto users = get_users ();
+	vector <User> users = get_users ();
+	sort (users.begin (), users.end ());
+
 	vector <pair <User, Profile>> users_and_profiles;
 
 	socialnet::Hosts hosts;
@@ -78,7 +80,7 @@ int main (int argc, char **argv)
 		auto implementation = socialnet::eImplementation::UNKNOWN;
 		
 		if (peaceful_age_count < 16) {
-			cerr << cn << " " << user.user << "@" << user.host << endl;
+			cerr << cn << " " << user.host << " " << user.user << endl;
 
 			try {
 				auto socialnet_user = hosts.make_user (user.host, user.user);
