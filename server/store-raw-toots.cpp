@@ -8,6 +8,7 @@
 #include <fstream>
 #include <set>
 #include <random>
+#include <algorithm>
 
 #include <socialnet-1.h>
 
@@ -111,6 +112,7 @@ static void get_and_save_toots (vector <User> users)
 int main (int argc, char **argv)
 {
 	auto users = get_users ();
+	sort (users.begin (), users.end ());
 	get_and_save_toots (users);
 }
 

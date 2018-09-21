@@ -8,6 +8,7 @@
 #include <fstream>
 #include <set>
 #include <random>
+#include <algorithm>
 
 #include <socialnet-1.h>
 
