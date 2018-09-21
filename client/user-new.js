@@ -1,44 +1,8 @@
-var g_language
-
 
 function mediaProxy (image) {
 	return 'https://images.weserv.nl/?url=' +
 		encodeURIComponent (image.replace (/^http(s)?\:\/\//, '')) +
 		'&errorredirect=' + encodeURIComponent ('vinayaka.distsn.org/missing.png')
-}
-
-
-window.addEventListener ('load', function () {
-	if (window.navigator.language === 'ja' || window.navigator.language.startsWith ('ja-')) {
-		g_language = 'ja'
-		setJapaneseMessages ();
-	} else {
-		g_language = 'en'
-	}
-}, false)
-
-
-function setJapaneseMessages () {
-	var messages = {
-		'm-matching': 'マッチング',
-		'm-users': 'ユーザー',
-		'm-instances': 'インスタンス',
-		'm-code': 'コード',
-		'm-donation': 'かねくれ',
-		'm-newcomers': 'マストドンとプレロマのあたらしいユーザー',
-		'm-search': 'さがす',
-		'm-new': 'あたらしい',
-		'm-active': 'アクティブ',
-		'm-optout': 'オプトアウト',
-		'anti-harassment-message': 'ボット、スパム、ハラスメントをつうほうするには <a href="https://github.com/distsn/vinayaka/blob/master/server/blacklisted_users.csv" target="_blank">blacklisted_users.csv</a> にプルリクエストをおくってください。',
-		'm-media-proxy': 'あなたのプライバシー: アバターは <a href="https://images.weserv.nl" target="_blank">images.weserv.nl</a> によりホストされています。'
-	}
-	for (var id in messages) {
-		var placeholder = document.getElementById (id);
-		if (placeholder) {
-			placeholder.innerHTML = messages[id]
-		}
-	}
 }
 
 

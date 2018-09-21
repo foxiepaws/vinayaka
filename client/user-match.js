@@ -1,50 +1,8 @@
 
-var g_language
-
-
 function mediaProxy (image) {
 	return 'https://images.weserv.nl/?url=' +
 		encodeURIComponent (image.replace (/^http(s)?\:\/\//, '')) +
 		'&errorredirect=' + encodeURIComponent ('vinayaka.distsn.org/missing.png')
-}
-
-
-window.addEventListener ('load', function () {
-	if (window.navigator.language === 'ja' || window.navigator.language.startsWith ('ja-')) {
-		g_language = 'ja'
-		setJapaneseMessages ();
-	} else {
-		g_language = 'en'
-	}
-}, false)
-
-
-function setJapaneseMessages () {
-	var messages = {
-		'm-matching': 'マッチング',
-		'm-users': 'ユーザー',
-		'm-instances': 'インスタンス',
-		'm-code': 'コード',
-		'm-donation': 'かねくれ',
-		'm-mastodon-user-matching': 'マストドンとプレロマのユーザーマッチング',
-		'm-search': 'さがす',
-		'm-new': 'あたらしい',
-		'm-active': 'アクティブ',
-		'm-optout': 'オプトアウト',
-		'm-description': 'つかっていることばでマッチング。あなたとにている、マストドンまたはプレロマのユーザーを、さがします。ことばは、スクリーンネームとプロフィールとトゥートにでてくるものを、つかいます。',
-		'm-user-input': 'あなたのユーザーめいと、インスタンスのホストめい (れい: nullkal@mstdn.jp)',
-		'anti-harassment-message': 'ボット、スパム、ハラスメントをつうほうするには <a href="https://github.com/distsn/vinayaka/blob/master/server/blacklisted_users.csv" target="_blank">blacklisted_users.csv</a> にプルリクエストをおくってください。',
-		'm-media-proxy': 'あなたのプライバシー: アバターは <a href="https://images.weserv.nl" target="_blank">images.weserv.nl</a> によりホストされています。'
-	}
-	for (var id in messages) {
-		var placeholder = document.getElementById (id);
-		if (placeholder) {
-			placeholder.innerHTML = messages[id]
-		}
-	}
-	document.getElementById　('search-button').value = 'さがす'
-	document.getElementById　('detail-button').value = 'くわしく'
-	document.getElementById　('share-button').value = 'シェア'
 }
 
 
@@ -69,8 +27,7 @@ function search (detail) {
 	} else {
 		document.getElementById ('placeholder').innerHTML =
 			'<strong>' +
-			(g_language === 'ja'? 'ユーザーめいと、ホストめいが、わかりません。':
-			'Username or instance is not available.') +
+			'User name or instance is not available.' +
 			'</strong>'
 	}
 }
@@ -104,15 +61,13 @@ function search_impl (host, user, detail) {
 				} catch (e) {
 					document.getElementById ('placeholder').innerHTML =
 						'<strong>' +
-						(g_language === 'ja'? 'ぜつぼうとなかよくなろうよ。':
-						'Sorry.') +
+						'Sorry.' +
 						'</strong>'
 				}
 			} else {
 				document.getElementById ('placeholder').innerHTML =
 					'<strong>' +
-					(g_language === 'ja'? 'じょうほうがえられませんでした。':
-					'Sorry.') +
+					'Sorry.' +
 					'</strong>'
 			}
 		}
@@ -120,8 +75,7 @@ function search_impl (host, user, detail) {
 	document.getElementById ('anti-harassment-message').setAttribute ('style', 'display:none;');
 	document.getElementById ('placeholder').innerHTML =
 		'<strong>' +
-		(g_language === 'ja'? 'おまちください。':
-		'Searching... (about 60 seconds)') +
+		'Searching... (about 60 seconds)' +
 		'</strong>'
 	document.getElementById ('search-button').setAttribute ('disabled', 'disabled');
 	document.getElementById ('detail-button').setAttribute ('disabled', 'disabled');
@@ -201,12 +155,8 @@ for (cn = 0; cn < users.length && cn < limit + number_of_blacklisted_users; cn +
 		(! (user.host === current_host && user.user === current_user)))
 	{
 		var user_html = '';
-		var m_following =
-			(g_language === 'ja'? 'フォローしています':
-			'Following')
-		var m_similarity =
-			(g_language === 'ja'? 'スコア':
-			'Similarity')
+		var m_following = 'Following'
+		var m_similarity = 'Similarity'
 		var m_bot = 'Bot'
 		if (user.blacklisted) {
 			number_of_blacklisted_users ++;
@@ -299,32 +249,17 @@ var g_share_intent = '';
 
 function activate_share_button (users, current_host, current_user) {
 	var intent = '';
-	if (g_language === 'ja') {
-		intent += '@' + current_user + '@' + current_host + ' ' +
-			'ににているユーザー' + "\n\n";
-		for (var cn = 0; cn < 6 && cn < users.length; cn ++) {
-			var user = users[cn];
-			if (! (user.host === current_host && user.user === current_user)) {
-				intent += user.user + '@' + user.host + "\n";
-			}
+	intent += '@' + current_user + '@' + current_host + ' ' +
+		'is similar to:' + "\n\n";
+	for (var cn = 0; cn < 6 && cn < users.length; cn ++) {
+		var user = users[cn];
+		if (! (user.host === current_host && user.user === current_user)) {
+			intent += '@' + user.user + '@' + user.host + "\n";
 		}
-		intent += "\n";
-		intent += 'マストドンユーザーマッチング' + "\n";
-		intent += 'http://vinayaka.distsn.org' + "\n";
-		intent += '#マストドンユーザーマッチング' + "\n";
-	} else {
-		intent += '@' + current_user + '@' + current_host + ' ' +
-			'is similar to:' + "\n\n";
-		for (var cn = 0; cn < 6 && cn < users.length; cn ++) {
-			var user = users[cn];
-			if (! (user.host === current_host && user.user === current_user)) {
-				intent += user.user + '@' + user.host + "\n";
-			}
-		}
-		intent += "\n";
-		intent += 'http://MastodonUserMatching.tk' + "\n";
-		intent += '#MastodonUserMatching' + "\n";
 	}
+	intent += "\n";
+	intent += 'http://MastodonUserMatching.tk' + "\n";
+	intent += '#MastodonUserMatching' + "\n";
 	g_share_intent = intent;
 	document.getElementById ('share-button').removeAttribute ('style');
 };

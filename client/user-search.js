@@ -1,46 +1,8 @@
-var g_language
-
 
 function mediaProxy (image) {
 	return 'https://images.weserv.nl/?url=' +
 		encodeURIComponent (image.replace (/^http(s)?\:\/\//, '')) +
 		'&errorredirect=' + encodeURIComponent ('vinayaka.distsn.org/missing.png')
-}
-
-
-window.addEventListener ('load', function () {
-	if (window.navigator.language === 'ja' || window.navigator.language.startsWith ('ja-')) {
-		g_language = 'ja'
-		setJapaneseMessages ();
-	} else {
-		g_language = 'en'
-	}
-}, false)
-
-
-function setJapaneseMessages () {
-	var messages = {
-		'm-matching': 'マッチング',
-		'm-users': 'ユーザー',
-		'm-instances': 'インスタンス',
-		'm-code': 'コード',
-		'm-donation': 'かねくれ',
-		'm-mastodon-pleroma-user-search': 'マストドンとプレロマのユーザーをさがす',
-		'm-search': 'さがす',
-		'm-new': 'あたらしい',
-		'm-active': 'アクティブ',
-		'm-optout': 'オプトアウト',
-		'm-description': 'ユーザーめい、スクリーンネーム、プロフィールでユーザーをさがします。',
-		'anti-harassment-message': 'ボット、スパム、ハラスメントをつうほうするには <a href="https://github.com/distsn/vinayaka/blob/master/server/blacklisted_users.csv" target="_blank">blacklisted_users.csv</a> にプルリクエストをおくってください。',
-		'm-media-proxy': 'あなたのプライバシー: アバターは <a href="https://images.weserv.nl" target="_blank">images.weserv.nl</a> によりホストされています。'
-	}
-	for (var id in messages) {
-		var placeholder = document.getElementById (id);
-		if (placeholder) {
-			placeholder.innerHTML = messages[id]
-		}
-	}
-	document.getElementById　('search-button').value = 'さがす'
 }
 
 
@@ -51,8 +13,7 @@ function search () {
 	} else {
 		document.getElementById ('placeholder').innerHTML =
 			'<strong>' +
-			(g_language === 'ja'? 'キーワードが入力されていません。':
-			'Keyword is not available.') +
+			'Keyword is not available.' +
 			'</strong>'
 	}
 }
@@ -75,15 +36,13 @@ function search_impl (keyword) {
 				} catch (e) {
 					document.getElementById ('placeholder').innerHTML =
 						'<strong>' +
-						(g_language === 'ja'? 'ぜつぼうとなかよくなろうよ。':
-						'Sorry.') +
+						'Sorry.' +
 						'</strong>'
 				}
 			} else {
 				document.getElementById ('placeholder').innerHTML =
 					'<strong>' +
-					(g_language === 'ja'? 'じょうほうがえられませんでした。':
-					'Sorry.') +
+					'Sorry.' +
 					'</strong>'
 			}
 		}
@@ -91,8 +50,7 @@ function search_impl (keyword) {
 	document.getElementById ('anti-harassment-message').setAttribute ('style', 'display:none;');
 	document.getElementById ('placeholder').innerHTML =
 		'<strong>' +
-		(g_language === 'ja'? 'おまちください。':
-		'Searching...') +
+		'Searching...' +
 		'</strong>'
 	document.getElementById ('search-button').setAttribute ('disabled', 'disabled');
 	request.send ();
@@ -130,9 +88,7 @@ function show_users (users) {
 	if (users.length <= 100) {
 		show_users_impl (users)
 	} else {
-		var message =
-			(g_language === 'ja'? users.length + ' けん、みつかりました。つづけてもよろしいですか？':
-				users.length + ' users found.')
+		var message = users.length + ' users found.'
 		var reply = window.confirm (message)
 		if (reply) {
 			show_users_impl (users)
@@ -140,8 +96,7 @@ function show_users (users) {
 			var placeholder = document.getElementById ('placeholder');
 			var html =
 				'<p>' +
-				(g_language === 'ja'? users.length + ' ユーザー':
-					users.length + ' users found') +
+				users.length + ' users found' +
 				'</p>'
 			placeholder.innerHTML = html
 		}
