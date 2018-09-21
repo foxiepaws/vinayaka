@@ -66,9 +66,13 @@ int main (int argc, char **argv)
 	hosts.initialize ();
 	
 	unsigned int peaceful_age_count = 0;
-	
+
+	unsigned int cn = 0;
+
 	for (auto user: users) {
-		cerr << user.user << "@" << user.host << endl;
+		cerr << cn << " " << user.user << "@" << user.host << endl;
+		cn ++;
+
 		string screen_name;
 		string bio;
 		string avatar;
