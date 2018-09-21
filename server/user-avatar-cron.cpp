@@ -70,9 +70,6 @@ int main (int argc, char **argv)
 	unsigned int cn = 0;
 
 	for (auto user: users) {
-		cerr << cn << " " << user.user << "@" << user.host << endl;
-		cn ++;
-
 		string screen_name;
 		string bio;
 		string avatar;
@@ -81,6 +78,8 @@ int main (int argc, char **argv)
 		auto implementation = socialnet::eImplementation::UNKNOWN;
 		
 		if (peaceful_age_count < 16) {
+			cerr << cn << " " << user.user << "@" << user.host << endl;
+
 			try {
 				auto socialnet_user = hosts.make_user (user.host, user.user);
 				if (! socialnet_user) {
@@ -95,6 +94,8 @@ int main (int argc, char **argv)
 				cerr << "Error " << e.line << endl;
 			};
 		}
+
+		cn ++;
 
 		Profile profile;
 		profile.screen_name = screen_name;
