@@ -72,7 +72,7 @@ set <User> get_blacklisted_users ()
 
 vector <UserAndSpeed> get_users_and_speed ()
 {
-	vector <UserAndSpeed> users_and_speeds_raw = get_users_and_speed_impl (0.5 / (24.0 * 60.0 * 60.0));
+	vector <UserAndSpeed> users_and_speeds_raw = get_users_and_speed_impl (0.2 / (24.0 * 60.0 * 60.0));
 	
 	set <User> optouted_users = get_optouted_users ();
 	
