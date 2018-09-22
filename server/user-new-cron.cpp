@@ -7,6 +7,7 @@
 #include <sstream>
 #include <fstream>
 #include <set>
+#include <tuple>
 
 #include <socialnet-1.h>
 
@@ -159,6 +160,12 @@ static bool by_timestamp (const UserAndFirstToot &a, const UserAndFirstToot &b)
 }
 
 
+static bool by_host_name (const UserAndFirstToot &a, const UserAndFirstToot &b)
+{
+	return tuple <string, string> {a.host, a.user} < tuple <string, string> {b.host, b.user};
+}
+
+
 static vector <UserAndFirstToot> get_users_in_all_hosts (unsigned int limit, set <string> hosts)
 {
 	vector <UserAndFirstToot> users_in_all_hosts;
@@ -178,8 +185,6 @@ static vector <UserAndFirstToot> get_users_in_all_hosts (unsigned int limit, set
 			}
 		}
 	}
-
-	sort (users_in_all_hosts.begin (), users_in_all_hosts.end (), by_timestamp);
 
 	set <User> blacklisted_users = get_blacklisted_users ();
 	for (auto & users_and_first_toot: users_in_all_hosts) {
@@ -251,7 +256,11 @@ static void cache_sorted_result (set <string> hosts)
 		}
 	}
 
+	sort (newcomers.begin (), newcomers.end (), by_host_name);
+
 	get_profile_for_all_users (newcomers);
+
+	sort (newcomers.begin (), newcomers.end (), by_timestamp);
 
 	const string filename {"/var/lib/vinayaka/users-new-cache.json"};
 	FileLock {filename};
