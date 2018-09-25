@@ -11,6 +11,7 @@
 #include <random>
 
 #include <socialnet-1.h>
+#include <languagemodel-1.h>
 
 #include "picojson.h"
 #include "distsn.h"

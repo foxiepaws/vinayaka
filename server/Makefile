@@ -38,38 +38,51 @@ objects = \
 	user-new-cron.o \
 	user-search-api.o \
 	user-new-suggestions-api.o
+
 cgi_binaries = \
 	vinayaka-user-speed-api.cgi \
 	vinayaka-user-search-api.cgi \
 	vinayaka-user-match-filtered-api.cgi \
 	vinayaka-user-match-suggestions-api.cgi \
 	vinayaka-user-new-suggestions-api.cgi
+
 cron_binaries = \
 	vinayaka-user-avatar-cron \
 	vinayaka-user-speed-cron \
 	vinayaka-store-raw-toots-cron \
 	vinayaka-collect-raw-toots-cron \
 	vinayaka-user-new-cron
+
 impl_binaries = \
 	vinayaka-user-match-impl \
 	vinayaka-user-match-cache-fetcher \
 	vinayaka-user-match-cache-fetcher-osa \
 	vinayaka-clear-cache-impl
+
 impl_scripts = \
 	vinayaka-user-match-resource-guard
+
 binaries = $(cgi_binaries) $(cron_binaries) $(impl_binaries)
+
 cgi_scripts = \
 	vinayaka-user-match-api.cgi \
 	vinayaka-user-match-osa-api.cgi \
 	vinayaka-user-profiles-api.cgi \
 	vinayaka-user-new-api.cgi
+
 cron_scripts = \
 	vinayaka-clear-cache-cron \
 	vinayaka-https-renew-cron
+
 cgis = $(cgi_binaries) $(cgi_scripts)
+
 crons = $(cron_binaries) $(cron_scripts)
+
 impls = $(impl_binaries) $(impl_scripts)
+
 etcs = blacklisted_users.csv
+
+loading_libraries = -lsocialnet-1 -lcurl -ltinyxml2 -llanguagemodel-1
 
 .SUFFIXES: .cpp .o
 
@@ -79,46 +92,46 @@ etcs = blacklisted_users.csv
 all: $(binaries)
 
 vinayaka-user-match-impl: distsn.o user-match-api.o sort-user-speed.o
-	$(CXX) distsn.o user-match-api.o  sort-user-speed.o -lsocialnet-1 -lcurl -ltinyxml2 $(CFLAGS) -o $@
+	$(CXX) distsn.o user-match-api.o sort-user-speed.o $(loading_libraries) $(CFLAGS) -o $@
 
 vinayaka-user-avatar-cron: distsn.o user-avatar-cron.o sort-user-speed.o
-	$(CXX) distsn.o user-avatar-cron.o sort-user-speed.o -lsocialnet-1 -lcurl -ltinyxml2 $(CFLAGS) -o $@
+	$(CXX) distsn.o user-avatar-cron.o sort-user-speed.o $(loading_libraries)  $(CFLAGS) -o $@
 
 vinayaka-user-match-cache-fetcher: distsn.o cache-fetcher.o
-	$(CXX) distsn.o cache-fetcher.o -lsocialnet-1 -lcurl -ltinyxml2 $(CFLAGS) -o $@
+	$(CXX) distsn.o cache-fetcher.o $(loading_libraries) $(CFLAGS) -o $@
 
 vinayaka-user-match-cache-fetcher-osa: distsn.o cache-fetcher-osa.o
-	$(CXX) distsn.o cache-fetcher-osa.o -lsocialnet-1 -lcurl -ltinyxml2 $(CFLAGS) -o $@
+	$(CXX) distsn.o cache-fetcher-osa.o $(loading_libraries) $(CFLAGS) -o $@
 
 vinayaka-user-match-filtered-api.cgi: distsn.o cache-fetcher-filtered.o
-	$(CXX) distsn.o cache-fetcher-filtered.o -lsocialnet-1 -lcurl -ltinyxml2 $(CFLAGS) -o $@
+	$(CXX) distsn.o cache-fetcher-filtered.o $(loading_libraries) $(CFLAGS) -o $@
 
 vinayaka-user-match-suggestions-api.cgi: distsn.o cache-fetcher-suggestions.o
-	$(CXX) distsn.o cache-fetcher-suggestions.o -lsocialnet-1 -lcurl -ltinyxml2 $(CFLAGS) -o $@
+	$(CXX) distsn.o cache-fetcher-suggestions.o $(loading_libraries) $(CFLAGS) -o $@
 
 vinayaka-user-speed-cron: distsn.o user-speed-cron.o
-	$(CXX) distsn.o user-speed-cron.o -lsocialnet-1 -lcurl -ltinyxml2 $(CFLAGS) -o $@
+	$(CXX) distsn.o user-speed-cron.o $(loading_libraries) $(CFLAGS) -o $@
 
 vinayaka-user-speed-api.cgi: distsn.o sort-user-speed.o user-speed-api.o
-	$(CXX) distsn.o sort-user-speed.o user-speed-api.o -lsocialnet-1 -lcurl -ltinyxml2 $(CFLAGS) -o $@
+	$(CXX) distsn.o sort-user-speed.o user-speed-api.o $(loading_libraries) $(CFLAGS) -o $@
 
 vinayaka-clear-cache-impl: distsn.o clear-cache-impl.o
-	$(CXX) distsn.o clear-cache-impl.o -lsocialnet-1 -lcurl -ltinyxml2 $(CFLAGS) -o $@
+	$(CXX) distsn.o clear-cache-impl.o $(loading_libraries) $(CFLAGS) -o $@
 
 vinayaka-store-raw-toots-cron: distsn.o sort-user-speed.o store-raw-toots.o
-	$(CXX) distsn.o sort-user-speed.o store-raw-toots.o -lsocialnet-1 -lcurl -ltinyxml2 $(CFLAGS) -o $@
+	$(CXX) distsn.o sort-user-speed.o store-raw-toots.o $(loading_libraries) $(CFLAGS) -o $@
 
 vinayaka-collect-raw-toots-cron: distsn.o sort-user-speed.o collect-raw-toots.o
-	$(CXX) distsn.o sort-user-speed.o collect-raw-toots.o -lsocialnet-1 -lcurl -ltinyxml2 $(CFLAGS) -o $@
+	$(CXX) distsn.o sort-user-speed.o collect-raw-toots.o $(loading_libraries) $(CFLAGS) -o $@
 
 vinayaka-user-new-cron: distsn.o sort-user-speed.o user-new-cron.o
-	$(CXX) distsn.o sort-user-speed.o user-new-cron.o -lsocialnet-1 -lcurl -ltinyxml2 $(CFLAGS) -o $@
+	$(CXX) distsn.o sort-user-speed.o user-new-cron.o $(loading_libraries) $(CFLAGS) -o $@
 
 vinayaka-user-search-api.cgi: distsn.o sort-user-speed.o user-search-api.o
-	$(CXX) distsn.o sort-user-speed.o user-search-api.o -lsocialnet-1 -lcurl -ltinyxml2 $(CFLAGS) -o $@
+	$(CXX) distsn.o sort-user-speed.o user-search-api.o $(loading_libraries) $(CFLAGS) -o $@
 
 vinayaka-user-new-suggestions-api.cgi: distsn.o sort-user-speed.o user-new-suggestions-api.o
-	$(CXX) distsn.o sort-user-speed.o user-new-suggestions-api.o -lsocialnet-1 -lcurl -ltinyxml2 $(CFLAGS) -o $@
+	$(CXX) distsn.o sort-user-speed.o user-new-suggestions-api.o $(loading_libraries) $(CFLAGS) -o $@
 
 install: $(cgis)
 	$(INSTALL_PROGRAM) $(cgis) --target-directory=$(cgidir)

@@ -9,6 +9,9 @@
 #include <set>
 #include <random>
 #include <limits>
+
+#include <languagemodel-1.h>
+
 #include "picojson.h"
 #include "distsn.h"
 
