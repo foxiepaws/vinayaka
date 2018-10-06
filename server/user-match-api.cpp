@@ -325,8 +325,12 @@ int main (int argc, char **argv)
 	socialnet_user->get_profile (screen_name, bio, avatar, type);
 
 	vector <string> toots;
-	toots.push_back (screen_name);
-	toots.push_back (bio);
+	if (! screen_name.empty ()) {
+		toots.push_back (screen_name);
+	}
+	if (! bio.empty ()) {
+		toots.push_back (bio);
+	}
 
 	vector <socialnet::Status> socialnet_statuses = socialnet_user->get_timeline (10);
 
