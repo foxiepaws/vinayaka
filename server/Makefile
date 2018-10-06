@@ -37,14 +37,16 @@ objects = \
 	collect-raw-toots.o \
 	user-new-cron.o \
 	user-search-api.o \
-	user-new-suggestions-api.o
+	user-new-suggestions-api.o \
+	cache-fetcher-misskey.o
 
 cgi_binaries = \
 	vinayaka-user-speed-api.cgi \
 	vinayaka-user-search-api.cgi \
 	vinayaka-user-match-filtered-api.cgi \
 	vinayaka-user-match-suggestions-api.cgi \
-	vinayaka-user-new-suggestions-api.cgi
+	vinayaka-user-new-suggestions-api.cgi \
+	vinayaka-user-match-misskey-api.cgi
 
 cron_binaries = \
 	vinayaka-user-avatar-cron \
@@ -132,6 +134,9 @@ vinayaka-user-search-api.cgi: distsn.o sort-user-speed.o user-search-api.o
 
 vinayaka-user-new-suggestions-api.cgi: distsn.o sort-user-speed.o user-new-suggestions-api.o
 	$(CXX) distsn.o sort-user-speed.o user-new-suggestions-api.o $(loading_libraries) $(CFLAGS) -o $@
+
+vinayaka-user-match-misskey-api.cgi: distsn.o cache-fetcher-misskey.o
+	$(CXX) distsn.o cache-fetcher-misskey.o $(loading_libraries) $(CFLAGS) -o $@
 
 install: $(cgis)
 	$(INSTALL_PROGRAM) $(cgis) --target-directory=$(cgidir)
