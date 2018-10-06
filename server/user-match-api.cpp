@@ -333,6 +333,11 @@ int main (int argc, char **argv)
 	for (unsigned int cn = 0; cn < socialnet_statuses.size () && cn < 80; cn ++) {
 		toots.push_back (socialnet_statuses.at (cn).content);
 	}
+	
+	if (toots.size () < 4) {
+		cerr << "toots.size () = " << toots.size () << endl;
+		exit (1);
+	}
 
 	const unsigned int vocabulary_size {1600};
 	vector <ModelTopology> models = {
