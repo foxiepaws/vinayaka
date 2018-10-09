@@ -51,7 +51,8 @@ int main (int argc, char **argv)
 			/* Do nothing */
 		} else if (pid == 0) {
 			/* Child */
-			execl ("/usr/lib/cgi-bin/inayaka-user-match-api.cgi", user.host.c_str (), user.user.c_str ());
+			string path {"/usr/lib/cgi-bin/vinayaka-user-match-api.cgi"};
+			execl (path.c_str (), user.host.c_str (), user.user.c_str ());
 		} else {
 			/* Parent */
 			int status = 0;
