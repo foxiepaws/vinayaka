@@ -64,6 +64,7 @@ Write following code in crontab:
 24 *   * * * /usr/local/bin/vinayaka-clear-cache-cron
 30 */6 * * * /usr/local/bin/vinayaka-collect-raw-toots-cron
 36 */6 * * * /usr/local/bin/vinayaka-store-raw-toots-cron
+42 */4 * * * /usr/local/bin/vinayaka-prefetch-cron
 ```
 
 Write following code in crontab for the root:
