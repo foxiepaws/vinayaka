@@ -52,7 +52,7 @@ int main (int argc, char **argv)
 		} else if (pid == 0) {
 			/* Child */
 			string path {"/usr/lib/cgi-bin/vinayaka-user-match-api.cgi"};
-			auto result = execl (path.c_str (), user.host.c_str (), user.user.c_str ());
+			auto result = execl (path.c_str (), path.c_str (), user.host.c_str (), user.user.c_str (), nullptr);
 			if (result < 0) {
 				cerr << "Can not exec: " << errno << endl;
 			}
