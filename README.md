@@ -23,6 +23,9 @@ http://vinayaka.distsn.org/cgi-bin/vinayaka-user-match-osa-api.cgi?mastodon.soci
 http://vinayaka.distsn.org/cgi-bin/vinayaka-user-match-suggestions-api.cgi?mastodon.social+Gargron  
 (マストドン公式 `/api/v1/suggestions` 互換)
 
+http://vinayaka.distsn.org/cgi-bin/vinayaka-user-match-misskey-api.cgi?mastodon.social+Gargron
+(Misskey `/api/users/recommendation` 互換)
+
 ### ユーザーを検索
 
 ユーザー名、スクリーンネーム、bioを検索します。
