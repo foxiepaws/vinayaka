@@ -51,4 +51,5 @@ vinayaka-user-match-filtered-api.cgi
 vinayaka-user-match-suggestions-api.cgi
 vinayaka-user-new-suggestions-api.cgi
 vinayaka-user-match-misskey-api.cgi
+vinayaka-prefetch-cron
 
