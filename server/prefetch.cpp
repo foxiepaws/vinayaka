@@ -46,7 +46,7 @@ int main (int argc, char **argv)
 		}
 	}
 
-	for (unsigned int cn = 0; cn < 720 && cn < misskey_users.size (); cn ++) {
+	for (unsigned int cn = 0; cn < 8 * 60 && cn < misskey_users.size (); cn ++) {
 		auto user = misskey_users.at (cn);
 		cerr << cn << " " << user.host << " " << user.user << endl;
 
