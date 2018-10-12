@@ -360,7 +360,8 @@ string fetch_cache (string a_host, string a_user, bool & a_hit)
 
 	time_t now = time (nullptr);
 
-	for (auto row: table) {
+	for (auto row_iter = table.rbegin (); row_iter != table.rend (); row_iter ++) {
+		auto row {* row_iter};
 		if (3 < row.size ()
 			&& row.at (0) == a_host
 			&& row.at (1) == a_user)
