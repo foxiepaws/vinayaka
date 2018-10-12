@@ -36,7 +36,12 @@ int main (int argc, char **argv)
 	for (auto user: all_users) {
 		string host_name = user.host;
 		auto host = hosts.get (host_name);
-		if (host && host->implementation () == socialnet::eImplementation::MISSKEY) {
+		if (host
+			&& (host->implementation () == socialnet::eImplementation::GNUSOCIAL
+				|| host->implementation () == socialnet::eImplementation::PLEROMA
+				|| host->implementation () == socialnet::eImplementation::MISSKEY
+			)
+		) {
 			misskey_users.push_back (user);
 		}
 	}
