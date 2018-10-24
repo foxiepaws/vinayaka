@@ -46,18 +46,7 @@ for (cn = 0; cn < users.length; cn ++) {
 	var user;
 	user = users [cn];
 	var user_html = '';
-	if (user.blacklisted) {
-		user_html =
-			'<p>' +
-			'<img class="avatar" src="blacklisted.png">' +
-			'<span class="headline">' + escapeHtml (user.user) + '@<wbr>' + escapeHtml (user.host) + ' ' +
-			'<a class="icon" href="javascript:openBlacklistExplanation()">?</a>' +
-			'</span>' +
-			'<br>' +
-			'<small>' + (new Date (1000 * user.first_toot_timestamp)) + '</small>' +
-			(user.type === 'Service'? '<br><strong>' + m_bot + '</strong>': '') +
-			'</p>'
-	} else {
+	if (! user.blacklisted) {
 		user_html +=
 			'<p>' +
 			'<a href="' +

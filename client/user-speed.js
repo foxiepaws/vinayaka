@@ -85,19 +85,7 @@ for (cn = 0; cn < users.length; cn ++) {
 	user = users [cn];
 	var score_s = (user.manual_score_available? user.manual_score.toFixed (1): '<b style="color: red">?</b>');
 	var user_html = '';
-	if (user.blacklisted) {
-		user_html =
-			'<p>' +
-			'<img class="avatar" src="blacklisted.png">' +
-			'<span class="headline">' + escapeHtml (user.username) + '@<wbr>' + escapeHtml (user.host) + ' ' +
-			'<a class="icon" href="javascript:openBlacklistExplanation()">?</a>' +
-			'</span>' +
-			'<br>' +
-			(user.speed * 60 * 60 * 24).toFixed (1) + ' TPD' + ' ' +
-			'(' + (cn + 1).toFixed (0) + ')' +
-			(user.type === 'Service'? '<br><strong>' + m_bot + '</strong>': '') +
-			'</p>';
-	} else {
+	if (! user.blacklisted) {
 		user_html +=
 			'<p>' +
 			'<a href="' +

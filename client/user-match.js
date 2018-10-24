@@ -151,14 +151,17 @@ var number_of_blacklisted_users = 0;
 for (cn = 0; cn < users.length && cn < limit + number_of_blacklisted_users; cn ++) {
 	var user;
 	user = users [cn];
-	if (detail ||
-		(! (user.host === current_host && user.user === current_user)))
+	var this_is_me;
+	this_is_me = (user.host === current_host && user.user === current_user)
+	var blacklisted
+	blacklisted = user.blacklisted
+	if (detail || ((! this_is_me) && (! blacklisted)))
 	{
 		var user_html = '';
 		var m_following = 'Following'
 		var m_similarity = 'Similarity'
 		var m_bot = 'Bot'
-		if (user.blacklisted) {
+		if (blacklisted) {
 			number_of_blacklisted_users ++;
 			user_html +=
 				'<p>' +
