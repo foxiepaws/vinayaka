@@ -138,17 +138,8 @@ var placeholder = document.getElementById ('placeholder');
 var html = '';
 var cn;
 var cn_intersection;
-var limit;
 
-if (detail) {
-	limit = 1000;
-} else {
-	limit = 100;
-}
-
-var number_of_blacklisted_users = 0;
-
-for (cn = 0; cn < users.length && cn < limit + number_of_blacklisted_users; cn ++) {
+for (cn = 0; cn < users.length; cn ++) {
 	var user;
 	user = users [cn];
 	var this_is_me;
@@ -162,7 +153,6 @@ for (cn = 0; cn < users.length && cn < limit + number_of_blacklisted_users; cn +
 		var m_similarity = 'Similarity'
 		var m_bot = 'Bot'
 		if (blacklisted) {
-			number_of_blacklisted_users ++;
 			user_html +=
 				'<p>' +
 				'<img class="avatar" src="blacklisted.png">' +
