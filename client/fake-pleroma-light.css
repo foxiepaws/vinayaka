@@ -106,6 +106,8 @@ input[type=text] {
 	color: #304055;
 	background-color: #dbe0e8;
 	border-color: #304055;
+	border-style: solid;
+	border-width: thin;
 }
 
 div.inputs {
