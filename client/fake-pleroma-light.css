@@ -68,8 +68,14 @@ a:visited.fake-button {
 input[type=button] {
 	color: #304055;
 	background-color: #dbe0e8;
-	border-style: none;
+	border-color: #f86f0f;
+	border-style: solid;
+	border-width: thin;
 	border-radius: 8px;
+}
+
+input[type=button][disabled=disabled] {
+	border-color: #dbe0e8;
 }
 
 input[type=button]:hover {
