@@ -102,6 +102,12 @@ input[type=text] {
 	height: 32px;
 }
 
+input[type=text] {
+	color: #304055;
+	background-color: #dbe0e8;
+	border-color: #304055;
+}
+
 div.inputs {
 	margin-right: 1em;
 }
