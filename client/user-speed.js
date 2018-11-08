@@ -8,7 +8,7 @@ function mediaProxy (image) {
 
 window.addEventListener ('load', function () {
 	var request = new XMLHttpRequest;
-	request.open ('GET', '/cgi-bin/vinayaka-user-speed-api.cgi?100');
+	request.open ('GET', '/cgi-bin/vinayaka-user-speed-api.cgi?400');
 	request.onload = function () {
 		if (request.readyState === request.DONE) {
 			if (request.status === 200) {
@@ -23,27 +23,8 @@ window.addEventListener ('load', function () {
 }, false); /* window.addEventListener ('load', function () { */
 
 
-window.load_1000 = function () {
-	document.getElementById ('a-1000').removeAttribute ('href');
-	var request = new XMLHttpRequest;
-	request.open ('GET', '/cgi-bin/vinayaka-user-speed-api.cgi?1000');
-	request.onload = function () {
-		if (request.readyState === request.DONE) {
-			if (request.status === 200) {
-				var response_text = request.responseText;
-				var users = JSON.parse (response_text);
-				show_users (users);
-				document.getElementById ('anti-harassment-message').removeAttribute ('style');
-			}
-		}
-	}
-	request.send ();
-};
-
-
 window.load_full = function () {
-	document.getElementById ('a-1000').removeAttribute ('href');
-	document.getElementById ('a-full').removeAttribute ('href');
+	document.getElementById ('p-show-all').setAttribute ('style', 'display:none');
 	var request = new XMLHttpRequest;
 	request.open ('GET', '/cgi-bin/vinayaka-user-speed-api.cgi');
 	request.onload = function () {
@@ -80,6 +61,8 @@ var boilerplate = (window.location.search === '?boilerplate');
 var placeholder = document.getElementById ('placeholder');
 var html = '';
 var cn;
+var visible_position
+visible_position = 0
 for (cn = 0; cn < users.length; cn ++) {
 	var user;
 	user = users [cn];
@@ -107,9 +90,10 @@ for (cn = 0; cn < users.length; cn ++) {
 			'</a>' +
 			'<br>' +
 			(user.speed * 60 * 60 * 24).toFixed (1) + ' TPD' + ' ' +
-			'(' + (cn + 1).toFixed (0) + ')' +
+			'(' + (visible_position + 1).toFixed (0) + ')' +
 			(user.type === 'Service'? '<br><strong>' + m_bot + '</strong>': '') +
 			'</p>';
+		visible_position ++
 	}
 	html += user_html;
 }
