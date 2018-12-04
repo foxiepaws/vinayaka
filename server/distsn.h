@@ -130,6 +130,7 @@ std::string fetch_cache (std::string a_host, std::string a_user, bool & a_hit);
 
 std::set <User> get_optouted_users ();
 
+bool described (std::string screen_name, std::string bio, std::string avatar);
 
 /* sort-user-speed.cpp */
 std::vector <UserAndSpeed> get_users_and_speed ();

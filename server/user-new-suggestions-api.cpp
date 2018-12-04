@@ -41,9 +41,9 @@ static string get_filtered_api (string in, set <socialnet::HostNameAndUserName> 
 		bool local = (host == listener_host);
 		string type = user_object.at (string {"type"}).get <string> ();
 		bool bot = (type == string {"Service"});
-		bool described = ((! screen_name.empty ()) && (! bio.empty ()) && bio != string {"<p></p>"} && (! avatar.empty ()));
+		bool described_bool = described (screen_name, bio, avatar);
 
-		if ((! local) && (! following_bool) && (! blacklisted) && (! bot) && described) {
+		if ((! local) && (! following_bool) && (! blacklisted) && (! bot) && described_bool) {
 			stringstream out_user;
 			out_user
 				<< "{"

@@ -400,6 +400,25 @@ set <User> get_optouted_users ()
 }
 
 
+static bool ends_with (string a, string b)
+{
+	return
+		b.size () <= a.size ()
+		&& a.substr (a.size () - b.size (), b.size ()) == b;
+}
+
+
+bool described (std::string screen_name, std::string bio, std::string avatar)
+{
+	return
+		(! screen_name.empty ())
+		&& (! bio.empty ())
+		&& bio != string {"<p></p>"}
+		&& (! avatar.empty ())
+		&& (! ends_with (avatar, string {"/avi.png"}));
+}
+
+
 FileLock::FileLock (string a_path, int operation)
 {
 	path = a_path;

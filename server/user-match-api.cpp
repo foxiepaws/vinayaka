@@ -422,9 +422,9 @@ int main (int argc, char **argv)
 			string screen_name = user_object.at (string {"screen_name"}).get <string> ();
 			string bio = user_object.at (string {"bio"}).get <string> ();
 			string avatar = user_object.at (string {"avatar"}).get <string> ();
-			bool described = ((! screen_name.empty ()) && (! bio.empty ()) && bio != string {"<p></p>"} && (! avatar.empty ()));
+			bool described_bool = described (screen_name, bio, avatar);
 
-			if (described) {
+			if (described_bool) {
 				UserAndSimilarity speaker_and_similarity;
 				speaker_and_similarity.host = host;
 				speaker_and_similarity.user = user;
