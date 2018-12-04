@@ -340,6 +340,7 @@ int main (int argc, char **argv)
 	
 	vector <UserAndSimilarity> speakers_and_similarity;
 	map <User, map <string, double>> speaker_to_intersection;
+	map <User, Profile> users_to_profile;
 
 	if (4 <= toots.size ()) {
 		/* Sorry to this long long scope. */
@@ -383,6 +384,9 @@ int main (int argc, char **argv)
 
 		cerr << "stable_sort" << endl;
 		stable_sort (speakers_and_similarity.begin (), speakers_and_similarity.end (), by_similarity_desc);
+
+		cerr << "read_profiles" << endl;
+		users_to_profile = read_profiles ();
 	} else {
 		/* toots.size () < 4 */
 		
@@ -422,6 +426,9 @@ int main (int argc, char **argv)
 			string screen_name = user_object.at (string {"screen_name"}).get <string> ();
 			string bio = user_object.at (string {"bio"}).get <string> ();
 			string avatar = user_object.at (string {"avatar"}).get <string> ();
+
+			string type = user_object.at (string {"type"}).get <string> ();
+
 			bool described_bool = described (screen_name, bio, avatar);
 
 			if (described_bool) {
@@ -434,12 +441,19 @@ int main (int argc, char **argv)
 				User speaker {host, user};
 				map <string, double> intersection;
 				speaker_to_intersection.insert (pair <User, map <string, double>> {speaker, intersection});
+				
+				Profile profile;
+				profile.screen_name = screen_name;
+				profile.bio = bio;
+				profile.avatar = avatar;
+				profile.type = type;
+				profile.url = string {};
+				profile.implementation = socialnet::eImplementation::UNKNOWN;
+				users_to_profile.insert (pair <User, Profile> {speaker, profile});
 			}
 		}
 	}
 
-	cerr << "read_profiles" << endl;
-	map <User, Profile> users_to_profile = read_profiles ();
 	cerr << "get_blacklisted_users" << endl;
 	set <User> blacklisted_users = get_blacklisted_users ();
 
