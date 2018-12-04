@@ -338,53 +338,105 @@ int main (int argc, char **argv)
 		toots.push_back (socialnet_statuses.at (cn).content);
 	}
 	
-	if (toots.size () < 4) {
-		cerr << "toots.size () = " << toots.size () << endl;
-		exit (1);
-	}
-
-	const unsigned int vocabulary_size {1600};
-	vector <ModelTopology> models = {
-		ModelTopology {6, vocabulary_size},
-	};
-	
-	cerr << "get_words_to_popularity" << endl;
-	map <string, unsigned int> words_to_popularity
-		= get_words_to_popularity (string {"/var/lib/vinayaka/model/popularity.csv"});
-		
-	cerr << "get_words_of_listener" << endl;
-	set <string> words_of_listener = get_words_of_listener (toots, models, words_to_popularity);
-	
-	cerr << "get_words_of_speakers" << endl;
-	map <User, set <string>> speaker_to_words
-		= get_words_of_speakers (string {"/var/lib/vinayaka/model/concrete-user-words.csv"});
-	
 	vector <UserAndSimilarity> speakers_and_similarity;
 	map <User, map <string, double>> speaker_to_intersection;
+
+	if (4 <= toots.size ()) {
+		/* Sorry to this long long scope. */
 	
-	cerr << "get_similarity" << endl;
-	unsigned int cn = 0;
-	for (auto speaker_and_words: speaker_to_words) {
-		if (cn % 100 == 0) {
-			cerr << cn << " ";
+		const unsigned int vocabulary_size {1600};
+		vector <ModelTopology> models = {
+			ModelTopology {6, vocabulary_size},
+		};
+	
+		cerr << "get_words_to_popularity" << endl;
+		map <string, unsigned int> words_to_popularity
+			= get_words_to_popularity (string {"/var/lib/vinayaka/model/popularity.csv"});
+		
+		cerr << "get_words_of_listener" << endl;
+		set <string> words_of_listener = get_words_of_listener (toots, models, words_to_popularity);
+	
+		cerr << "get_words_of_speakers" << endl;
+		map <User, set <string>> speaker_to_words
+			= get_words_of_speakers (string {"/var/lib/vinayaka/model/concrete-user-words.csv"});
+	
+		cerr << "get_similarity" << endl;
+		unsigned int cn = 0;
+		for (auto speaker_and_words: speaker_to_words) {
+			if (cn % 100 == 0) {
+				cerr << cn << " ";
+			}
+			cn ++;
+
+			User speaker = speaker_and_words.first;
+			set <string> words_of_speaker = speaker_and_words.second;
+			map <string, double> intersection;
+			double similarity = get_similarity (words_of_listener, words_of_speaker, intersection, words_to_popularity);
+			UserAndSimilarity speaker_and_similarity;
+			speaker_and_similarity.user = speaker.user;
+			speaker_and_similarity.host = speaker.host;
+			speaker_and_similarity.similarity = similarity;
+			speakers_and_similarity.push_back (speaker_and_similarity);
+			speaker_to_intersection.insert (pair <User, map <string, double>> {speaker, intersection});
 		}
-		cn ++;
+		cerr << endl;
 
-		User speaker = speaker_and_words.first;
-		set <string> words_of_speaker = speaker_and_words.second;
-		map <string, double> intersection;
-		double similarity = get_similarity (words_of_listener, words_of_speaker, intersection, words_to_popularity);
-		UserAndSimilarity speaker_and_similarity;
-		speaker_and_similarity.user = speaker.user;
-		speaker_and_similarity.host = speaker.host;
-		speaker_and_similarity.similarity = similarity;
-		speakers_and_similarity.push_back (speaker_and_similarity);
-		speaker_to_intersection.insert (pair <User, map <string, double>> {speaker, intersection});
+		cerr << "stable_sort" << endl;
+		stable_sort (speakers_and_similarity.begin (), speakers_and_similarity.end (), by_similarity_desc);
+	} else {
+		/* toots.size () < 4 */
+		
+		string s;
+		{
+			string file_name {"/var/lib/vinayaka/users-new-cache.json"};
+			FileLock lock {file_name, LOCK_SH};
+			FILE *in = fopen (file_name.c_str (), "r");
+			if (in == nullptr) {
+				cerr << file_name << " can not open." << endl;
+				exit (1);
+			}
+			for (; ; ) {
+			char b [1024];
+				auto fgets_return = fgets (b, 1024, in);
+				if (fgets_return == nullptr) {
+					break;
+				}
+				s += string {b};
+			}
+		}
+		picojson::value json_value;
+		string json_parse_error = picojson::parse (json_value, s);
+		if (! json_parse_error.empty ()) {
+			cerr << json_parse_error << endl;
+			exit (1);
+		}
+
+		auto users_array = json_value.get <picojson::array> ();
+
+		for (unsigned int cn = 0; cn < users_array.size (); cn ++) {
+			auto user_value = users_array.at (cn);
+			auto user_object = user_value.get <picojson::object> ();
+			string host = user_object.at (string {"host"}).get <string> ();
+			string user = user_object.at (string {"user"}).get <string> ();
+
+			string screen_name = user_object.at (string {"screen_name"}).get <string> ();
+			string bio = user_object.at (string {"bio"}).get <string> ();
+			string avatar = user_object.at (string {"avatar"}).get <string> ();
+			bool described = ((! screen_name.empty ()) && (! bio.empty ()) && bio != string {"<p></p>"} && (! avatar.empty ()));
+
+			if (described) {
+				UserAndSimilarity speaker_and_similarity;
+				speaker_and_similarity.host = host;
+				speaker_and_similarity.user = user;
+				speaker_and_similarity.similarity = static_cast <double> (0);
+				speakers_and_similarity.push_back (speaker_and_similarity);
+
+				User speaker {host, user};
+				map <string, double> intersection;
+				speaker_to_intersection.insert (pair <User, map <string, double>> {speaker, intersection});
+			}
+		}
 	}
-	cerr << endl;
-
-	cerr << "stable_sort" << endl;
-	stable_sort (speakers_and_similarity.begin (), speakers_and_similarity.end (), by_similarity_desc);
 
 	cerr << "read_profiles" << endl;
 	map <User, Profile> users_to_profile = read_profiles ();
